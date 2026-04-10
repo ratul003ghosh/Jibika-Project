@@ -1,0 +1,399 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f7f8;
+    color: #1f2937;
+    margin: 0;
+    padding: 0;
+}
+
+.container,
+.container-fluid {
+    width: 100%;
+}
+
+/* Top Govt Bar */
+.top-gov-bar {
+    background: #a7c2ad;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+    font-size: 14px;
+}
+
+.gov-bar-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.gov-left,
+.gov-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.gov-badge {
+    background: #0f9d58;
+    color: #fff;
+    font-weight: 700;
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+}
+
+.gov-text,
+.gov-date {
+    color: #1f2937;
+    font-weight: 500;
+}
+
+.lang-switch {
+    display: flex;
+    border: 1px solid #198754;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+}
+
+.lang-switch span {
+    padding: 4px 10px;
+    font-weight: 600;
+    color: #198754;
+}
+
+.lang-switch .lang-active {
+    background: #198754;
+    color: #fff;
+}
+
+/* Navbar */
+.main-navbar {
+    z-index: 999;
+}
+
+.brand-text {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.brand-en {
+    color: #198754;
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.brand-bn {
+    color: #dc3545;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+/* Hero */
+.hero-section {
+    position: relative;
+    min-height: 640px;
+    background:
+        linear-gradient(90deg, rgba(8, 44, 112, 0.88) 0%, rgba(14, 79, 185, 0.72) 55%, rgba(14, 79, 185, 0.35) 100%),
+        url('/jibika/assets/image/bd.jpg') center center / cover no-repeat;
+    display: flex;
+    align-items: center;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    padding-top: 100px;
+    padding-bottom: 100px;
+}
+
+.hero-quote {
+    font-size: 22px;
+    color: #dbeafe;
+    margin-bottom: 18px;
+}
+
+.hero-title {
+    font-size: 58px;
+    line-height: 1.2;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 20px;
+    max-width: 820px;
+}
+
+.hero-subtitle {
+    font-size: 20px;
+    color: #e5e7eb;
+    max-width: 650px;
+    margin-bottom: 30px;
+}
+
+.hero-info-box {
+    display: grid;
+    gap: 18px;
+}
+
+.info-card {
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 18px;
+    padding: 22px;
+    color: #fff;
+    backdrop-filter: blur(4px);
+}
+
+.info-card h5 {
+    margin-bottom: 8px;
+    font-weight: 700;
+    font-size: 24px;
+}
+
+.info-card p {
+    margin-bottom: 0;
+    color: #eaf2ff;
+    font-size: 16px;
+}
+
+/* Shared */
+.section-title {
+    font-size: 42px;
+    font-weight: 700;
+    color: #0d47a1;
+}
+
+.section-subtitle {
+    max-width: 760px;
+    margin: 12px auto 0;
+    color: #6b7280;
+    font-size: 18px;
+}
+
+/* Journey */
+.journey-card {
+    height: 100%;
+    background: linear-gradient(135deg, #0d47a1, #1d63d5);
+    color: #fff;
+    border-radius: 20px;
+    padding: 26px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.journey-card h5 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.journey-card p {
+    color: #dbeafe;
+    min-height: 88px;
+    font-size: 16px;
+}
+
+/* Search */
+.search-box {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.custom-input {
+    height: 50px;
+    border-radius: 12px;
+}
+
+/* Sector */
+.sector-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 18px;
+    text-align: center;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    font-weight: 600;
+    color: #0d47a1;
+    height: 100%;
+    font-size: 16px;
+}
+
+/* Stats */
+.stats-box {
+    background: #fff;
+    border-radius: 18px;
+    padding: 30px 20px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    height: 100%;
+}
+
+.stats-box h3 {
+    font-size: 38px;
+    font-weight: 700;
+    color: #0d47a1;
+    margin-bottom: 10px;
+}
+
+.stats-box p {
+    margin-bottom: 0;
+    color: #6b7280;
+    font-weight: 500;
+    font-size: 16px;
+}
+
+/* Support */
+.support-banner {
+    background: linear-gradient(135deg, #0d47a1, #1d63d5);
+    color: #fff;
+    border-radius: 24px;
+    padding: 36px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+}
+
+.support-banner h2 {
+    font-size: 34px;
+    font-weight: 700;
+    margin-bottom: 14px;
+}
+
+.support-banner p {
+    color: #dbeafe;
+    font-size: 17px;
+}
+
+/* Updates */
+.update-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    height: 100%;
+}
+
+.update-image-placeholder {
+    height: 170px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #fff3cd, #dbeafe);
+    margin-bottom: 16px;
+}
+
+.update-card h5 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #0d47a1;
+}
+
+.update-card p {
+    color: #6b7280;
+    min-height: 80px;
+    font-size: 15px;
+}
+
+/* Organizations */
+.org-card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 24px;
+    text-align: center;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    height: 100%;
+}
+
+.org-card h6 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0d47a1;
+    min-height: 48px;
+}
+
+/* Resources */
+.resource-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    height: 100%;
+    font-weight: 600;
+    color: #0d47a1;
+    font-size: 15px;
+}
+
+/* Footer */
+.site-footer {
+    background: #ffffff;
+    border-top: 1px solid #e5e7eb;
+}
+
+.site-footer h5 {
+    font-weight: 700;
+}
+
+.footer-text {
+    color: #6b7280;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .hero-title {
+        font-size: 48px;
+    }
+}
+
+@media (max-width: 991px) {
+    .hero-title {
+        font-size: 38px;
+    }
+
+    .hero-section {
+        min-height: auto;
+    }
+
+    .hero-content {
+        padding-top: 60px;
+        padding-bottom: 60px;
+    }
+
+    .hero-info-box {
+        margin-top: 30px;
+    }
+
+    .support-banner h2 {
+        font-size: 26px;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-title {
+        font-size: 30px;
+    }
+
+    .hero-quote {
+        font-size: 16px;
+    }
+
+    .hero-subtitle {
+        font-size: 15px;
+    }
+
+    .brand-en {
+        font-size: 24px;
+    }
+
+    .brand-bn {
+        font-size: 20px;
+    }
+
+    .gov-text,
+    .gov-date {
+        font-size: 12px;
+    }
+
+    .section-title {
+        font-size: 28px;
+    }
+}
