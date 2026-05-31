@@ -124,7 +124,7 @@ $sql = "SELECT
         LEFT JOIN upazilas u ON jobs.upazila_id = u.upazila_id
         LEFT JOIN wards w ON jobs.ward_id = w.ward_id
         LEFT JOIN users ON jobs.employer_id = users.user_id
-        WHERE jobs.status='active'";
+        WHERE 1=1";
 
 if ($search != "") {
     $search_safe = $conn->real_escape_string($search);
@@ -172,6 +172,86 @@ $jobs_result = $conn->query($sql);
 
 <?php include('../includes/header.php'); ?>
 <?php include('../includes/navbar.php'); ?>
+<?php
+$lang = $_SESSION['lang'] ?? 'bn';
+$jobs_text = [
+    'bn' => [
+        'badge' => 'জীবিকা জবস',
+        'hero_title' => 'আপনার পরবর্তী সুযোগ আবিষ্কার করুন',
+        'hero_desc' => 'সারা বাংলাদেশের শীর্ষ নিয়োগকর্তাদের সাথে যুক্ত হন এবং আপনার ক্যারিয়ারে পরবর্তী পদক্ষেপ নিন।',
+        'search_placeholder' => 'চাকরির নাম, কীওয়ার্ড বা কোম্পানি',
+        'all_locations' => 'সকল অবস্থান',
+        'any_job_type' => 'যেকোনো চাকরির ধরন',
+        'search_btn' => 'চাকরি খুঁজুন',
+        'quick_filters' => 'দ্রুত ফিল্টার',
+        'student_pt' => 'স্টুডেন্ট পার্ট-টাইম',
+        'student_pt_sub' => 'শিক্ষার্থীদের জন্য নমনীয় সময়',
+        'day_labor' => 'দৈনিক শ্রমিক',
+        'day_labor_sub' => 'দৈনিক ও সাপ্তাহিক মজুরি',
+        'internships' => 'ইন্টার্নশিপ',
+        'internships_sub' => 'আপনার ক্যারিয়ার শুরু করুন',
+        'filters' => 'ফিল্টারসমূহ',
+        'clear_all' => 'সব মুছুন',
+        'job_cat' => 'চাকরির ক্যাটাগরি',
+        'job_type' => 'চাকরির ধরন',
+        'exp_level' => 'অভিজ্ঞতার স্তর',
+        'job_alerts' => 'জব অ্যালার্ট',
+        'job_alerts_sub' => 'নতুন চাকরি আপনার দক্ষতার সাথে মিললে বিজ্ঞপ্তি পান।',
+        'update_profile' => 'প্রোফাইল আপডেট করুন',
+        'recommended' => 'আপনার জন্য প্রস্তাবিত',
+        'jobs_found' => 'টি চাকরি পাওয়া গেছে',
+        'deadline' => 'শেষ তারিখ',
+        'closed' => 'বন্ধ',
+        'applied' => 'আবেদনকৃত',
+        'apply_now' => 'আবেদন করুন',
+        'no_jobs' => 'কোনো চাকরি পাওয়া যায়নি',
+        'no_jobs_desc' => 'আপনার মানদণ্ডের সাথে মিলে এমন কোনো সুযোগ আমরা খুঁজে পাইনি। আপনার ফিল্টারগুলি পরিবর্তন করে আবার চেষ্টা করুন।',
+        'reset_search' => 'সার্চ রিসেট করুন',
+        'not_specified' => 'উল্লেখ নেই',
+        'negotiable' => 'আলোচনা সাপেক্ষে',
+        'multiple_loc' => 'একাধিক স্থান',
+        'unknown_emp' => 'অজ্ঞাত নিয়োগকর্তা'
+    ],
+    'en' => [
+        'badge' => 'JIBIKA JOBS',
+        'hero_title' => 'Discover Your Next Opportunity',
+        'hero_desc' => 'Connect with top employers across Bangladesh and take the next step in your career journey.',
+        'search_placeholder' => 'Job title, keywords, or company',
+        'all_locations' => 'All Locations',
+        'any_job_type' => 'Any Job Type',
+        'search_btn' => 'Search Jobs',
+        'quick_filters' => 'Quick Filters',
+        'student_pt' => 'Student Part-time',
+        'student_pt_sub' => 'Flexible hours for students',
+        'day_labor' => 'Day Labor',
+        'day_labor_sub' => 'Daily & Weekly wages',
+        'internships' => 'Internships',
+        'internships_sub' => 'Kickstart your career',
+        'filters' => 'Filters',
+        'clear_all' => 'Clear All',
+        'job_cat' => 'Job Category',
+        'job_type' => 'Job Type',
+        'exp_level' => 'Experience Level',
+        'job_alerts' => 'Job Alerts',
+        'job_alerts_sub' => 'Get notified when new jobs match your skills.',
+        'update_profile' => 'Update Profile',
+        'recommended' => 'Recommended for you',
+        'jobs_found' => 'jobs found',
+        'deadline' => 'Deadline',
+        'closed' => 'Closed',
+        'applied' => 'Applied',
+        'apply_now' => 'Apply Now',
+        'no_jobs' => 'No Jobs Found',
+        'no_jobs_desc' => 'We couldn\'t find any opportunities matching your exact criteria. Try adjusting your filters or searching with different keywords.',
+        'reset_search' => 'Reset Search',
+        'not_specified' => 'Not specified',
+        'negotiable' => 'Negotiable',
+        'multiple_loc' => 'Multiple Locations',
+        'unknown_emp' => 'Unknown Employer'
+    ]
+];
+$jt = $jobs_text[$lang];
+?>
 
 <style>
     body { background-color: #f8f9fa; }
@@ -288,9 +368,9 @@ $jobs_result = $conn->query($sql);
 <!-- Hero Banner -->
 <div class="jobs-hero text-center">
     <div class="container px-4">
-        <span class="badge bg-white text-success rounded-pill px-3 py-2 mb-3 shadow-sm fw-bold" style="letter-spacing:1px;">JIBIKA JOBS</span>
-        <h1 class="text-white fw-bold mb-3" style="font-size: 3rem;">Discover Your Next Opportunity</h1>
-        <p class="text-white-50 fs-5 mb-0" style="max-width: 600px; margin: 0 auto;">Connect with top employers across Bangladesh and take the next step in your career journey.</p>
+        <span class="badge bg-white text-success rounded-pill px-3 py-2 mb-3 shadow-sm fw-bold" style="letter-spacing:1px;"><?php echo $jt['badge']; ?></span>
+        <h1 class="text-white fw-bold mb-3" style="font-size: 3rem;"><?php echo $jt['hero_title']; ?></h1>
+        <p class="text-white-50 fs-5 mb-0" style="max-width: 600px; margin: 0 auto;"><?php echo $jt['hero_desc']; ?></p>
     </div>
 </div>
 
@@ -309,14 +389,14 @@ $jobs_result = $conn->query($sql);
                 <div class="col-lg-4">
                     <div class="search-input-group">
                         <i class="fa-solid fa-magnifying-glass text-muted ms-2"></i>
-                        <input type="text" name="search" class="form-control" placeholder="Job title, keywords, or company" value="<?php echo htmlspecialchars($search); ?>">
+                        <input type="text" name="search" class="form-control" placeholder="<?php echo $jt['search_placeholder']; ?>" value="<?php echo htmlspecialchars($search); ?>">
                     </div>
                 </div>
                 <div class="col-lg-3">
                     <div class="search-input-group">
                         <i class="fa-solid fa-location-dot text-muted ms-2"></i>
                         <select name="district_id" class="form-select text-muted">
-                            <option value="">All Locations</option>
+                            <option value=""><?php echo $jt['all_locations']; ?></option>
                             <?php
                             if ($districts && $districts->num_rows > 0) {
                                 $districts->data_seek(0);
@@ -333,7 +413,7 @@ $jobs_result = $conn->query($sql);
                     <div class="search-input-group">
                         <i class="fa-solid fa-briefcase text-muted ms-2"></i>
                         <select name="job_type" class="form-select text-muted">
-                            <option value="">Any Job Type</option>
+                            <option value=""><?php echo $jt['any_job_type']; ?></option>
                             <?php
                             $types = ['Full-time', 'Part-time', 'Part-time (Student)', 'Day Labor', 'Internship', 'Contract', 'Remote'];
                             foreach ($types as $type) {
@@ -345,50 +425,44 @@ $jobs_result = $conn->query($sql);
                     </div>
                 </div>
                 <div class="col-lg-2">
-                    <button type="submit" class="btn btn-apply w-100 rounded-3 py-3 shadow-sm" style="font-size: 1.05rem;">Search Jobs</button>
+                    <button type="submit" class="btn btn-apply w-100 rounded-3 py-3 shadow-sm" style="font-size: 1.05rem;"><?php echo $jt['search_btn']; ?></button>
                 </div>
             </div>
         </div>
 
-        <!-- Quick Access Filters -->
-        <div class="row g-3 mb-4 mt-1">
             <div class="col-md-4">
-                <a href="jobs.php?job_type=Part-time+(Student)" class="d-flex align-items-center bg-white border rounded-4 p-3 shadow-sm text-decoration-none" style="transition: transform 0.2s; border-left: 4px solid #f59e0b !important;">
-                    <div class="bg-warning bg-opacity-10 text-warning rounded-3 d-flex justify-content-center align-items-center me-3" style="width:50px; height:50px; font-size:1.5rem;">
-                        <i class="fa-solid fa-graduation-cap"></i>
+                <a href="jobs.php?job_type=Part-time+(Student)" class="text-decoration-none d-block overflow-hidden rounded-4 shadow-sm position-relative hover-lift" style="height: 180px;">
+                    <div style="background-image: url('/assets/image/student_jobs.png'); background-size: cover; background-position: center; position: absolute; inset: 0; transition: transform 0.5s;" class="specialized-bg"></div>
+                    <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(15,23,42,0.9) 0%, rgba(15,23,42,0.2) 60%, transparent 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 1.5rem;">
+                        <h5 class="fw-bold text-white mb-1"><?php echo $jt['student_pt']; ?></h5>
+                        <small class="text-white-50"><?php echo $jt['student_pt_sub']; ?></small>
                     </div>
-                    <div>
-                        <h6 class="fw-bold text-dark mb-0 fs-5">Student Part-time</h6>
-                        <small class="text-muted">Flexible hours for students</small>
-                    </div>
-                    <i class="fa-solid fa-chevron-right text-muted ms-auto"></i>
                 </a>
             </div>
             <div class="col-md-4">
-                <a href="jobs.php?job_type=Day+Labor" class="d-flex align-items-center bg-white border rounded-4 p-3 shadow-sm text-decoration-none" style="transition: transform 0.2s; border-left: 4px solid #10b981 !important;">
-                    <div class="bg-success bg-opacity-10 text-success rounded-3 d-flex justify-content-center align-items-center me-3" style="width:50px; height:50px; font-size:1.5rem;">
-                        <i class="fa-solid fa-person-digging"></i>
+                <a href="jobs.php?job_type=Day+Labor" class="text-decoration-none d-block overflow-hidden rounded-4 shadow-sm position-relative hover-lift" style="height: 180px;">
+                    <div style="background-image: url('/assets/image/day_labor.png'); background-size: cover; background-position: center; position: absolute; inset: 0; transition: transform 0.5s;" class="specialized-bg"></div>
+                    <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(15,23,42,0.9) 0%, rgba(15,23,42,0.2) 60%, transparent 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 1.5rem;">
+                        <h5 class="fw-bold text-white mb-1"><?php echo $jt['day_labor']; ?></h5>
+                        <small class="text-white-50"><?php echo $jt['day_labor_sub']; ?></small>
                     </div>
-                    <div>
-                        <h6 class="fw-bold text-dark mb-0 fs-5">Day Labor</h6>
-                        <small class="text-muted">Daily & Weekly wages</small>
-                    </div>
-                    <i class="fa-solid fa-chevron-right text-muted ms-auto"></i>
                 </a>
             </div>
             <div class="col-md-4">
-                <a href="jobs.php?job_type=Internship" class="d-flex align-items-center bg-white border rounded-4 p-3 shadow-sm text-decoration-none" style="transition: transform 0.2s; border-left: 4px solid #3b82f6 !important;">
-                    <div class="bg-primary bg-opacity-10 text-primary rounded-3 d-flex justify-content-center align-items-center me-3" style="width:50px; height:50px; font-size:1.5rem;">
-                        <i class="fa-solid fa-briefcase"></i>
+                <a href="jobs.php?job_type=Internship" class="text-decoration-none d-block overflow-hidden rounded-4 shadow-sm position-relative hover-lift" style="height: 180px;">
+                    <div style="background-image: url('/assets/image/internships.png'); background-size: cover; background-position: center; position: absolute; inset: 0; transition: transform 0.5s;" class="specialized-bg"></div>
+                    <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(15,23,42,0.9) 0%, rgba(15,23,42,0.2) 60%, transparent 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 1.5rem;">
+                        <h5 class="fw-bold text-white mb-1"><?php echo $jt['internships']; ?></h5>
+                        <small class="text-white-50"><?php echo $jt['internships_sub']; ?></small>
                     </div>
-                    <div>
-                        <h6 class="fw-bold text-dark mb-0 fs-5">Internships</h6>
-                        <small class="text-muted">Kickstart your career</small>
-                    </div>
-                    <i class="fa-solid fa-chevron-right text-muted ms-auto"></i>
                 </a>
             </div>
         </div>
+        <style>
+            .hover-lift:hover .specialized-bg { transform: scale(1.05); }
+            .hover-lift { transition: transform 0.2s; }
+            .hover-lift:hover { transform: translateY(-5px); }
+        </style>
 
         <!-- Main Content -->
         <div class="row g-4 mt-2">
@@ -397,14 +471,14 @@ $jobs_result = $conn->query($sql);
             <div class="col-lg-3 d-none d-lg-block">
                 <div class="filter-sidebar p-4 sticky-top" style="top: 100px;">
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h5 class="fw-bold mb-0 text-dark">Filters</h5>
+                        <h5 class="fw-bold mb-0 text-dark"><?php echo $jt['filters']; ?></h5>
                         <?php if(!empty($search) || !empty($district_id) || !empty($job_type) || !empty($categories) || !empty($experiences)): ?>
-                            <a href="jobs.php" class="text-danger small text-decoration-none fw-bold">Clear All</a>
+                            <a href="jobs.php" class="text-danger small text-decoration-none fw-bold"><?php echo $jt['clear_all']; ?></a>
                         <?php endif; ?>
                     </div>
 
                     <div class="mb-4">
-                        <h6 class="fw-bold text-muted small text-uppercase mb-3">Job Category</h6>
+                        <h6 class="fw-bold text-muted small text-uppercase mb-3"><?php echo $jt['job_cat']; ?></h6>
                         <?php
                         $cat_list = ['IT & Tech', 'Garments', 'Driving', 'Education', 'Health', 'Marketing'];
                         foreach ($cat_list as $cat):
@@ -418,7 +492,7 @@ $jobs_result = $conn->query($sql);
                     </div>
 
                     <div class="mb-4">
-                        <h6 class="fw-bold text-muted small text-uppercase mb-3">Job Type</h6>
+                        <h6 class="fw-bold text-muted small text-uppercase mb-3"><?php echo $jt['job_type']; ?></h6>
                         <?php
                         $t_list = ['Full-time', 'Part-time (Student)', 'Day Labor', 'Internship', 'Contract'];
                         foreach ($t_list as $t):
@@ -432,7 +506,7 @@ $jobs_result = $conn->query($sql);
                     </div>
 
                     <div class="mb-4">
-                        <h6 class="fw-bold text-muted small text-uppercase mb-3">Experience Level</h6>
+                        <h6 class="fw-bold text-muted small text-uppercase mb-3"><?php echo $jt['exp_level']; ?></h6>
                         <?php
                         $exp_list = ['Entry Level', 'Mid Level', 'Senior Level', '1 Year', '2 Years', '3 Years'];
                         foreach ($exp_list as $exp):
@@ -447,9 +521,9 @@ $jobs_result = $conn->query($sql);
 
                     <div class="p-3 bg-light rounded-3 mt-4 text-center border">
                         <i class="fa-solid fa-bell text-warning fs-3 mb-2"></i>
-                        <h6 class="fw-bold mb-1">Job Alerts</h6>
-                        <p class="small text-muted mb-3">Get notified when new jobs match your skills.</p>
-                        <a href="profile.php" class="btn btn-outline-dark btn-sm w-100 rounded-pill fw-bold">Update Profile</a>
+                        <h6 class="fw-bold mb-1"><?php echo $jt['job_alerts']; ?></h6>
+                        <p class="small text-muted mb-3"><?php echo $jt['job_alerts_sub']; ?></p>
+                        <a href="profile.php" class="btn btn-outline-dark btn-sm w-100 rounded-pill fw-bold"><?php echo $jt['update_profile']; ?></a>
                     </div>
                 </div>
             </div>
@@ -458,8 +532,8 @@ $jobs_result = $conn->query($sql);
             <div class="col-lg-9">
                 
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="fw-bold text-dark mb-0">Recommended for you</h4>
-                    <span class="text-muted fw-medium"><?php echo $jobs_result ? $jobs_result->num_rows : 0; ?> jobs found</span>
+                    <h4 class="fw-bold text-dark mb-0"><?php echo $jt['recommended']; ?></h4>
+                    <span class="text-muted fw-medium"><?php echo ($jobs_result ? $jobs_result->num_rows : 0) . ' ' . $jt['jobs_found']; ?></span>
                 </div>
 
                 <?php if ($jobs_result && $jobs_result->num_rows > 0): ?>
@@ -495,18 +569,18 @@ $jobs_result = $conn->query($sql);
                                                     <?php echo htmlspecialchars($job['title']); ?>
                                                 </h5>
                                                 <?php if ($deadline_over): ?>
-                                                    <span class="badge bg-danger rounded-pill px-2 py-1" style="font-size:0.7rem;">Closed</span>
+                                                    <span class="badge bg-danger rounded-pill px-2 py-1" style="font-size:0.7rem;"><?php echo $jt['closed']; ?></span>
                                                 <?php endif; ?>
                                             </div>
                                             
                                             <p class="text-success fw-bold mb-3" style="font-size: 1.05rem;">
-                                                <?php echo htmlspecialchars($job['company_name'] ?? 'Unknown Employer'); ?>
+                                                <?php echo htmlspecialchars($job['company_name'] ?? $jt['unknown_emp']); ?>
                                             </p>
                                             
                                             <div class="d-flex flex-wrap gap-2 mb-3">
-                                                <span class="job-meta-pill"><i class="fa-solid fa-location-dot text-muted"></i> <?php echo htmlspecialchars($job['district_name'] ?? 'Multiple Locations'); ?></span>
+                                                <span class="job-meta-pill"><i class="fa-solid fa-location-dot text-muted"></i> <?php echo htmlspecialchars($job['district_name'] ?? $jt['multiple_loc']); ?></span>
                                                 <span class="job-meta-pill"><i class="fa-solid fa-briefcase text-muted"></i> <?php echo htmlspecialchars($job['job_type'] ?? 'Full-time'); ?></span>
-                                                <span class="job-meta-pill"><i class="fa-solid fa-money-bill-wave text-muted"></i> <?php echo !empty($job['salary']) ? htmlspecialchars($job['salary']) : 'Negotiable'; ?></span>
+                                                <span class="job-meta-pill"><i class="fa-solid fa-money-bill-wave text-muted"></i> <?php echo !empty($job['salary']) ? htmlspecialchars($job['salary']) : $jt['negotiable']; ?></span>
                                             </div>
 
                                             <p class="text-secondary mb-0" style="line-height: 1.6; font-size: 0.95rem;">
@@ -518,8 +592,8 @@ $jobs_result = $conn->query($sql);
 
                                 <div class="col-md-4 mt-4 mt-md-0 border-start-md ps-md-4 text-md-end d-flex flex-column justify-content-center h-100">
                                     <div class="mb-3 text-start text-md-end">
-                                        <small class="text-danger fw-bold d-block mb-1"><i class="fa-regular fa-clock me-1"></i> Deadline</small>
-                                        <span class="fw-semibold text-dark"><?php echo !empty($deadline) ? date('d M, Y', strtotime($deadline)) : 'Not specified'; ?></span>
+                                        <small class="text-danger fw-bold d-block mb-1"><i class="fa-regular fa-clock me-1"></i> <?php echo $jt['deadline']; ?></small>
+                                        <span class="fw-semibold text-dark"><?php echo !empty($deadline) ? date('d M, Y', strtotime($deadline)) : $jt['not_specified']; ?></span>
                                     </div>
                                     
                                     <div class="d-flex gap-2 justify-content-md-end">
@@ -535,17 +609,17 @@ $jobs_result = $conn->query($sql);
 
                                         <?php if ($already_applied): ?>
                                             <button class="btn btn-light border text-success fw-bold flex-grow-1" style="border-radius:10px;" disabled>
-                                                <i class="fa-solid fa-check me-2"></i>Applied
+                                                <i class="fa-solid fa-check me-2"></i><?php echo $jt['applied']; ?>
                                             </button>
                                         <?php elseif ($deadline_over): ?>
                                             <button class="btn btn-light border text-danger fw-bold flex-grow-1" style="border-radius:10px;" disabled>
-                                                Closed
+                                                <?php echo $jt['closed']; ?>
                                             </button>
                                         <?php else: ?>
                                             <a href="jobs.php?apply=<?php echo $job['job_id']; ?>&search=<?php echo urlencode($search); ?>&district_id=<?php echo urlencode($district_id); ?>&job_type=<?php echo urlencode($job_type); ?>"
                                                class="btn btn-apply flex-grow-1"
                                                onclick="return confirm('Apply for this job?')">
-                                                Apply Now
+                                                <?php echo $jt['apply_now']; ?>
                                             </a>
                                         <?php endif; ?>
                                     </div>
@@ -561,9 +635,9 @@ $jobs_result = $conn->query($sql);
                     <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mb-4" style="width:100px; height:100px;">
                         <i class="fa-solid fa-briefcase text-muted opacity-50" style="font-size: 3rem;"></i>
                     </div>
-                    <h3 class="fw-bold text-dark mb-2">No Jobs Found</h3>
-                    <p class="text-muted fs-5 mb-4" style="max-width: 500px;">We couldn't find any opportunities matching your exact criteria. Try adjusting your filters or searching with different keywords.</p>
-                    <a href="jobs.php" class="btn btn-dark rounded-pill px-5 py-2 fw-bold">Reset Search</a>
+                    <h3 class="fw-bold text-dark mb-2"><?php echo $jt['no_jobs']; ?></h3>
+                    <p class="text-muted fs-5 mb-4" style="max-width: 500px;"><?php echo $jt['no_jobs_desc']; ?></p>
+                    <a href="jobs.php" class="btn btn-dark rounded-pill px-5 py-2 fw-bold"><?php echo $jt['reset_search']; ?></a>
                 </div>
             <?php endif; ?>
         </div>

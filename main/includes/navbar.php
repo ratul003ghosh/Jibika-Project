@@ -9,14 +9,31 @@ if (isset($_GET['lang'])) {
 
 $lang = $_SESSION['lang'] ?? 'bn';
 
+$eng_date = date('l, d F Y');
+$eng_days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+$bng_days = ['রবিবার', 'সোমবার', 'মঙ্গলবার', 'বুধবার', 'বৃহস্পতিবার', 'শুক্রবার', 'শনিবার'];
+$eng_months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+$bng_months = ['জানুয়ারি', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর'];
+$eng_nums = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+$bng_nums = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+$bng_date = str_replace($eng_days, $bng_days, $eng_date);
+$bng_date = str_replace($eng_months, $bng_months, $bng_date);
+$bng_date = str_replace($eng_nums, $bng_nums, $bng_date);
+
 $navText = [
     'bn' => [
         'gov_badge' => 'বাংলাদেশ',
         'gov_text' => 'গণপ্রজাতন্ত্রী বাংলাদেশ সরকারের ভাবনায় কর্মসংস্থান ও জীবিকা সহায়তা প্ল্যাটফর্ম',
-        'date' => 'সোমবার, ২৩ চৈত্র ১৪৩২',
+        'gov_subtitle' => 'জাতীয় কর্মসংস্থান ও দক্ষতা প্ল্যাটফর্ম',
+        'date' => $bng_date,
         'home' => 'হোম',
         'about' => 'আমাদের সম্পর্কে',
-        'jobs' => 'চাকরি',
+        'job_portal' => 'চাকরি পোর্টাল',
+        'eservices' => 'ই-সেবা',
+        'trainings' => 'প্রশিক্ষণ',
+        'notice' => 'নোটিশ বোর্ড',
+        'statistics' => 'পরিসংখ্যান',
+        'contact' => 'যোগাযোগ',
         'login' => 'লগইন',
         'register' => 'রেজিস্টার',
         'dashboard' => 'ড্যাশবোর্ড',
@@ -25,10 +42,16 @@ $navText = [
     'en' => [
         'gov_badge' => 'Bangladesh',
         'gov_text' => 'Employment and livelihood support platform inspired by the Government of Bangladesh',
-        'date' => 'Monday, 23 Choitro 1432',
+        'gov_subtitle' => 'National Employment & Skills Platform',
+        'date' => $eng_date,
         'home' => 'Home',
-        'about' => 'About',
-        'jobs' => 'Jobs',
+        'about' => 'About Us',
+        'job_portal' => 'Job Portal',
+        'eservices' => 'E-Services',
+        'trainings' => 'Trainings',
+        'notice' => 'Notice Board',
+        'statistics' => 'Statistics',
+        'contact' => 'Contact',
         'login' => 'Login',
         'register' => 'Register',
         'dashboard' => 'Dashboard',
@@ -133,7 +156,7 @@ $t = $navText[$lang];
             </div>
             <div>
                 <h1 class="gov-title">জীবিকা - Jibika Portal</h1>
-                <p class="gov-subtitle">National Employment & Skills Platform</p>
+                <p class="gov-subtitle"><?php echo $t['gov_subtitle']; ?></p>
             </div>
         </div>
     </div>
@@ -153,22 +176,22 @@ $t = $navText[$lang];
                     <a class="nav-link" href="/index.php"><i class="fa-solid fa-house me-1"></i> <?php echo $t['home']; ?></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/about.php">About Us</a>
+                    <a class="nav-link" href="/about.php"><?php echo $t['about']; ?></a>
                 </li>
                 <li class="nav-item">
                     <?php if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin'): ?>
-                        <a class="nav-link" href="/admin/jobs.php">Job Portal</a>
+                        <a class="nav-link" href="/admin/jobs.php"><?php echo $t['job_portal']; ?></a>
                     <?php elseif (isset($_SESSION['role']) && $_SESSION['role'] == 'employer'): ?>
-                        <a class="nav-link" href="/employer/manage_jobs.php">Job Portal</a>
+                        <a class="nav-link" href="/employer/manage_jobs.php"><?php echo $t['job_portal']; ?></a>
                     <?php else: ?>
-                        <a class="nav-link" href="/jobseeker/jobs.php">Job Portal</a>
+                        <a class="nav-link" href="/jobseeker/jobs.php"><?php echo $t['job_portal']; ?></a>
                     <?php endif; ?>
                 </li>
-                <li class="nav-item"><a class="nav-link" href="/eservices.php">E-Services</a></li>
-                <li class="nav-item"><a class="nav-link" href="/trainings.php">Trainings</a></li>
-                <li class="nav-item"><a class="nav-link" href="/notice.php">Notice Board</a></li>
-                <li class="nav-item"><a class="nav-link" href="/statistics.php">Statistics</a></li>
-                <li class="nav-item"><a class="nav-link" href="/contact.php">Contact</a></li>
+                <li class="nav-item"><a class="nav-link" href="/eservices.php"><?php echo $t['eservices']; ?></a></li>
+                <li class="nav-item"><a class="nav-link" href="/trainings.php"><?php echo $t['trainings']; ?></a></li>
+                <li class="nav-item"><a class="nav-link" href="/notice.php"><?php echo $t['notice']; ?></a></li>
+                <li class="nav-item"><a class="nav-link" href="/statistics.php"><?php echo $t['statistics']; ?></a></li>
+                <li class="nav-item"><a class="nav-link" href="/contact.php"><?php echo $t['contact']; ?></a></li>
             </ul>
 
             <ul class="navbar-nav ms-auto align-items-center">
