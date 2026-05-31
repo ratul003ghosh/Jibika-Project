@@ -1,0 +1,16 @@
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE / Editor folders
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# XAMPP / Local Logs
+error_log
+access_log

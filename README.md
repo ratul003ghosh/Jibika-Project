@@ -1,37 +1,65 @@
-# 👋 Welcome to Jibika (জীবিকা)
+# Jibika - Job Portal (জীবিকা)
 
-Hey there! Thanks for dropping by the **Jibika** repository. 
+![Jibika Project Banner](https://via.placeholder.com/1000x300?text=Jibika+-+Smart+Employment+Platform)
 
-While Jibika looks like a standard job portal on the surface, its true purpose is much bigger. We built this platform primarily as a **powerful tool for the Government and NGOs** to actively monitor and solve unemployment in Bangladesh at a hyper-local level.
+**Jibika** is an area-based unemployment monitoring and smart employment platform built for Bangladesh. While it looks like a standard job portal, it is designed to serve as a powerful tool for government policymakers and NGOs to monitor unemployment data at a hyper-local level (District, Upazila, and Ward) to provide targeted training and support.
 
-Instead of just guessing where jobs are needed, Jibika provides real, area-based data (down to the specific District, Upazila, and Ward). It is designed to bridge the massive gap between policymakers, local employers, and the everyday workforce.
+## 🚀 Key Features
 
-## ✨ Why Jibika exists
+* **Bilingual UI**: Fully localized in both English and Bengali (`$_SESSION['lang']`).
+* **Smart Match**: Advanced job filtering and search matching skills to local opportunities.
+* **Area-Based Monitoring**: Granular unemployment data tracking (district, upazila, ward).
+* **Role-Based Access**: Specialized dashboards for Job Seekers, Employers, and Administrators.
+* **Specialized Sectors**: Focus on inclusive opportunities like Day Labor, Part-time Students, and Agriculture.
 
-We wanted to create an ecosystem that actually helps the country grow from the grassroots up:
+## 🛠 Tech Stack
 
-*   **For the Government & Policymakers:** This is the core of Jibika. Admins can log in and see exactly which areas are struggling with unemployment and what specific skills the local people have. This means the government can make actual data-driven decisions rather than shooting in the dark.
-*   **For NGOs & Trainers:** If an NGO wants to launch a sewing or IT training program, they can use Jibika to see exactly which Ward or Upazila has a high concentration of unemployed youth who actually want those skills.
-*   **For Local Employers:** Whether you run a garments factory, a local startup, or just need a daily wage worker for construction, Jibika makes it incredibly easy to find local people. We specifically built categories for **Day Laborers** and **Student Part-time** workers because they are the backbone of the local economy.
-*   **For the People:** Job seekers don't just get a job board. They get a platform that recommends jobs based on their exact location. Plus, we provide them with free resources like CV guides, interview tips, and direct links to government E-Services and entrepreneurship support.
+* **Frontend**: HTML5, Vanilla CSS3, JavaScript, Bootstrap 5
+* **Backend**: PHP 8+ (Procedural)
+* **Database**: MySQL
+* **Environment**: XAMPP (Local Development)
 
-## 🛠️ How we built it
+## 📋 Prerequisites
 
-We wanted to keep the technology accessible, fast, and easy to deploy:
-*   **Frontend:** Standard HTML, CSS, and vanilla JavaScript (powered by Bootstrap 5 for a clean, responsive, government-standard design).
-*   **Backend:** Good old PHP to handle the heavy lifting, routing, and user session logic.
-*   **Database:** MySQL. We structured the database heavily around location mapping and user roles (you'll find the `jibika_db.sql` file right here in the repo).
+To run this project locally, you will need:
+* **XAMPP** (or any similar AMP stack like WAMP/MAMP)
+* **PHP** version 8.0 or higher
+* **MySQL** database server (runs on port 3307 in this setup)
 
-## 🚀 Want to run it yourself?
+## ⚙️ Installation / Setup
 
-It's super easy to get it running on your local machine to test it out.
+1. **Clone the repository**:
+   Open terminal inside `C:\xampp\htdocs\` and run:
+   ```bash
+   git clone https://github.com/ratul003ghosh/Jibika-Project.git
+   ```
+2. **Setup Database**:
+   * Open XAMPP Control Panel and start **Apache** and **MySQL**.
+   * Go to `http://localhost/phpmyadmin`
+   * Create a new database named `jibika_db`
+   * Import the SQL file located at `database/jibika_db.sql` into this new database.
+3. **Configure Database Connection**:
+   * Open `src/assets/config/db.php`
+   * Ensure the credentials match your local setup (e.g., username `root`, password ``, port `3307`).
+4. **Run the Project**:
+   * Open your browser and navigate to: `http://localhost/Jibika-Project/src/`
 
-1.  **Download the code:** Just clone this repo or download the ZIP file.
-2.  **Set up your database:** Open up XAMPP, WAMP, or MAMP, go to phpMyAdmin, and create a new database called `jibika`. Then, import the `jibika_db.sql` file that is included in this repository.
-3.  **Check the connection:** Open the `main/assets/config/db.php` file and just make sure your database username and password match your local setup (usually it's `root` with a blank password).
-4.  **Run it!** Drop the project folder into your local server (like `htdocs`), open your browser, and go to `http://localhost/Jibika-Project/main/`.
+## 🔀 Branching Strategy & Team Workflow
 
-Thanks for checking out Jibika! 
+To avoid breaking code and managing conflicts easily, we follow this branching strategy:
 
----
-*Built with ❤️ to empower the government, NGOs, and the people to modernize the local employment ecosystem in Bangladesh.*
+1. **`main`**: The Holy Grail. Only contains stable, working code. **Never commit directly to main**.
+2. **`development`**: The central integration branch. All features merge here.
+3. **Feature Branches**: Before coding, create a branch off of `development`. 
+   * Example: `git checkout -b feature/login-system`
+4. **Pull Requests (PR)**: When a feature is done, push your branch and open a PR into `development`. 
+
+### Best Practices to Avoid Conflicts:
+* Always `git pull origin development` before starting new work.
+* Communicate with the team about who is editing which file (`index.php`, `navbar.php`, etc.).
+* Write descriptive commit messages (e.g., `feat: added student jobs section`).
+
+## 👥 Contributors
+
+* [Ratul Ghosh](https://github.com/ratul003ghosh)
+* *(Add other team members here)*
