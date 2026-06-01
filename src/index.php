@@ -70,8 +70,8 @@ $home_text = [
     'bn' => [
         // Hero
         'hero_quote'        => 'প্রতিটি দক্ষতার পেছনে লুকিয়ে আছে একটি সম্ভাবনার গল্প',
-        'hero_title'        => "একটি দক্ষতা, একটি সুযোগ —<br>বদলে দিন আপনার গল্প",
-        'hero_subtitle'     => 'Jibika হলো একটি এলাকাভিত্তিক বেকারত্ব পর্যবেক্ষণ ও স্মার্ট জব ম্যাচিং সিস্টেম।',
+        'hero_title'        => "আজই আপনার স্বপ্নের চাকরি খুঁজুন!",
+        'hero_subtitle'     => 'জীবিকা আপনাকে বাংলাদেশের সেরা নিয়োগকর্তাদের সাথে যুক্ত করে — এলাকাভিত্তিক, স্মার্ট এবং দ্রুততম সময়ে।',
         'my_dashboard'      => 'আমার ড্যাশবোর্ড',
         'employer_dashboard'=> 'নিয়োগকর্তার ড্যাশবোর্ড',
         'go_panel'          => 'প্যানেলে যান',
@@ -174,12 +174,28 @@ $home_text = [
         'sec_sales'       => 'বিক্রয় ও মার্কেটিং',    'sec_sales_sub'   => 'বিপণন, সেলস',
         'sec_edu'         => 'শিক্ষা ও প্রশিক্ষণ',     'sec_edu_sub'     => 'টিউশন, কোচিং',
         'sec_biz'         => 'ক্ষুদ্র ব্যবসা',          'sec_biz_sub'     => 'উদ্যোক্তা, SME',
+        // Testimonials
+        'testi_badge'       => 'গ্রাহকরা কী বলেন',
+        'testi_title'       => 'আমাদের গ্রাহকদের মতামত',
+        'testi_subtitle'    => 'চাকরি প্রার্থী এবং নিয়োগকর্তাদের বাস্তব গল্প যারা জীবিকায় আস্থা রেখেছেন',
+        't1_text'           => '"জীবিকা আমাকে মাত্র ২ সপ্তাহের মধ্যে ঢাকায় একটি দারুণ আইটি চাকরি খুঁজে পেতে সাহায্য করেছে! এলাকাভিত্তিক সার্চের মাধ্যমে আমার বাড়ির কাছাকাছি সুযোগ খুঁজে পাওয়া অনেক সহজ হয়েছে।"',
+        't1_role'           => 'সফটওয়্যার ডেভেলপার, ঢাকা',
+        't2_text'           => '"নিয়োগকর্তা হিসেবে, আমি আমাদের কারখানার জন্য কয়েক দিনের মধ্যে চট্টগ্রাম থেকে দক্ষ কর্মী পেয়েছি। স্কিল ম্যাচিং ফিচারটি সত্যিই অসাধারণ!"',
+        't2_role'           => 'এইচআর ম্যানেজার, চট্টগ্রাম',
+        't3_text'           => '"জীবিকা খুঁজে পাওয়ার আগে আমি কয়েক মাস বেকার ছিলাম। এখন আমি সিলেটে আমার পরিবারের কাছাকাছি একজন নার্স হিসেবে কাজ করছি। এটি জীবন পরিবর্তনকারী একটি প্ল্যাটফর্ম!"',
+        't3_role'           => 'নার্স, সিলেট',
+        't4_text'           => '"সদ্য স্নাতক হিসেবে আমি প্রথম চাকরি খুঁজতে গিয়ে সংগ্রাম করছিলাম। জীবিকা আমাকে একটি স্থানীয় স্টার্টআপের সাথে যুক্ত করেছে যারা নতুন প্রতিভা খুঁজছিল। এখন আমি একজন জুনিয়র ডেটা অ্যানালিস্ট!"',
+        't4_role'           => 'জুনিয়র অ্যানালিস্ট, রাজশাহী',
+        't5_text'           => '"আমাদের খুলনার নির্মাণ প্রকল্পের জন্য বিশ্বস্ত দিনমজুরের প্রয়োজন ছিল। জীবিকার ডেডিকেটেড দিনমজুর সেকশন ভেরিফাইড কর্মী খুঁজে পাওয়া অবিশ্বাস্যভাবে দ্রুত করেছে।"',
+        't5_role'           => 'সাইট কন্ট্রাক্টর, খুলনা',
+        't6_text'           => '"স্কিলস ম্যাপিং ফিচারটি দারুণ! আমি শুধু আমার সার্টিফিকেশন আপলোড করেছি এবং প্ল্যাটফর্মটি স্বয়ংক্রিয়ভাবে সেরা মিলে যাওয়া অ্যাডমিনিস্ট্রেটিভ ভূমিকাগুলোর পরামর্শ দিয়েছে।"',
+        't6_role'           => 'অ্যাডমিন এক্সিকিউটিভ, ঢাকা',
     ],
     'en' => [
         // Hero
         'hero_quote'        => 'Behind every skill lies a story of potential',
-        'hero_title'        => "One skill, one opportunity —<br>Change your story",
-        'hero_subtitle'     => 'Jibika is an area-based unemployment monitoring and smart job matching system.',
+        'hero_title'        => "Find Your Dream Job<br>Today!",
+        'hero_subtitle'     => 'Jibika connects skilled job seekers with top employers across Bangladesh — area-based, smart, and fast.',
         'my_dashboard'      => 'My Dashboard',
         'employer_dashboard'=> 'Employer Dashboard',
         'go_panel'          => 'Go to Panel',
@@ -282,6 +298,22 @@ $home_text = [
         'sec_sales'       => 'Sales & Marketing',        'sec_sales_sub'   => 'Marketing, Sales',
         'sec_edu'         => 'Education & Training',     'sec_edu_sub'     => 'Tutoring, Coaching',
         'sec_biz'         => 'Small Business',           'sec_biz_sub'     => 'Entrepreneur, SME',
+        // Testimonials
+        'testi_badge'       => 'What People Say',
+        'testi_title'       => 'Testimonials From Our Customers',
+        'testi_subtitle'    => 'Real stories from job seekers and employers who trust Jibika',
+        't1_text'           => '"Jibika helped me find a great IT job in Dhaka within just 2 weeks! The area-based search made it so easy to find opportunities near my home."',
+        't1_role'           => 'Software Developer, Dhaka',
+        't2_text'           => '"As an employer, I found skilled workers from Chittagong for our factory within days. The skill matching feature is outstanding!"',
+        't2_role'           => 'HR Manager, Chittagong',
+        't3_text'           => '"I was unemployed for months before finding Jibika. Now I\'m working as a nurse in Sylhet, close to my family. Life-changing platform!"',
+        't3_role'           => 'Nurse, Sylhet',
+        't4_text'           => '"As a recent graduate, I was struggling to find my first job. Jibika connected me with a local startup looking for fresh talent. Now I\'m a junior data analyst!"',
+        't4_role'           => 'Junior Analyst, Rajshahi',
+        't5_text'           => '"We needed reliable day laborers for our construction project in Khulna. Jibika\'s dedicated day labor section made it incredibly fast to find verified workers."',
+        't5_role'           => 'Site Contractor, Khulna',
+        't6_text'           => '"The skills mapping feature is brilliant! I simply uploaded my certifications, and the platform automatically suggested the best matching administrative roles."',
+        't6_role'           => 'Admin Executive, Dhaka',
     ]
 ];
 $ht = $home_text[$lang];
@@ -291,47 +323,203 @@ $ht = $home_text[$lang];
 <div class="container-fluid p-0">
 
     <!-- HERO SECTION -->
-    <section class="hero-section">
-        <div class="container-fluid px-4 px-xl-5 hero-content">
-            <div class="row align-items-center gy-4">
-                <div class="col-lg-7">
-                    <p class="hero-quote"><?php echo $ht['hero_quote']; ?></p>
-                    <h1 class="hero-title"><?php echo $ht['hero_title']; ?></h1>
-                    <p class="hero-subtitle"><?php echo $ht['hero_subtitle']; ?></p>
-                    <div class="hero-buttons">
-                        <?php if (isset($_SESSION['user_id'])): ?>
-                            <?php if ($_SESSION['role'] == 'job_seeker'): ?>
-                                <a href="/jobseeker/dashboard.php" class="btn btn-warning btn-lg me-2 mb-2"><?php echo $ht['my_dashboard']; ?></a>
-                            <?php elseif ($_SESSION['role'] == 'employer'): ?>
-                                <a href="/employer/dashboard.php" class="btn btn-warning btn-lg me-2 mb-2"><?php echo $ht['employer_dashboard']; ?></a>
-                            <?php else: ?>
-                                <a href="/auth/login.php" class="btn btn-warning btn-lg me-2 mb-2"><?php echo $ht['go_panel']; ?></a>
-                            <?php endif; ?>
-                            <a href="/jobseeker/jobs.php" class="btn btn-outline-light btn-lg mb-2"><?php echo $ht['browse_jobs']; ?></a>
-                        <?php else: ?>
-                            <a href="/auth/register.php" class="btn btn-warning btn-lg me-2 mb-2"><?php echo $ht['get_started']; ?></a>
-                            <a href="/auth/login.php" class="btn btn-outline-light btn-lg mb-2"><?php echo $ht['login']; ?></a>
-                        <?php endif; ?>
-                    </div>
-                </div>
-                <div class="col-lg-5">
-                    <div class="hero-info-box">
-                        <a href="<?php echo $dashboard_link; ?>" class="info-card d-block text-decoration-none">
-                            <h5><?php echo $ht['area_monitor']; ?></h5>
-                            <p><?php echo $ht['area_monitor_sub']; ?></p>
-                        </a>
-                        <a href="<?php echo $skills_link; ?>" class="info-card d-block text-decoration-none">
-                            <h5><?php echo $ht['skill_mapping']; ?></h5>
-                            <p><?php echo $ht['skill_mapping_sub']; ?></p>
-                        </a>
-                        <a href="<?php echo $jobs_link; ?>" class="info-card d-block text-decoration-none">
-                            <h5><?php echo $ht['smart_match']; ?></h5>
-                            <p><?php echo $ht['smart_match_sub']; ?></p>
-                        </a>
-                    </div>
+    <section class="hero-section" style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding: 90px 0 100px; position:relative;">
+        
+        <!-- BACKGROUND SLIDER LAYERS -->
+        <div class="hero-slider-bg active" style="background-image: url('/assets/image/bd.jpg');"></div>
+        <div class="hero-slider-bg" style="background-image: url('/assets/image/bd_2.png');"></div>
+        <div class="hero-slider-bg" style="background-image: url('/assets/image/bd_4.png');"></div>
+        
+        <!-- LATEST UPDATE TICKER -->
+        <div class="w-100 shadow-sm" style="background: rgba(0, 0, 0, 0.4); border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding: 10px 0; position:absolute; top:0; left:0; z-index:10; backdrop-filter: blur(10px);">
+            <div class="container-fluid px-4 px-xl-5">
+                <div class="d-flex align-items-center">
+                    <span class="badge rounded-pill me-3 px-3 py-2 text-white" style="background-color: #10B981; font-size: 0.85rem; font-weight:700;"><i class="fa-solid fa-bullhorn me-1"></i> <?php echo $lang == 'bn' ? 'বিজ্ঞপ্তি' : 'UPDATE'; ?></span>
+                    <marquee behavior="scroll" direction="left" class="text-white mb-0" style="font-weight: 500; font-size: 1rem; letter-spacing: 0.5px;">
+                        <?php echo $lang == 'bn' ? 'জীবিকা পোর্টালে নতুন ফিচার যুক্ত হয়েছে! এখন আপনি এলাকা ও দক্ষতা অনুযায়ী স্মার্ট সার্চের মাধ্যমে খুব সহজেই চাকরি খুঁজতে পারবেন। নতুন ইন্টার্নশিপ এবং পার্ট-টাইম জব যুক্ত হয়েছে।' : 'New features added to Jibika Portal! Now you can easily search for jobs using smart search based on area and skills. New internship and part-time jobs have been added.'; ?>
+                    </marquee>
                 </div>
             </div>
         </div>
+
+        <style>
+            .job-filter-btn { transition: all 0.3s ease; }
+            .job-filter-btn:hover { background-color: #10B981 !important; border-color: #10B981 !important; color: #fff !important; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(16,185,129,0.4); }
+        </style>
+        <div class="container-fluid px-4 px-xl-5 hero-content" style="max-width: 1100px; margin: 0 auto; padding-top: 0;">
+            <div class="mb-4">
+                <span class="badge rounded-pill shadow-sm" style="font-size:0.85rem; font-weight:700; color: #fff; background-color: rgba(16, 185, 129, 0.25); border: 1px solid rgba(16, 185, 129, 0.5); padding: 8px 18px; letter-spacing: 0.5px; backdrop-filter: blur(4px);">
+                    <i class="fa-solid fa-bolt me-1" style="color:#fff;"></i> BANGLADESH'S #1 JOB PORTAL
+                </span>
+            </div>
+            <h1 class="hero-title" style="font-size:4.5rem; font-weight:800; line-height:1.15; text-shadow: 0 4px 12px rgba(0,0,0,0.3); margin-bottom: 20px;"><?php echo $ht['hero_title']; ?></h1>
+            <p class="hero-subtitle mx-auto" style="font-size:1.15rem; opacity:0.95; max-width:650px; text-shadow: 0 2px 6px rgba(0,0,0,0.5); line-height:1.6; margin-bottom: 40px; color:#e2e8f0;"><?php echo $ht['hero_subtitle']; ?></p>
+            
+            <div class="search-box bg-white rounded-pill shadow-lg mt-4 mx-auto" style="max-width: 1050px; padding: 8px;">
+                <form action="/jobseeker/jobs.php" method="GET">
+                    <div class="row g-0 align-items-center">
+                        <div class="col-md-4 d-flex align-items-center bg-transparent ps-4">
+                            <i class="fa-solid fa-magnifying-glass text-muted fs-5"></i>
+                            <input type="text" name="keyword" list="jobTitleList" class="form-control border-0 shadow-none bg-transparent" placeholder="<?php echo $ht['search_placeholder']; ?>" style="font-size:1.15rem; padding: 18px 15px;">
+                            <datalist id="jobTitleList">
+                                <option value="Software Engineer">
+                                <option value="Data Entry">
+                                <option value="Graphic Designer">
+                                <option value="Teacher">
+                                <option value="Driver">
+                                <option value="Nurse">
+                                <option value="Sales Executive">
+                                <option value="Accountant">
+                            </datalist>
+                        </div>
+                        <div class="col-md-3 border-start">
+                            <select name="district" id="districtSelect" class="form-select border-0 shadow-none bg-transparent text-muted" style="font-size:1.15rem; padding: 18px 15px; cursor:pointer;">
+                                <option value=""><?php echo $ht['select_district']; ?></option>
+                                <?php if ($locations_result && mysqli_num_rows($locations_result) > 0): ?>
+                                    <?php while ($location_row = mysqli_fetch_assoc($locations_result)): ?>
+                                        <option value="<?php echo htmlspecialchars($location_row['location']); ?>"><?php echo htmlspecialchars($location_row['location']); ?></option>
+                                    <?php endwhile; ?>
+                                <?php endif; ?>
+                            </select>
+                        </div>
+                        <div class="col-md-3 border-start">
+                            <input type="text" name="upazila" list="upazilaList" class="form-control border-0 shadow-none bg-transparent" placeholder="<?php echo $ht['upazila']; ?>" style="font-size:1.15rem; padding: 18px 15px;">
+                            <datalist id="upazilaList"></datalist>
+                        </div>
+                        <div class="col-md-2 pe-1">
+                            <button type="submit" class="btn w-100 rounded-pill fw-bold text-white d-flex align-items-center justify-content-center" style="font-size:1.2rem; background-color:#10B981; border:none; padding:16px 0;">
+                                <i class="fa-solid fa-magnifying-glass me-2"></i> Search Jobs
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="d-flex flex-wrap justify-content-center gap-2 mt-4 pt-2" style="max-width: 900px; margin: 0 auto;">
+                <a href="/jobseeker/jobs.php" class="btn rounded-pill px-3 py-2 text-white d-flex align-items-center gap-2 shadow-sm job-filter-btn" style="background-color: #10B981; border:none; font-weight:600; font-size:1rem;"><i class="fa-solid fa-border-all"></i> All Jobs</a>
+                <a href="/jobseeker/jobs.php?job_type=Full-time" class="btn btn-outline-light rounded-pill px-3 py-2 d-flex align-items-center gap-2 job-filter-btn" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(5px); font-weight:600; font-size:1rem; border-color: rgba(255,255,255,0.25);"><i class="fa-solid fa-briefcase"></i> Full-time</a>
+                <a href="/jobseeker/jobs.php?job_type=Part-time+(Student)" class="btn btn-outline-light rounded-pill px-3 py-2 d-flex align-items-center gap-2 job-filter-btn" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(5px); font-weight:600; font-size:1rem; border-color: rgba(255,255,255,0.25);"><i class="fa-solid fa-graduation-cap"></i> Part-time</a>
+                <a href="/jobseeker/jobs.php?job_type=Internship" class="btn btn-outline-light rounded-pill px-3 py-2 d-flex align-items-center gap-2 job-filter-btn" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(5px); font-weight:600; font-size:1rem; border-color: rgba(255,255,255,0.25);"><i class="fa-solid fa-star"></i> Internship</a>
+                <a href="/jobseeker/jobs.php?job_type=Day+Labor" class="btn btn-outline-light rounded-pill px-3 py-2 d-flex align-items-center gap-2 job-filter-btn" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(5px); font-weight:600; font-size:1rem; border-color: rgba(255,255,255,0.25);"><i class="fa-solid fa-hammer"></i> Day Labor</a>
+                <a href="/jobseeker/jobs.php?job_type=Remote" class="btn btn-outline-light rounded-pill px-3 py-2 d-flex align-items-center gap-2 job-filter-btn" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(5px); font-weight:600; font-size:1rem; border-color: rgba(255,255,255,0.25);"><i class="fa-solid fa-house-laptop"></i> Remote</a>
+            </div>
+        </div>
+        
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const upazilaData = {
+                    'Dhaka': ['Savar', 'Dhamrai', 'Keraniganj', 'Nawabganj', 'Dohar'],
+                    'Chattogram': ['Hathazari', 'Sitakunda', 'Mirsharai', 'Patiya', 'Fatikchhari'],
+                    'Sylhet': ['Sylhet Sadar', 'Beanibazar', 'Golapganj', 'Companiganj', 'Gowainghat'],
+                    'Rajshahi': ['Paba', 'Godagari', 'Tanor', 'Bagmara', 'Mohanpur'],
+                    'Khulna': ['Batiaghata', 'Dacope', 'Dumuria', 'Koyra', 'Paikgachha'],
+                    'Barishal': ['Agailjhara', 'Babuganj', 'Bakerganj', 'Banaripara', 'Gournadi'],
+                    'Rangpur': ['Badarganj', 'Gangachhara', 'Kaunia', 'Mithapukur', 'Pirgachha'],
+                    'Mymensingh': ['Bhaluka', 'Dhobaura', 'Fulbaria', 'Gaffargaon', 'Gauripur'],
+                    'Comilla': ['Barura', 'Brahmanpara', 'Burichang', 'Chandina', 'Chauddagram'],
+                    'Gazipur': ['Gazipur Sadar', 'Kaliakair', 'Kaliganj', 'Kapasia', 'Sreepur'],
+                    'Narayanganj': ['Araihazar', 'Bandar', 'Narayanganj Sadar', 'Rupganj', 'Sonargaon']
+                };
+
+                const districtSelect = document.getElementById('districtSelect');
+                if(districtSelect) {
+                    districtSelect.addEventListener('change', function() {
+                        const upazilaList = document.getElementById('upazilaList');
+                        upazilaList.innerHTML = '';
+                        const selectedDistrict = this.value;
+                        if (upazilaData[selectedDistrict]) {
+                            upazilaData[selectedDistrict].forEach(upazila => {
+                                const option = document.createElement('option');
+                                option.value = upazila;
+                                upazilaList.appendChild(option);
+                            });
+                        }
+                    });
+                }
+
+                // --- Hero Background Slider (3D Prism Transition) ---
+                const slides = document.querySelectorAll('.hero-slider-bg');
+                let currentSlide = 0;
+                if(slides.length > 0) {
+                    setInterval(() => {
+                        // Remove classes from all slides
+                        slides.forEach(slide => {
+                            slide.classList.remove('active', 'prev');
+                        });
+                        
+                        // Mark the outgoing slide as 'prev'
+                        slides[currentSlide].classList.add('prev');
+                        
+                        // Select the next slide
+                        currentSlide = (currentSlide + 1) % slides.length;
+                        
+                        // Mark the incoming slide as 'active'
+                        slides[currentSlide].classList.add('active');
+                    }, 5500); // 5.5 seconds delay (2s slower for optimal reading pace)
+                }
+
+                // --- Testimonial 3D Stack Slider ---
+                const stackCards = document.querySelectorAll('.testimonial-card-3d');
+                const stackDots = document.querySelectorAll('.stack-dot');
+                const stackPrevBtn = document.querySelector('.stack-nav-btn.prev');
+                const stackNextBtn = document.querySelector('.stack-nav-btn.next');
+                let activeStackIndex = 0;
+
+                function updateStackSlider() {
+                    stackCards.forEach((card, idx) => {
+                        card.classList.remove('active', 'prev-card', 'next-card');
+                        
+                        if (idx === activeStackIndex) {
+                            card.classList.add('active');
+                        } else if (idx === (activeStackIndex - 1 + stackCards.length) % stackCards.length) {
+                            card.classList.add('prev-card');
+                        } else if (idx === (activeStackIndex + 1) % stackCards.length) {
+                            card.classList.add('next-card');
+                        }
+                    });
+
+                    stackDots.forEach((dot, idx) => {
+                        dot.classList.toggle('active', idx === activeStackIndex);
+                    });
+                }
+
+                let stackInterval;
+                
+                function startStackTimer() {
+                    clearInterval(stackInterval);
+                    stackInterval = setInterval(() => {
+                        activeStackIndex = (activeStackIndex + 1) % stackCards.length;
+                        updateStackSlider();
+                    }, 3500); // Snappy 3.5s delay
+                }
+
+                if (stackCards.length > 0) {
+                    // Initialize positions
+                    updateStackSlider();
+                    startStackTimer();
+
+                    stackNextBtn.addEventListener('click', () => {
+                        activeStackIndex = (activeStackIndex + 1) % stackCards.length;
+                        updateStackSlider();
+                        startStackTimer(); // reset interval on user click
+                    });
+
+                    stackPrevBtn.addEventListener('click', () => {
+                        activeStackIndex = (activeStackIndex - 1 + stackCards.length) % stackCards.length;
+                        updateStackSlider();
+                        startStackTimer(); // reset interval on user click
+                    });
+
+                    stackDots.forEach((dot, idx) => {
+                        dot.addEventListener('click', () => {
+                            activeStackIndex = idx;
+                            updateStackSlider();
+                            startStackTimer(); // reset interval on user click
+                        });
+                    });
+                }
+            });
+        </script>
     </section>
 
     <!-- START JOURNEY -->
@@ -390,42 +578,7 @@ $ht = $home_text[$lang];
         </div>
     </section>
 
-    <!-- SEARCH SECTION -->
-    <section class="search-section py-5">
-        <div class="container-fluid px-4 px-xl-5">
-            <div class="text-center mb-4">
-                <h2 class="section-title"><?php echo $ht['search_title']; ?></h2>
-                <p class="section-subtitle"><?php echo $ht['search_subtitle']; ?></p>
-            </div>
-            <div class="search-box">
-                <form action="/jobseeker/jobs.php" method="GET">
-                    <div class="row g-3 align-items-center">
-                        <div class="col-md-5">
-                            <input type="text" name="keyword" class="form-control custom-input" placeholder="<?php echo $ht['search_placeholder']; ?>">
-                        </div>
-                        <div class="col-md-3">
-                            <select name="district" class="form-control custom-input">
-                                <option value=""><?php echo $ht['select_district']; ?></option>
-                                <?php if ($locations_result && mysqli_num_rows($locations_result) > 0): ?>
-                                    <?php while ($location_row = mysqli_fetch_assoc($locations_result)): ?>
-                                        <option value="<?php echo htmlspecialchars($location_row['location']); ?>">
-                                            <?php echo htmlspecialchars($location_row['location']); ?>
-                                        </option>
-                                    <?php endwhile; ?>
-                                <?php endif; ?>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <input type="text" name="upazila" class="form-control custom-input" placeholder="<?php echo $ht['upazila']; ?>">
-                        </div>
-                        <div class="col-md-2 d-grid">
-                            <button type="submit" class="btn btn-warning btn-lg"><?php echo $ht['search_btn']; ?></button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </section>
+
 
     <!-- SECTORS with icons -->
     <section class="sector-section py-5" style="background: linear-gradient(135deg, #f0fdf4, #ecfdf5);">
@@ -593,43 +746,7 @@ $ht = $home_text[$lang];
         </div>
     </section>
 
-    <!-- STATS -->
-    <section class="stats-section-v2 py-5">
-        <div class="container-fluid px-4 px-xl-5">
-            <div class="stats-banner-v2">
-                <div class="row g-4 text-center">
-                    <div class="col-md-3 col-6">
-                        <div class="stat-item"><span class="stat-icon">🗺️</span><h3><?php echo $total_districts; ?>+</h3><p><?php echo $ht['stat_districts']; ?></p></div>
-                    </div>
-                    <div class="col-md-3 col-6">
-                        <div class="stat-item"><span class="stat-icon">💼</span><h3><?php echo $total_jobs; ?>+</h3><p><?php echo $ht['stat_jobs']; ?></p></div>
-                    </div>
-                    <div class="col-md-3 col-6">
-                        <div class="stat-item"><span class="stat-icon">👥</span><h3><?php echo $total_job_seekers; ?>+</h3><p><?php echo $ht['stat_seekers']; ?></p></div>
-                    </div>
-                    <div class="col-md-3 col-6">
-                        <div class="stat-item"><span class="stat-icon">📝</span><h3><?php echo $total_applications; ?>+</h3><p><?php echo $ht['stat_applications']; ?></p></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- SUPPORT BANNER -->
-    <section class="py-5">
-        <div class="container-fluid px-4 px-xl-5">
-            <div class="support-banner-v2">
-                <div class="row align-items-center gy-4">
-                    <div class="col-lg-2 text-center"><img src="/assets/image/govt_data.png" alt="Reports" style="width:140px;border-radius:20px;"></div>
-                    <div class="col-lg-7">
-                        <h2><?php echo $ht['support_title']; ?></h2>
-                        <p class="mb-0"><?php echo $ht['support_text']; ?></p>
-                    </div>
-                    <div class="col-lg-3 text-lg-end"><a href="/admin/reports.php" class="btn btn-warning btn-lg"><?php echo $ht['view_reports']; ?></a></div>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- UPDATES -->
     <section class="updates-v2-section py-5" style="background: linear-gradient(135deg, #fef3c7, #fdf2f8);">
@@ -757,6 +874,309 @@ $ht = $home_text[$lang];
                 </div>
             </div>
         </div>
+    </section>
+
+    <!-- TESTIMONIALS (3D PERSPECTIVE CARD STACK SLIDER) -->
+    <section class="testimonial-section py-5" style="background-color: #030712; color: #fff; overflow: hidden; position: relative;">
+        <div class="container-fluid px-4 px-xl-5 text-center position-relative">
+            <h5 style="color: #10B981; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.5rem;"><?php echo $ht['testi_badge']; ?></h5>
+            <h2 class="section-title text-white mb-2" style="font-weight: 800; font-size: 2.6rem;"><?php echo $ht['testi_title']; ?></h2>
+            <p class="section-subtitle mb-5" style="color: #9CA3AF; max-width: 600px; margin: 0 auto;"><?php echo $ht['testi_subtitle']; ?></p>
+            
+            <div class="testimonial-3d-stack-wrapper">
+                <div class="testimonial-stack-container">
+                    
+                    <!-- Card 1 -->
+                    <div class="testimonial-card-3d active" data-index="0">
+                        <div class="card-brand-header">
+                            <span class="brand-logo"><i class="fa-solid fa-laptop-code"></i></span>
+                            <span class="brand-name">BRAIN STATION 23</span>
+                        </div>
+                        <p class="card-quote"><?php echo $ht['t1_text']; ?></p>
+                        <div class="card-author-footer">
+                            <div class="author-avatar" style="background-color: #10B981;">R</div>
+                            <div class="author-info">
+                                <h6 class="author-name">Rahim Hossain</h6>
+                                <span class="author-role"><?php echo $ht['t1_role']; ?></span>
+                            </div>
+                            <div class="author-rating"><i class="fa-solid fa-star text-warning"></i> 5.0</div>
+                        </div>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="testimonial-card-3d next-1" data-index="1">
+                        <div class="card-brand-header">
+                            <span class="brand-logo"><i class="fa-solid fa-industry"></i></span>
+                            <span class="brand-name">KDS GROUP</span>
+                        </div>
+                        <p class="card-quote"><?php echo $ht['t2_text']; ?></p>
+                        <div class="card-author-footer">
+                            <div class="author-avatar" style="background-color: #3B82F6;">F</div>
+                            <div class="author-info">
+                                <h6 class="author-name">Fatema Begum</h6>
+                                <span class="author-role"><?php echo $ht['t2_role']; ?></span>
+                            </div>
+                            <div class="author-rating"><i class="fa-solid fa-star text-warning"></i> 4.9</div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="testimonial-card-3d next-2" data-index="2">
+                        <div class="card-brand-header">
+                            <span class="brand-logo"><i class="fa-solid fa-hand-holding-heart"></i></span>
+                            <span class="brand-name">IBN SINA HOSPITAL</span>
+                        </div>
+                        <p class="card-quote"><?php echo $ht['t3_text']; ?></p>
+                        <div class="card-author-footer">
+                            <div class="author-avatar" style="background-color: #8B5CF6;">A</div>
+                            <div class="author-info">
+                                <h6 class="author-name">Ayesha Khatun</h6>
+                                <span class="author-role"><?php echo $ht['t3_role']; ?></span>
+                            </div>
+                            <div class="author-rating"><i class="fa-solid fa-star text-warning"></i> 5.0</div>
+                        </div>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div class="testimonial-card-3d" data-index="3">
+                        <div class="card-brand-header">
+                            <span class="brand-logo"><i class="fa-solid fa-chart-line"></i></span>
+                            <span class="brand-name">VARENDRA IT SOLUTIONS</span>
+                        </div>
+                        <p class="card-quote"><?php echo $ht['t4_text']; ?></p>
+                        <div class="card-author-footer">
+                            <div class="author-avatar" style="background-color: #F59E0B;">T</div>
+                            <div class="author-info">
+                                <h6 class="author-name">Tariqul Islam</h6>
+                                <span class="author-role"><?php echo $ht['t4_role']; ?></span>
+                            </div>
+                            <div class="author-rating"><i class="fa-solid fa-star text-warning"></i> 4.8</div>
+                        </div>
+                    </div>
+
+                    <!-- Card 5 -->
+                    <div class="testimonial-card-3d" data-index="4">
+                        <div class="card-brand-header">
+                            <span class="brand-logo"><i class="fa-solid fa-helmet-safety"></i></span>
+                            <span class="brand-name">KHULNA SHIPYARD</span>
+                        </div>
+                        <p class="card-quote"><?php echo $ht['t5_text']; ?></p>
+                        <div class="card-author-footer">
+                            <div class="author-avatar" style="background-color: #EF4444;">K</div>
+                            <div class="author-info">
+                                <h6 class="author-name">Kamal Uddin</h6>
+                                <span class="author-role"><?php echo $ht['t5_role']; ?></span>
+                            </div>
+                            <div class="author-rating"><i class="fa-solid fa-star text-warning"></i> 5.0</div>
+                        </div>
+                    </div>
+
+                    <!-- Card 6 -->
+                    <div class="testimonial-card-3d" data-index="5">
+                        <div class="card-brand-header">
+                            <span class="brand-logo"><i class="fa-solid fa-user-tie"></i></span>
+                            <span class="brand-name">PATHAO</span>
+                        </div>
+                        <p class="card-quote"><?php echo $ht['t6_text']; ?></p>
+                        <div class="card-author-footer">
+                            <div class="author-avatar" style="background-color: #06B6D4;">N</div>
+                            <div class="author-info">
+                                <h6 class="author-name">Nusrat Jahan</h6>
+                                <span class="author-role"><?php echo $ht['t6_role']; ?></span>
+                            </div>
+                            <div class="author-rating"><i class="fa-solid fa-star text-warning"></i> 4.9</div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Navigation Controls -->
+                <div class="stack-navigation mt-5">
+                    <button type="button" class="stack-nav-btn prev"><i class="fa-solid fa-arrow-left"></i></button>
+                    <div class="stack-indicators">
+                        <span class="stack-dot active" data-slide="0"></span>
+                        <span class="stack-dot" data-slide="1"></span>
+                        <span class="stack-dot" data-slide="2"></span>
+                        <span class="stack-dot" data-slide="3"></span>
+                        <span class="stack-dot" data-slide="4"></span>
+                        <span class="stack-dot" data-slide="5"></span>
+                    </div>
+                    <button type="button" class="stack-nav-btn next"><i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .testimonial-3d-stack-wrapper {
+                margin: 40px auto 20px;
+                max-width: 680px;
+                position: relative;
+            }
+            .testimonial-stack-container {
+                position: relative;
+                height: 380px;
+                width: 100%;
+                perspective: 1200px;
+                transform-style: preserve-3d;
+            }
+            .testimonial-card-3d {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                left: 0;
+                top: 0;
+                background: #0b0f19; /* Sleek elegant near-black like the attachment */
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                border-radius: 28px;
+                padding: 2.8rem;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7);
+                transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+                opacity: 0;
+                transform: translateX(100%) scale(0.9) rotateY(15deg);
+                pointer-events: none;
+                text-align: left;
+                z-index: 1;
+            }
+            
+            /* Active top card */
+            .testimonial-card-3d.active {
+                opacity: 1;
+                transform: translateX(0) scale(1) rotateY(0deg);
+                z-index: 5;
+                pointer-events: auto;
+            }
+            
+            /* Outgoing animated transition (sliding to left and fading out) */
+            .testimonial-card-3d.prev-card {
+                opacity: 0;
+                transform: translateX(-100%) scale(0.9) rotateY(-15deg);
+                z-index: 2;
+            }
+
+            /* Incoming transition (placed on right) */
+            .testimonial-card-3d.next-card {
+                opacity: 0;
+                transform: translateX(100%) scale(0.9) rotateY(15deg);
+                z-index: 2;
+            }
+
+            .card-brand-header {
+                display: flex;
+                align-items: center;
+                gap: 0.8rem;
+                margin-bottom: 1.5rem;
+            }
+            .brand-logo {
+                font-size: 1.6rem;
+                color: #10B981;
+            }
+            .brand-name {
+                font-size: 1.1rem;
+                font-weight: 700;
+                letter-spacing: 1.5px;
+                color: #fff;
+            }
+            .card-quote {
+                font-size: 1.25rem;
+                line-height: 1.7;
+                color: #e5e7eb;
+                font-style: italic;
+                font-weight: 400;
+                margin-bottom: 2rem;
+                flex-grow: 1;
+            }
+            .card-author-footer {
+                display: flex;
+                align-items: center;
+                border-top: 1px solid rgba(255, 255, 255, 0.06);
+                padding-top: 1.5rem;
+                gap: 1rem;
+            }
+            .author-avatar {
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                color: #fff;
+                font-size: 1.3rem;
+                font-weight: 800;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            }
+            .author-info {
+                flex-grow: 1;
+            }
+            .author-name {
+                font-size: 1.1rem;
+                font-weight: 700;
+                color: #fff;
+                margin: 0 0 3px 0;
+            }
+            .author-role {
+                font-size: 0.85rem;
+                color: #9CA3AF;
+            }
+            .author-rating {
+                background: rgba(255,255,255,0.06);
+                padding: 6px 14px;
+                border-radius: 50px;
+                font-weight: 700;
+                color: #10B981;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 0.95rem;
+                border: 1px solid rgba(255,255,255,0.03);
+            }
+
+            .stack-navigation {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 2rem;
+            }
+            .stack-nav-btn {
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                color: #fff;
+                width: 52px;
+                height: 52px;
+                border-radius: 50%;
+                cursor: pointer;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 1.1rem;
+                transition: all 0.3s;
+            }
+            .stack-nav-btn:hover {
+                background: #10B981;
+                border-color: #10B981;
+                box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+                transform: scale(1.08);
+            }
+            .stack-indicators {
+                display: flex;
+                gap: 8px;
+            }
+            .stack-dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.2);
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+            .stack-dot.active {
+                background: #10B981;
+                transform: scale(1.4);
+                box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+            }
+        </style>
     </section>
 
 </div>
