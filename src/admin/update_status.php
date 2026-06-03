@@ -8,6 +8,70 @@ if(!isset($_SESSION['user_id']) || $_SESSION['role'] != 'admin'){
 
 include('../assets/config/db.php');
 
+$lang = $_SESSION['lang'] ?? 'bn';
+
+$usText = [
+    'bn' => [
+        'title' => 'কর্মসংস্থানের অবস্থা ট্র্যাকিং',
+        'subtitle' => 'চাকরিপ্রার্থীদের কর্মসংস্থানের যাত্রা পর্যবেক্ষণ ও আপডেট করুন।',
+        'back_btn' => 'ফিরে যান',
+        'msg_success' => 'কর্মসংস্থানের অবস্থা সফলভাবে আপডেট করা হয়েছে!',
+        'msg_error' => 'ত্রুটি: ',
+        'msg_invalid' => 'অবৈধ অবস্থা নির্বাচন করা হয়েছে।',
+        'seeker_info' => 'চাকরিপ্রার্থীর তথ্য',
+        'label_name' => 'নাম:',
+        'label_email' => 'ইমেইল:',
+        'label_status' => 'বর্তমান অবস্থা:',
+        'label_updated' => 'সর্বশেষ আপডেট:',
+        'select_new_status' => 'নতুন অবস্থা নির্বাচন করুন',
+        'admin_remarks' => 'অ্যাডমিন মন্তব্য',
+        'placeholder_remarks' => 'অবস্থা আপডেটের নোট লিখুন...',
+        'update_btn' => 'কর্মসংস্থানের অবস্থা আপডেট করুন',
+        'timeline' => 'কর্মসংস্থানের যাত্রার টাইমলাইন',
+        'th_serial' => '#',
+        'th_old_status' => 'পূর্ববর্তী অবস্থা',
+        'th_new_status' => 'নতুন অবস্থা',
+        'th_remarks' => 'মন্তব্য',
+        'th_date' => 'তারিখ',
+        'no_history' => 'এখনও কোনো কর্মসংস্থানের ইতিহাস পাওয়া যায়নি।',
+        'unemployed' => 'বেকার',
+        'employed' => 'নিযুক্ত',
+        'training' => 'প্রশিক্ষণরত',
+        'self_employed' => 'স্বনির্ভর',
+        'na' => 'প্রযোজ্য নয়',
+    ],
+    'en' => [
+        'title' => 'Employment Status Tracking',
+        'subtitle' => 'Monitor and update employment journey of job seekers.',
+        'back_btn' => 'Back',
+        'msg_success' => 'Employment status updated successfully!',
+        'msg_error' => 'Error: ',
+        'msg_invalid' => 'Invalid status selected.',
+        'seeker_info' => 'Job Seeker Information',
+        'label_name' => 'Name:',
+        'label_email' => 'Email:',
+        'label_status' => 'Current Status:',
+        'label_updated' => 'Last Updated:',
+        'select_new_status' => 'Select New Status',
+        'admin_remarks' => 'Admin Remarks',
+        'placeholder_remarks' => 'Write status update notes...',
+        'update_btn' => 'Update Employment Status',
+        'timeline' => 'Employment Journey Timeline',
+        'th_serial' => '#',
+        'th_old_status' => 'Old Status',
+        'th_new_status' => 'New Status',
+        'th_remarks' => 'Remarks',
+        'th_date' => 'Date',
+        'no_history' => 'No employment history found yet.',
+        'unemployed' => 'Unemployed',
+        'employed' => 'Employed',
+        'training' => 'Training',
+        'self_employed' => 'Self Employed',
+        'na' => 'N/A',
+    ]
+];
+$ct = $usText[$lang];
+
 if(!isset($_GET['email']) || empty($_GET['email'])){
     header("Location: unemployed_details.php");
     exit();
@@ -120,7 +184,7 @@ if(isset($_POST['update_status'])){
 
             $conn->query($activity_sql);
 
-            $message = "Employment status updated successfully!";
+            $message = $ct['msg_success'];
 
             // Refresh user data
             $user_result = $conn->query($user_sql);
@@ -136,12 +200,12 @@ if(isset($_POST['update_status'])){
 
         } else {
 
-            $message = "Error: " . $conn->error;
+            $message = $ct['msg_error'] . $conn->error;
         }
 
     } else {
 
-        $message = "Invalid status selected.";
+        $message = $ct['msg_invalid'];
     }
 }
 ?>
@@ -154,14 +218,14 @@ if(isset($_POST['update_status'])){
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
 
         <div>
-            <h2 class="mb-1">Employment Status Tracking</h2>
+            <h2 class="mb-1"><?php echo $ct['title']; ?></h2>
             <p class="text-muted mb-0">
-                Monitor and update employment journey of job seekers.
+                <?php echo $ct['subtitle']; ?>
             </p>
         </div>
 
         <a href="unemployed_details.php" class="btn btn-secondary">
-            Back
+            <?php echo $ct['back_btn']; ?>
         </a>
 
     </div>
@@ -180,42 +244,42 @@ if(isset($_POST['update_status'])){
 
             <div class="card shadow border-0 p-4 h-100">
 
-                <h4 class="mb-4">Job Seeker Information</h4>
+                <h4 class="mb-4"><?php echo $ct['seeker_info']; ?></h4>
 
                 <p>
-                    <strong>Name:</strong>
+                    <strong><?php echo $ct['label_name']; ?></strong>
                     <?php echo htmlspecialchars($user['full_name']); ?>
                 </p>
 
                 <p>
-                    <strong>Email:</strong>
+                    <strong><?php echo $ct['label_email']; ?></strong>
                     <?php echo htmlspecialchars($user['email']); ?>
                 </p>
 
                 <p>
-                    <strong>Current Status:</strong>
+                    <strong><?php echo $ct['label_status']; ?></strong>
 
                     <?php
                     $status = $user['current_status'];
 
                     if($status == 'employed'){
-                        echo "<span class='badge bg-success'>Employed</span>";
+                        echo "<span class='badge bg-success'>" . $ct['employed'] . "</span>";
                     }
                     elseif($status == 'training'){
-                        echo "<span class='badge bg-warning text-dark'>Training</span>";
+                        echo "<span class='badge bg-warning text-dark'>" . $ct['training'] . "</span>";
                     }
                     elseif($status == 'self_employed'){
-                        echo "<span class='badge bg-info text-dark'>Self Employed</span>";
+                        echo "<span class='badge bg-info text-dark'>" . $ct['self_employed'] . "</span>";
                     }
                     else{
-                        echo "<span class='badge bg-danger'>Unemployed</span>";
+                        echo "<span class='badge bg-danger'>" . $ct['unemployed'] . "</span>";
                     }
                     ?>
                 </p>
 
                 <p>
-                    <strong>Last Updated:</strong>
-                    <?php echo htmlspecialchars($user['updated_at'] ?? 'N/A'); ?>
+                    <strong><?php echo $ct['label_updated']; ?></strong>
+                    <?php echo htmlspecialchars($user['updated_at'] ?? $ct['na']); ?>
                 </p>
 
                 <hr>
@@ -225,7 +289,7 @@ if(isset($_POST['update_status'])){
                     <div class="mb-3">
 
                         <label class="form-label">
-                            Select New Status
+                            <?php echo $ct['select_new_status']; ?>
                         </label>
 
                         <select name="current_status"
@@ -234,22 +298,22 @@ if(isset($_POST['update_status'])){
 
                             <option value="unemployed"
                                 <?php echo ($status == 'unemployed') ? 'selected' : ''; ?>>
-                                Unemployed
+                                <?php echo $ct['unemployed']; ?>
                             </option>
 
                             <option value="training"
                                 <?php echo ($status == 'training') ? 'selected' : ''; ?>>
-                                Training
+                                <?php echo $ct['training']; ?>
                             </option>
 
                             <option value="employed"
                                 <?php echo ($status == 'employed') ? 'selected' : ''; ?>>
-                                Employed
+                                <?php echo $ct['employed']; ?>
                             </option>
 
                             <option value="self_employed"
                                 <?php echo ($status == 'self_employed') ? 'selected' : ''; ?>>
-                                Self Employed
+                                <?php echo $ct['self_employed']; ?>
                             </option>
 
                         </select>
@@ -259,13 +323,13 @@ if(isset($_POST['update_status'])){
                     <div class="mb-4">
 
                         <label class="form-label">
-                            Admin Remarks
+                            <?php echo $ct['admin_remarks']; ?>
                         </label>
 
                         <textarea name="remarks"
                                   class="form-control"
                                   rows="5"
-                                  placeholder="Write status update notes..."><?php echo htmlspecialchars($user['remarks'] ?? ''); ?></textarea>
+                                  placeholder="<?php echo $ct['placeholder_remarks']; ?>"><?php echo htmlspecialchars($user['remarks'] ?? ''); ?></textarea>
 
                     </div>
 
@@ -273,7 +337,7 @@ if(isset($_POST['update_status'])){
                             name="update_status"
                             class="btn btn-success w-100">
 
-                        Update Employment Status
+                        <?php echo $ct['update_btn']; ?>
 
                     </button>
 
@@ -288,7 +352,7 @@ if(isset($_POST['update_status'])){
             <div class="card shadow border-0 p-4 h-100">
 
                 <h4 class="mb-4">
-                    Employment Journey Timeline
+                    <?php echo $ct['timeline']; ?>
                 </h4>
 
                 <?php if($status_history && $status_history->num_rows > 0): ?>
@@ -300,11 +364,11 @@ if(isset($_POST['update_status'])){
                             <thead class="table-dark">
 
                                 <tr>
-                                    <th>#</th>
-                                    <th>Old Status</th>
-                                    <th>New Status</th>
-                                    <th>Remarks</th>
-                                    <th>Date</th>
+                                    <th><?php echo $ct['th_serial']; ?></th>
+                                    <th><?php echo $ct['th_old_status']; ?></th>
+                                    <th><?php echo $ct['th_new_status']; ?></th>
+                                    <th><?php echo $ct['th_remarks']; ?></th>
+                                    <th><?php echo $ct['th_date']; ?></th>
                                 </tr>
 
                             </thead>
@@ -320,7 +384,7 @@ if(isset($_POST['update_status'])){
                                         <td><?php echo $count++; ?></td>
 
                                         <td>
-                                            <?php echo htmlspecialchars($row['old_status'] ?? 'N/A'); ?>
+                                            <?php echo htmlspecialchars($ct[$row['old_status']] ?? $row['old_status'] ?? $ct['na']); ?>
                                         </td>
 
                                         <td>
@@ -329,16 +393,16 @@ if(isset($_POST['update_status'])){
                                             $new = $row['new_status'];
 
                                             if($new == 'employed'){
-                                                echo "<span class='badge bg-success'>Employed</span>";
+                                                echo "<span class='badge bg-success'>" . $ct['employed'] . "</span>";
                                             }
                                             elseif($new == 'training'){
-                                                echo "<span class='badge bg-warning text-dark'>Training</span>";
+                                                echo "<span class='badge bg-warning text-dark'>" . $ct['training'] . "</span>";
                                             }
                                             elseif($new == 'self_employed'){
-                                                echo "<span class='badge bg-info text-dark'>Self Employed</span>";
+                                                echo "<span class='badge bg-info text-dark'>" . $ct['self_employed'] . "</span>";
                                             }
                                             else{
-                                                echo "<span class='badge bg-danger'>Unemployed</span>";
+                                                echo "<span class='badge bg-danger'>" . $ct['unemployed'] . "</span>";
                                             }
                                             ?>
 
@@ -365,7 +429,7 @@ if(isset($_POST['update_status'])){
                 <?php else: ?>
 
                     <div class="alert alert-warning mb-0">
-                        No employment history found yet.
+                        <?php echo $ct['no_history']; ?>
                     </div>
 
                 <?php endif; ?>

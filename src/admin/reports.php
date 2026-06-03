@@ -8,6 +8,102 @@ if(!isset($_SESSION['user_id']) || $_SESSION['role'] != 'admin'){
 
 include('../assets/config/db.php');
 
+$lang = $_SESSION['lang'] ?? 'bn';
+
+$arText = [
+    'bn' => [
+        'title' => 'কর্মসংস্থান বিশ্লেষণ ড্যাশবোর্ড',
+        'subtitle' => 'এলাকাভিত্তিক বেকারত্ব, কর্মসংস্থান, দক্ষতা এবং চাকরির চাহিদা পর্যবেক্ষণ।',
+        'details_btn' => 'বেকারদের বিবরণ',
+        'back_btn' => 'ফিরে যান',
+        'total_users' => 'মোট ব্যবহারকারী',
+        'job_seekers' => 'চাকরিপ্রার্থী',
+        'employers' => 'নিয়োগকর্তা',
+        'total_jobs' => 'মোট চাকরি',
+        'unemployed' => 'বেকার',
+        'employed' => 'নিযুক্ত',
+        'training' => 'প্রশিক্ষণরত',
+        'self_employed' => 'স্বনির্ভর',
+        'status_overview' => 'কর্মসংস্থানের অবস্থার সংক্ষিপ্ত বিবরণ',
+        'district_unemployment' => 'জেলাওয়ারী বেকারত্ব',
+        'jobs_by_district' => 'জেলা অনুযায়ী পোস্ট করা চাকরি',
+        'top_skills' => 'শীর্ষ দক্ষতা বিশ্লেষণ',
+        'table_title' => 'জেলাওয়ারী কর্মসংস্থান পর্যবেক্ষণ টেবিল',
+        'th_district' => 'জেলা',
+        'th_job_seekers' => 'চাকরিপ্রার্থী',
+        'th_unemployed' => 'বেকার',
+        'th_employed' => 'নিযুক্ত',
+        'th_training' => 'প্রশিক্ষণরত',
+        'th_self_employed' => 'স্বনির্ভর',
+        'th_jobs_posted' => 'পোস্ট করা চাকরি',
+        'no_district_data' => 'কোনো জেলা বিশ্লেষণ তথ্য পাওয়া যায়নি।',
+        'recent_changes' => 'সাম্প্রতিক কর্মসংস্থানের পরিবর্তন',
+        'th_name' => 'নাম',
+        'th_change' => 'পরিবর্তন',
+        'th_date' => 'তারিখ',
+        'no_changes' => 'এখনও কোনো কর্মসংস্থানের অবস্থা পরিবর্তন নেই।',
+        'recent_jobs' => 'সাম্প্রতিক চাকরি',
+        'th_title' => 'শিরোনাম',
+        'th_salary' => 'বেতন',
+        'no_recent_jobs' => 'কোনো সাম্প্রতিক চাকরি পাওয়া যায়নি।',
+        'negotiable' => 'আলোচনা সাপেক্ষে',
+        'na' => 'প্রযোজ্য নয়',
+        // Chart labels (JavaScript)
+        'chart_label_unemployed' => 'বেকার',
+        'chart_label_employed' => 'নিযুক্ত',
+        'chart_label_training' => 'প্রশিক্ষণরত',
+        'chart_label_self_employed' => 'স্বনির্ভর',
+        'chart_label_jobs_posted' => 'পোস্ট করা চাকরি',
+        'chart_label_users' => 'ব্যবহারকারী',
+    ],
+    'en' => [
+        'title' => 'Employment Analytics Dashboard',
+        'subtitle' => 'Area-based unemployment, employment, skill and job demand monitoring.',
+        'details_btn' => 'Unemployed Details',
+        'back_btn' => 'Back',
+        'total_users' => 'Total Users',
+        'job_seekers' => 'Job Seekers',
+        'employers' => 'Employers',
+        'total_jobs' => 'Total Jobs',
+        'unemployed' => 'Unemployed',
+        'employed' => 'Employed',
+        'training' => 'Training',
+        'self_employed' => 'Self Employed',
+        'status_overview' => 'Employment Status Overview',
+        'district_unemployment' => 'District-wise Unemployment',
+        'jobs_by_district' => 'Jobs Posted by District',
+        'top_skills' => 'Top Skills Analytics',
+        'table_title' => 'District-wise Employment Monitoring Table',
+        'th_district' => 'District',
+        'th_job_seekers' => 'Job Seekers',
+        'th_unemployed' => 'Unemployed',
+        'th_employed' => 'Employed',
+        'th_training' => 'Training',
+        'th_self_employed' => 'Self Employed',
+        'th_jobs_posted' => 'Jobs Posted',
+        'no_district_data' => 'No district analytics data found.',
+        'recent_changes' => 'Recent Employment Changes',
+        'th_name' => 'Name',
+        'th_change' => 'Change',
+        'th_date' => 'Date',
+        'no_changes' => 'No employment status changes yet.',
+        'recent_jobs' => 'Recent Jobs',
+        'th_title' => 'Title',
+        'th_salary' => 'Salary',
+        'no_recent_jobs' => 'No recent jobs found.',
+        'negotiable' => 'Negotiable',
+        'na' => 'N/A',
+        // Chart labels (JavaScript)
+        'chart_label_unemployed' => 'Unemployed',
+        'chart_label_employed' => 'Employed',
+        'chart_label_training' => 'Training',
+        'chart_label_self_employed' => 'Self Employed',
+        'chart_label_jobs_posted' => 'Jobs Posted',
+        'chart_label_users' => 'Users',
+    ]
+];
+$ct = $arText[$lang];
+
 function getCount($conn, $sql){
     $q = $conn->query($sql);
     return ($q) ? ($q->fetch_assoc()['total'] ?? 0) : 0;
@@ -115,41 +211,41 @@ $recent_jobs = $conn->query("
 
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
         <div>
-            <h2 class="mb-1 fw-bold">Employment Analytics Dashboard</h2>
+            <h2 class="mb-1 fw-bold"><?php echo $ct['title']; ?></h2>
             <p class="text-muted mb-0">
-                Area-based unemployment, employment, skill and job demand monitoring.
+                <?php echo $ct['subtitle']; ?>
             </p>
         </div>
         <div>
-            <a href="unemployed_details.php" class="btn btn-danger me-2">Unemployed Details</a>
-            <a href="dashboard.php" class="btn btn-secondary">Back</a>
+            <a href="unemployed_details.php" class="btn btn-danger me-2"><?php echo $ct['details_btn']; ?></a>
+            <a href="dashboard.php" class="btn btn-secondary"><?php echo $ct['back_btn']; ?></a>
         </div>
     </div>
 
     <div class="row g-4 mb-4">
-        <div class="col-md-3"><div class="card shadow-sm border-0 p-3 h-100"><h6>Total Users</h6><h3><?php echo $total_users; ?></h3></div></div>
-        <div class="col-md-3"><div class="card shadow-sm border-0 p-3 h-100"><h6>Job Seekers</h6><h3><?php echo $total_job_seekers; ?></h3></div></div>
-        <div class="col-md-3"><div class="card shadow-sm border-0 p-3 h-100"><h6>Employers</h6><h3><?php echo $total_employers; ?></h3></div></div>
-        <div class="col-md-3"><div class="card shadow-sm border-0 p-3 h-100"><h6>Total Jobs</h6><h3><?php echo $total_jobs; ?></h3></div></div>
+        <div class="col-md-3"><div class="card shadow-sm border-0 p-3 h-100"><h6><?php echo $ct['total_users']; ?></h6><h3><?php echo $total_users; ?></h3></div></div>
+        <div class="col-md-3"><div class="card shadow-sm border-0 p-3 h-100"><h6><?php echo $ct['job_seekers']; ?></h6><h3><?php echo $total_job_seekers; ?></h3></div></div>
+        <div class="col-md-3"><div class="card shadow-sm border-0 p-3 h-100"><h6><?php echo $ct['employers']; ?></h6><h3><?php echo $total_employers; ?></h3></div></div>
+        <div class="col-md-3"><div class="card shadow-sm border-0 p-3 h-100"><h6><?php echo $ct['total_jobs']; ?></h6><h3><?php echo $total_jobs; ?></h3></div></div>
 
-        <div class="col-md-3"><div class="card shadow-sm border-0 p-3 h-100"><h6>Unemployed</h6><h3 class="text-danger"><?php echo $total_unemployed; ?></h3></div></div>
-        <div class="col-md-3"><div class="card shadow-sm border-0 p-3 h-100"><h6>Employed</h6><h3 class="text-success"><?php echo $total_employed; ?></h3></div></div>
-        <div class="col-md-3"><div class="card shadow-sm border-0 p-3 h-100"><h6>Training</h6><h3 class="text-warning"><?php echo $total_training; ?></h3></div></div>
-        <div class="col-md-3"><div class="card shadow-sm border-0 p-3 h-100"><h6>Self Employed</h6><h3 class="text-info"><?php echo $total_self_employed; ?></h3></div></div>
+        <div class="col-md-3"><div class="card shadow-sm border-0 p-3 h-100"><h6><?php echo $ct['unemployed']; ?></h6><h3 class="text-danger"><?php echo $total_unemployed; ?></h3></div></div>
+        <div class="col-md-3"><div class="card shadow-sm border-0 p-3 h-100"><h6><?php echo $ct['employed']; ?></h6><h3 class="text-success"><?php echo $total_employed; ?></h3></div></div>
+        <div class="col-md-3"><div class="card shadow-sm border-0 p-3 h-100"><h6><?php echo $ct['training']; ?></h6><h3 class="text-warning"><?php echo $total_training; ?></h3></div></div>
+        <div class="col-md-3"><div class="card shadow-sm border-0 p-3 h-100"><h6><?php echo $ct['self_employed']; ?></h6><h3 class="text-info"><?php echo $total_self_employed; ?></h3></div></div>
     </div>
 
     <div class="row g-4 mb-4">
 
         <div class="col-lg-6">
             <div class="card shadow border-0 p-4 h-100">
-                <h4 class="mb-3">Employment Status Overview</h4>
+                <h4 class="mb-3"><?php echo $ct['status_overview']; ?></h4>
                 <canvas id="statusPieChart" height="220"></canvas>
             </div>
         </div>
 
         <div class="col-lg-6">
             <div class="card shadow border-0 p-4 h-100">
-                <h4 class="mb-3">District-wise Unemployment</h4>
+                <h4 class="mb-3"><?php echo $ct['district_unemployment']; ?></h4>
                 <canvas id="districtBarChart" height="220"></canvas>
             </div>
         </div>
@@ -160,14 +256,14 @@ $recent_jobs = $conn->query("
 
         <div class="col-lg-6">
             <div class="card shadow border-0 p-4 h-100">
-                <h4 class="mb-3">Jobs Posted by District</h4>
+                <h4 class="mb-3"><?php echo $ct['jobs_by_district']; ?></h4>
                 <canvas id="jobsDistrictChart" height="220"></canvas>
             </div>
         </div>
 
         <div class="col-lg-6">
             <div class="card shadow border-0 p-4 h-100">
-                <h4 class="mb-3">Top Skills Analytics</h4>
+                <h4 class="mb-3"><?php echo $ct['top_skills']; ?></h4>
                 <canvas id="skillsChart" height="220"></canvas>
             </div>
         </div>
@@ -175,39 +271,39 @@ $recent_jobs = $conn->query("
     </div>
 
     <div class="card shadow p-4 mb-4">
-        <h4 class="mb-3">District-wise Employment Monitoring Table</h4>
+        <h4 class="mb-3"><?php echo $ct['table_title']; ?></h4>
 
         <?php if(!empty($district_rows)): ?>
             <div class="table-responsive">
                 <table class="table table-bordered table-hover align-middle">
                     <thead class="table-dark">
                         <tr>
-                            <th>District</th>
-                            <th>Job Seekers</th>
-                            <th>Unemployed</th>
-                            <th>Employed</th>
-                            <th>Training</th>
-                            <th>Self Employed</th>
-                            <th>Jobs Posted</th>
+                            <th><?php echo $ct['th_district']; ?></th>
+                            <th><?php echo $ct['th_job_seekers']; ?></th>
+                            <th><?php echo $ct['th_unemployed']; ?></th>
+                            <th><?php echo $ct['th_employed']; ?></th>
+                            <th><?php echo $ct['th_training']; ?></th>
+                            <th><?php echo $ct['th_self_employed']; ?></th>
+                            <th><?php echo $ct['th_jobs_posted']; ?></th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach($district_rows as $row): ?>
                             <tr>
-                                <td><?php echo htmlspecialchars($row['district_name']); ?></td>
-                                <td><?php echo htmlspecialchars($row['total_job_seekers']); ?></td>
-                                <td><span class="badge bg-danger"><?php echo htmlspecialchars($row['unemployed']); ?></span></td>
-                                <td><span class="badge bg-success"><?php echo htmlspecialchars($row['employed']); ?></span></td>
-                                <td><span class="badge bg-warning text-dark"><?php echo htmlspecialchars($row['training']); ?></span></td>
-                                <td><span class="badge bg-info text-dark"><?php echo htmlspecialchars($row['self_employed']); ?></span></td>
-                                <td><?php echo htmlspecialchars($row['jobs_posted']); ?></td>
+                                <td><?php echo htmlspecialchars(translateDistrict($row['district_name'] ?? '', $lang)); ?></td>
+                                <td><?php echo htmlspecialchars(translateNumber($row['total_job_seekers'] ?? 0, $lang)); ?></td>
+                                <td><span class="badge bg-danger"><?php echo htmlspecialchars(translateNumber($row['unemployed'] ?? 0, $lang)); ?></span></td>
+                                <td><span class="badge bg-success"><?php echo htmlspecialchars(translateNumber($row['employed'] ?? 0, $lang)); ?></span></td>
+                                <td><span class="badge bg-warning text-dark"><?php echo htmlspecialchars(translateNumber($row['training'] ?? 0, $lang)); ?></span></td>
+                                <td><span class="badge bg-info text-dark"><?php echo htmlspecialchars(translateNumber($row['self_employed'] ?? 0, $lang)); ?></span></td>
+                                <td><?php echo htmlspecialchars(translateNumber($row['jobs_posted'] ?? 0, $lang)); ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>
         <?php else: ?>
-            <div class="alert alert-warning mb-0">No district analytics data found.</div>
+            <div class="alert alert-warning mb-0"><?php echo $ct['no_district_data']; ?></div>
         <?php endif; ?>
     </div>
 
@@ -215,71 +311,71 @@ $recent_jobs = $conn->query("
 
         <div class="col-lg-6">
             <div class="card shadow p-4 h-100">
-                <h4 class="mb-3">Recent Employment Changes</h4>
+                <h4 class="mb-3"><?php echo $ct['recent_changes']; ?></h4>
 
                 <?php if($recent_employment_changes && $recent_employment_changes->num_rows > 0): ?>
                     <div class="table-responsive">
                         <table class="table table-bordered table-sm align-middle">
                             <thead class="table-dark">
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Change</th>
-                                    <th>Date</th>
+                                    <th><?php echo $ct['th_name']; ?></th>
+                                    <th><?php echo $ct['th_change']; ?></th>
+                                    <th><?php echo $ct['th_date']; ?></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php while($row = $recent_employment_changes->fetch_assoc()): ?>
                                     <tr>
                                         <td>
-                                            <?php echo htmlspecialchars($row['full_name']); ?><br>
+                                            <?php echo htmlspecialchars(translateEmployerName($row['full_name'] ?? '', $lang)); ?><br>
                                             <small class="text-muted"><?php echo htmlspecialchars($row['email']); ?></small>
                                         </td>
                                         <td>
-                                            <?php echo htmlspecialchars($row['old_status'] ?? 'N/A'); ?>
+                                            <?php echo htmlspecialchars($ct[$row['old_status']] ?? $row['old_status'] ?? $ct['na']); ?>
                                             →
-                                            <strong><?php echo htmlspecialchars($row['new_status']); ?></strong>
+                                            <strong><?php echo htmlspecialchars($ct[$row['new_status']] ?? $row['new_status']); ?></strong>
                                             <br>
                                             <small><?php echo htmlspecialchars($row['remarks'] ?? ''); ?></small>
                                         </td>
-                                        <td><?php echo htmlspecialchars($row['created_at']); ?></td>
+                                        <td><?php echo htmlspecialchars(translateDate($row['created_at'] ?? '', $lang)); ?></td>
                                     </tr>
                                 <?php endwhile; ?>
                             </tbody>
                         </table>
                     </div>
                 <?php else: ?>
-                    <div class="alert alert-warning mb-0">No employment status changes yet.</div>
+                    <div class="alert alert-warning mb-0"><?php echo $ct['no_changes']; ?></div>
                 <?php endif; ?>
             </div>
         </div>
 
         <div class="col-lg-6">
             <div class="card shadow p-4 h-100">
-                <h4 class="mb-3">Recent Jobs</h4>
+                <h4 class="mb-3"><?php echo $ct['recent_jobs']; ?></h4>
 
                 <?php if($recent_jobs && $recent_jobs->num_rows > 0): ?>
                     <div class="table-responsive">
                         <table class="table table-bordered table-sm align-middle">
                             <thead class="table-dark">
                                 <tr>
-                                    <th>Title</th>
-                                    <th>District</th>
-                                    <th>Salary</th>
+                                    <th><?php echo $ct['th_title']; ?></th>
+                                    <th><?php echo $ct['th_district']; ?></th>
+                                    <th><?php echo $ct['th_salary']; ?></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php while($row = $recent_jobs->fetch_assoc()): ?>
                                     <tr>
-                                        <td><?php echo htmlspecialchars($row['title']); ?></td>
-                                        <td><?php echo htmlspecialchars($row['district_name'] ?? 'N/A'); ?></td>
-                                        <td><?php echo htmlspecialchars($row['salary'] ?? 'Negotiable'); ?></td>
+                                        <td><?php echo htmlspecialchars(translateJobTitle($row['title'] ?? '', $lang)); ?></td>
+                                        <td><?php echo htmlspecialchars(translateDistrict($row['district_name'] ?? '', $lang) ?: $ct['na']); ?></td>
+                                        <td><?php echo (empty($row['salary']) || strtolower($row['salary']) === 'negotiable') ? $ct['negotiable'] : '৳ ' . translateSalary($row['salary'], $lang); ?></td>
                                     </tr>
                                 <?php endwhile; ?>
                             </tbody>
                         </table>
                     </div>
                 <?php else: ?>
-                    <div class="alert alert-warning mb-0">No recent jobs found.</div>
+                    <div class="alert alert-warning mb-0"><?php echo $ct['no_recent_jobs']; ?></div>
                 <?php endif; ?>
             </div>
         </div>
@@ -299,10 +395,19 @@ const jobsData = <?php echo json_encode($jobs_data); ?>;
 const skillLabels = <?php echo json_encode($skill_labels); ?>;
 const skillData = <?php echo json_encode($skill_data); ?>;
 
+const chartLabels = {
+    unemployed: <?php echo json_encode($ct['chart_label_unemployed']); ?>,
+    employed: <?php echo json_encode($ct['chart_label_employed']); ?>,
+    training: <?php echo json_encode($ct['chart_label_training']); ?>,
+    self_employed: <?php echo json_encode($ct['chart_label_self_employed']); ?>,
+    jobs_posted: <?php echo json_encode($ct['chart_label_jobs_posted']); ?>,
+    users: <?php echo json_encode($ct['chart_label_users']); ?>
+};
+
 new Chart(document.getElementById('statusPieChart'), {
     type: 'doughnut',
     data: {
-        labels: ['Unemployed', 'Employed', 'Training', 'Self Employed'],
+        labels: [chartLabels.unemployed, chartLabels.employed, chartLabels.training, chartLabels.self_employed],
         datasets: [{
             data: [
                 <?php echo $total_unemployed; ?>,
@@ -320,10 +425,10 @@ new Chart(document.getElementById('districtBarChart'), {
     data: {
         labels: districtLabels,
         datasets: [
-            { label: 'Unemployed', data: unemployedData, backgroundColor: '#dc3545' },
-            { label: 'Employed', data: employedData, backgroundColor: '#198754' },
-            { label: 'Training', data: trainingData, backgroundColor: '#ffc107' },
-            { label: 'Self Employed', data: selfEmployedData, backgroundColor: '#0dcaf0' }
+            { label: chartLabels.unemployed, data: unemployedData, backgroundColor: '#dc3545' },
+            { label: chartLabels.employed, data: employedData, backgroundColor: '#198754' },
+            { label: chartLabels.training, data: trainingData, backgroundColor: '#ffc107' },
+            { label: chartLabels.self_employed, data: selfEmployedData, backgroundColor: '#0dcaf0' }
         ]
     },
     options: {
@@ -337,7 +442,7 @@ new Chart(document.getElementById('jobsDistrictChart'), {
     data: {
         labels: districtLabels,
         datasets: [{
-            label: 'Jobs Posted',
+            label: chartLabels.jobs_posted,
             data: jobsData,
             backgroundColor: '#0d6efd'
         }]
@@ -353,7 +458,7 @@ new Chart(document.getElementById('skillsChart'), {
     data: {
         labels: skillLabels,
         datasets: [{
-            label: 'Users',
+            label: chartLabels.users,
             data: skillData,
             backgroundColor: '#6f42c1'
         }]

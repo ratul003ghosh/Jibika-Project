@@ -26,7 +26,10 @@ $n_text = [
         'th_dl' => 'Download',
         'new_badge' => 'NEW',
         'prev' => 'Previous',
-        'next' => 'Next'
+        'next' => 'Next',
+        'ticker1' => 'Registration for the 3rd Phase Govt. Employment Scheme is now open until June 30, 2026.',
+        'ticker2' => 'Employers must update their Trade License info in the portal before July 15.',
+        'ticker3' => 'New Web Development training batch starting in Dhaka IT Park next month.'
     ],
     'bn' => [
         'ticker_lbl' => 'সর্বশেষ আপডেট',
@@ -44,7 +47,10 @@ $n_text = [
         'th_dl' => 'ডাউনলোড',
         'new_badge' => 'নতুন',
         'prev' => 'পূর্ববর্তী',
-        'next' => 'পরবর্তী'
+        'next' => 'পরবর্তী',
+        'ticker1' => '৩য় পর্যায়ের সরকারি কর্মসংস্থান প্রকল্পের জন্য নিবন্ধন ৩০ জুন, ২০২৬ পর্যন্ত খোলা রয়েছে।',
+        'ticker2' => 'নিয়োগকর্তাদের অবশ্যই ১৫ জুলাইয়ের আগে পোর্টালে তাদের ট্রেড লাইসেন্সের তথ্য আপডেট করতে হবে।',
+        'ticker3' => 'আগামী মাসে ঢাকা আইটি পার্কে নতুন ওয়েব ডেভেলপমেন্ট প্রশিক্ষণ ব্যাচ শুরু হচ্ছে।'
     ]
 ];
 $nt = $n_text[$lang];
@@ -78,9 +84,9 @@ include('includes/navbar.php');
     <div class="notice-ticker-label"><?php echo $nt['ticker_lbl']; ?></div>
     <div class="notice-ticker w-100 overflow-hidden">
         <marquee behavior="scroll" direction="left" scrollamount="6">
-            <span class="me-5"><i class="fa-solid fa-circle-exclamation text-warning me-2"></i>Registration for the 3rd Phase Govt. Employment Scheme is now open until June 30, 2026.</span>
-            <span class="me-5"><i class="fa-solid fa-circle-info text-info me-2"></i>Employers must update their Trade License info in the portal before July 15.</span>
-            <span><i class="fa-solid fa-bullhorn text-warning me-2"></i>New Web Development training batch starting in Dhaka IT Park next month.</span>
+            <span class="me-5"><i class="fa-solid fa-circle-exclamation text-warning me-2"></i><?php echo htmlspecialchars($nt['ticker1']); ?></span>
+            <span class="me-5"><i class="fa-solid fa-circle-info text-info me-2"></i><?php echo htmlspecialchars($nt['ticker2']); ?></span>
+            <span><i class="fa-solid fa-bullhorn text-warning me-2"></i><?php echo htmlspecialchars($nt['ticker3']); ?></span>
         </marquee>
     </div>
 </div>

@@ -9,6 +9,96 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'employer') {
 include('../assets/config/db.php');
 
 $employer_id = $_SESSION['user_id'];
+$lang = $_SESSION['lang'] ?? 'bn';
+
+$apText = [
+    'bn' => [
+        'title' => 'আবেদনকারী তালিকা',
+        'subtitle' => 'আবেদনকারীদের পর্যালোচনা করুন। গৃহীত আবেদনকারীদের স্বয়ংক্রিয়ভাবে নিযুক্ত হিসেবে চিহ্নিত করা হবে।',
+        'back_btn' => 'ড্যাশবোর্ডে ফিরে যান',
+        'msg_success' => 'আবেদনকারীর অবস্থা সফলভাবে আপডেট করা হয়েছে!',
+        'msg_error' => 'ত্রুটি: ',
+        'msg_not_found' => 'আবেদনপত্র পাওয়া যায়নি বা অ্যাক্সেস করার অনুমতি নেই।',
+        'th_serial' => '#',
+        'th_job_info' => 'চাকরির তথ্য',
+        'th_applicant_info' => 'আবেদনকারীর তথ্য',
+        'th_skills_edu' => 'দক্ষতা ও শিক্ষা',
+        'th_status' => 'আবেদনের অবস্থা',
+        'th_applied_at' => 'আবেদনের সময়',
+        'th_action' => 'পদক্ষেপ',
+        'label_salary' => 'বেতন:',
+        'label_deadline' => 'শেষ সময়সীমা:',
+        'label_education' => 'শিক্ষা:',
+        'label_skills' => 'দক্ষতা:',
+        'status_accepted' => 'গৃহীত',
+        'status_rejected' => 'প্রত্যাখ্যাত',
+        'status_pending' => 'অপেক্ষমাণ',
+        'status_emp_updated' => 'কর্মসংস্থান আপডেট করা হয়েছে',
+        'btn_accept' => 'গ্রহণ করুন',
+        'btn_reject' => 'প্রত্যাখ্যান করুন',
+        'btn_done' => 'সিদ্ধান্ত সম্পন্ন',
+        'confirm_accept' => 'আপনি কি এই আবেদনকারীকে গ্রহণ করতে চান? এটি ব্যবহারকারীকে কর্মসংস্থানিত হিসেবে চিহ্নিত করবে।',
+        'confirm_reject' => 'আপনি কি এই আবেদনকারীকে প্রত্যাখ্যান করতে চান?',
+        'no_applicants' => 'এখনও কোনো আবেদনকারী পাওয়া যায়নি।',
+        'not_specified' => 'নির্দিষ্ট করা নেই',
+        'negotiable' => 'আলোচনা সাপেক্ষে',
+        'fixed' => 'নির্দিষ্ট',
+        'range' => 'সীমা',
+        'general' => 'সাধারণ',
+        'na' => 'প্রযোজ্য নয়',
+        // Categories
+        'IT & Computer' => 'আইটি ও কম্পিউটার', 'Garments' => 'গার্মেন্টস', 'Driving' => 'ড্রাইভিং',
+        'Sales & Marketing' => 'বিক্রয় ও বিপণন', 'Office Support' => 'অফিস সাপোর্ট', 'Healthcare' => 'স্বাস্থ্যসেবা',
+        'Education' => 'শিক্ষা', 'Small Business' => 'ক্ষুদ্র ব্যবসা', 'Other' => 'অন্যান্য',
+        // Types
+        'Full-time' => 'পূর্ণকালীন', 'Part-time' => 'খণ্ডকালীন', 'Part-time (Student)' => 'খণ্ডকালীন (শিক্ষার্থী)',
+        'Day Labor' => 'দৈনিক শ্রমিক', 'Internship' => 'ইন্টার্নশিপ', 'Contract' => 'চুক্তিভিত্তিক', 'Remote' => 'রিমোট',
+    ],
+    'en' => [
+        'title' => 'Applicants List',
+        'subtitle' => 'Review applicants. Accepted applicants are automatically marked as employed.',
+        'back_btn' => 'Back to Dashboard',
+        'msg_success' => 'Application status updated successfully!',
+        'msg_error' => 'Error: ',
+        'msg_not_found' => 'Application not found or permission denied.',
+        'th_serial' => '#',
+        'th_job_info' => 'Job Information',
+        'th_applicant_info' => 'Applicant Information',
+        'th_skills_edu' => 'Skills & Education',
+        'th_status' => 'Application Status',
+        'th_applied_at' => 'Applied At',
+        'th_action' => 'Action',
+        'label_salary' => 'Salary:',
+        'label_deadline' => 'Deadline:',
+        'label_education' => 'Education:',
+        'label_skills' => 'Skills:',
+        'status_accepted' => 'Accepted',
+        'status_rejected' => 'Rejected',
+        'status_pending' => 'Pending',
+        'status_emp_updated' => 'Employment updated',
+        'btn_accept' => 'Accept',
+        'btn_reject' => 'Reject',
+        'btn_done' => 'Decision Done',
+        'confirm_accept' => 'Accept this applicant? This will mark the user as employed.',
+        'confirm_reject' => 'Reject this applicant?',
+        'no_applicants' => 'No applicants found yet.',
+        'not_specified' => 'Not specified',
+        'negotiable' => 'Negotiable',
+        'fixed' => 'Fixed',
+        'range' => 'Range',
+        'general' => 'General',
+        'na' => 'N/A',
+        // Categories
+        'IT & Computer' => 'IT & Computer', 'Garments' => 'Garments', 'Driving' => 'Driving',
+        'Sales & Marketing' => 'Sales & Marketing', 'Office Support' => 'Office Support', 'Healthcare' => 'Healthcare',
+        'Education' => 'Education', 'Small Business' => 'Small Business', 'Other' => 'Other',
+        // Types
+        'Full-time' => 'Full-time', 'Part-time' => 'Part-time', 'Part-time (Student)' => 'Part-time (Student)',
+        'Day Labor' => 'Day Labor', 'Internship' => 'Internship', 'Contract' => 'Contract', 'Remote' => 'Remote',
+    ]
+];
+$ct = $apText[$lang];
+
 $message = "";
 
 // Accept / Reject action
@@ -102,12 +192,12 @@ if (isset($_GET['action']) && isset($_GET['application_id'])) {
                     ");
                 }
 
-                $message = "Application status updated successfully!";
+                $message = $ct['msg_success'];
             } else {
-                $message = "Error: " . $conn->error;
+                $message = $ct['msg_error'] . $conn->error;
             }
         } else {
-            $message = "Application not found or permission denied.";
+            $message = $ct['msg_not_found'];
         }
     }
 }
@@ -150,11 +240,11 @@ $result = $conn->query($sql);
 
         <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
             <div>
-                <h2 class="mb-1">Applicants List</h2>
-                <p class="text-muted mb-0">Review applicants. Accepted applicants are automatically marked as employed.</p>
+                <h2 class="mb-1"><?php echo $ct['title']; ?></h2>
+                <p class="text-muted mb-0"><?php echo $ct['subtitle']; ?></p>
             </div>
 
-            <a href="dashboard.php" class="btn btn-secondary">Back to Dashboard</a>
+            <a href="dashboard.php" class="btn btn-secondary"><?php echo $ct['back_btn']; ?></a>
         </div>
 
         <?php if ($message != ""): ?>
@@ -169,13 +259,13 @@ $result = $conn->query($sql);
                 <table class="table table-bordered table-hover align-middle">
                     <thead class="table-dark">
                         <tr>
-                            <th>#</th>
-                            <th>Job Information</th>
-                            <th>Applicant Information</th>
-                            <th>Skills & Education</th>
-                            <th>Application Status</th>
-                            <th>Applied At</th>
-                            <th>Action</th>
+                            <th><?php echo $ct['th_serial']; ?></th>
+                            <th><?php echo $ct['th_job_info']; ?></th>
+                            <th><?php echo $ct['th_applicant_info']; ?></th>
+                            <th><?php echo $ct['th_skills_edu']; ?></th>
+                            <th><?php echo $ct['th_status']; ?></th>
+                            <th><?php echo $ct['th_applied_at']; ?></th>
+                            <th><?php echo $ct['th_action']; ?></th>
                         </tr>
                     </thead>
 
@@ -201,39 +291,39 @@ $result = $conn->query($sql);
                             ?>
 
                             <tr>
-                                <td><?php echo $count++; ?></td>
+                                <td><?php echo translateNumber($count++, $lang); ?></td>
 
                                 <td>
-                                    <strong><?php echo htmlspecialchars($row['job_title']); ?></strong>
+                                    <strong><?php echo htmlspecialchars(translateJobTitle($row['job_title'] ?? '', $lang)); ?></strong>
                                     <br>
 
                                     <span class="badge bg-primary me-1">
-                                        <?php echo htmlspecialchars($row['job_category'] ?? 'General'); ?>
+                                        <?php echo htmlspecialchars($ct[$row['job_category']] ?? $row['job_category'] ?? $ct['general']); ?>
                                     </span>
 
                                     <span class="badge bg-info text-dark">
-                                        <?php echo htmlspecialchars($row['job_type'] ?? 'N/A'); ?>
+                                        <?php echo htmlspecialchars($ct[$row['job_type']] ?? $row['job_type'] ?? $ct['na']); ?>
                                     </span>
 
                                     <br><br>
 
                                     <small>
-                                        <strong>Salary:</strong>
-                                        <?php echo htmlspecialchars($row['salary_type'] ?? 'Negotiable'); ?>
+                                        <strong><?php echo $ct['label_salary']; ?></strong>
+                                        <?php echo htmlspecialchars($ct[$row['salary_type']] ?? $row['salary_type'] ?? $ct['negotiable']); ?>
                                         -
-                                        <?php echo !empty($row['salary']) ? htmlspecialchars($row['salary']) : 'Negotiable'; ?>
+                                        <?php echo (empty($row['salary']) || strtolower($row['salary']) === 'negotiable') ? $ct['negotiable'] : '৳ ' . translateSalary($row['salary'], $lang); ?>
                                     </small>
 
                                     <br>
 
                                     <small>
-                                        <strong>Deadline:</strong>
-                                        <?php echo htmlspecialchars($row['application_deadline'] ?? 'N/A'); ?>
+                                        <strong><?php echo $ct['label_deadline']; ?></strong>
+                                        <?php echo htmlspecialchars(translateDate($row['application_deadline'] ?? '', $lang) ?: $ct['na']); ?>
                                     </small>
                                 </td>
 
                                 <td>
-                                    <strong><?php echo htmlspecialchars($row['full_name']); ?></strong>
+                                    <strong><?php echo htmlspecialchars(translateEmployerName($row['full_name'] ?? '', $lang)); ?></strong>
                                     <br>
                                     <small><?php echo htmlspecialchars($row['email']); ?></small>
 
@@ -247,21 +337,21 @@ $result = $conn->query($sql);
 
                                 <td>
                                     <small>
-                                        <strong>Education:</strong><br>
-                                        <?php echo !empty($row['education']) ? htmlspecialchars($row['education']) : 'Not specified'; ?>
+                                        <strong><?php echo $ct['label_education']; ?></strong><br>
+                                        <?php echo !empty($row['education']) ? htmlspecialchars($row['education']) : $ct['not_specified']; ?>
                                     </small>
 
                                     <hr class="my-2">
 
                                     <small>
-                                        <strong>Skills:</strong><br>
+                                        <strong><?php echo $ct['label_skills']; ?></strong><br>
                                         <?php
                                         if (!empty($skills)) {
                                             foreach ($skills as $skill) {
                                                 echo "<span class='badge bg-secondary me-1 mb-1'>" . htmlspecialchars($skill) . "</span>";
                                             }
                                         } else {
-                                            echo "Not specified";
+                                            echo $ct['not_specified'];
                                         }
                                         ?>
                                     </small>
@@ -272,33 +362,33 @@ $result = $conn->query($sql);
                                     $status = $row['status'];
 
                                     if ($status == 'Accepted') {
-                                        echo "<span class='badge bg-success'>Accepted</span>";
-                                        echo "<br><small class='text-success'>Employment updated</small>";
+                                        echo "<span class='badge bg-success'>" . $ct['status_accepted'] . "</span>";
+                                        echo "<br><small class='text-success'>" . $ct['status_emp_updated'] . "</small>";
                                     } elseif ($status == 'Rejected') {
-                                        echo "<span class='badge bg-danger'>Rejected</span>";
+                                        echo "<span class='badge bg-danger'>" . $ct['status_rejected'] . "</span>";
                                     } else {
-                                        echo "<span class='badge bg-warning text-dark'>Pending</span>";
+                                        echo "<span class='badge bg-warning text-dark'>" . $ct['status_pending'] . "</span>";
                                     }
                                     ?>
                                 </td>
 
-                                <td><?php echo htmlspecialchars($row['applied_at']); ?></td>
+                                <td><?php echo htmlspecialchars(translateDate($row['applied_at'], $lang)); ?></td>
 
                                 <td>
                                     <?php if ($row['status'] == 'Pending'): ?>
                                         <a href="applicants.php?action=accept&application_id=<?php echo $row['application_id']; ?>"
                                            class="btn btn-success btn-sm me-1 mb-1"
-                                           onclick="return confirm('Accept this applicant? This will mark the user as employed.')">
-                                            Accept
+                                           onclick="return confirm('<?php echo addslashes($ct['confirm_accept']); ?>')">
+                                            <?php echo $ct['btn_accept']; ?>
                                         </a>
 
                                         <a href="applicants.php?action=reject&application_id=<?php echo $row['application_id']; ?>"
                                            class="btn btn-danger btn-sm mb-1"
-                                           onclick="return confirm('Reject this applicant?')">
-                                            Reject
+                                           onclick="return confirm('<?php echo addslashes($ct['confirm_reject']); ?>')">
+                                            <?php echo $ct['btn_reject']; ?>
                                         </a>
                                     <?php else: ?>
-                                        <span class="text-muted">Decision Done</span>
+                                        <span class="text-muted"><?php echo $ct['btn_done']; ?></span>
                                     <?php endif; ?>
                                 </td>
                             </tr>
@@ -311,7 +401,7 @@ $result = $conn->query($sql);
         <?php else: ?>
 
             <div class="alert alert-warning mb-0">
-                No applicants found yet.
+                <?php echo $ct['no_applicants']; ?>
             </div>
 
         <?php endif; ?>

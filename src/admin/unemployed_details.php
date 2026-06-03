@@ -8,6 +8,75 @@ if(!isset($_SESSION['user_id']) || $_SESSION['role'] != 'admin'){
 
 include('../assets/config/db.php');
 
+$lang = $_SESSION['lang'] ?? 'bn';
+
+$udText = [
+    'bn' => [
+        'title' => 'কর্মসংস্থান পর্যবেক্ষণ পদ্ধতি',
+        'subtitle' => 'কর্মসংস্থানের অবস্থা, এলাকাভিত্তিক বেকারত্ব এবং শ্রমশক্তি বিশ্লেষণ পর্যবেক্ষণ করুন।',
+        'back_btn' => 'প্রতিবেদনে ফিরে যান',
+        'unemployed' => 'বেকার',
+        'employed' => 'নিযুক্ত',
+        'training' => 'প্রশিক্ষণরত',
+        'self_employed' => 'স্বনির্ভর',
+        'search_label' => '사용자 검색 / ব্যবহারকারী অনুসন্ধান', // wait, let's keep it simply 'ব্যবহারকারী অনুসন্ধান'
+        'search_label' => 'ব্যবহারকারী অনুসন্ধান',
+        'search_placeholder' => 'নাম / ইমেইল / ফোন',
+        'status_label' => 'কর্মসংস্থানের অবস্থা',
+        'all_status' => 'সকল অবস্থা',
+        'district_label' => 'জেলা',
+        'all_districts' => 'সকল জেলা',
+        'filter_btn' => 'ফিল্টার প্রয়োগ করুন',
+        'table_title' => 'কর্মশক্তি পর্যবেক্ষণ টেবিল',
+        'total_records' => 'মোট রেকর্ড:',
+        'th_serial' => '#',
+        'th_user' => 'ব্যবহারকারী',
+        'th_area' => 'এলাকা',
+        'th_edu' => 'শিক্ষা',
+        'th_skills' => 'দক্ষতা',
+        'th_status' => 'অবস্থা',
+        'th_remarks' => 'মন্তব্য',
+        'th_updated' => 'আপডেট করা হয়েছে',
+        'th_action' => 'পদক্ষেপ',
+        'no_skills' => 'দক্ষতা নেই',
+        'update_btn' => 'অবস্থা আপডেট',
+        'no_records' => 'কোনো কর্মশক্তি রেকর্ড পাওয়া যায়নি।',
+        'na' => 'প্রযোজ্য নয়',
+    ],
+    'en' => [
+        'title' => 'Employment Monitoring System',
+        'subtitle' => 'Monitor employment conditions, area-wise unemployment and workforce analytics.',
+        'back_btn' => 'Back to Reports',
+        'unemployed' => 'Unemployed',
+        'employed' => 'Employed',
+        'training' => 'Training',
+        'self_employed' => 'Self Employed',
+        'search_label' => 'Search User',
+        'search_placeholder' => 'Name / Email / Phone',
+        'status_label' => 'Employment Status',
+        'all_status' => 'All Status',
+        'district_label' => 'District',
+        'all_districts' => 'All Districts',
+        'filter_btn' => 'Apply Filter',
+        'table_title' => 'Workforce Monitoring Table',
+        'total_records' => 'Total Records:',
+        'th_serial' => '#',
+        'th_user' => 'User',
+        'th_area' => 'Area',
+        'th_edu' => 'Education',
+        'th_skills' => 'Skills',
+        'th_status' => 'Status',
+        'th_remarks' => 'Remarks',
+        'th_updated' => 'Updated',
+        'th_action' => 'Action',
+        'no_skills' => 'No Skills',
+        'update_btn' => 'Update Status',
+        'no_records' => 'No workforce records found.',
+        'na' => 'N/A',
+    ]
+];
+$ct = $udText[$lang];
+
 // District dropdown
 $districts = $conn->query("
     SELECT * 
@@ -132,16 +201,16 @@ $total_self_employed = $conn->query("
 
         <div>
             <h2 class="mb-1 fw-bold">
-                Employment Monitoring System
+                <?php echo $ct['title']; ?>
             </h2>
 
             <p class="text-muted mb-0">
-                Monitor employment conditions, area-wise unemployment and workforce analytics.
+                <?php echo $ct['subtitle']; ?>
             </p>
         </div>
 
         <a href="reports.php" class="btn btn-secondary">
-            Back to Reports
+            <?php echo $ct['back_btn']; ?>
         </a>
 
     </div>
@@ -151,36 +220,36 @@ $total_self_employed = $conn->query("
 
         <div class="col-md-3">
             <div class="card shadow-sm border-0 p-3 h-100">
-                <h6>Unemployed</h6>
+                <h6><?php echo $ct['unemployed']; ?></h6>
                 <h3 class="text-danger">
-                    <?php echo $total_unemployed; ?>
+                    <?php echo translateNumber($total_unemployed, $lang); ?>
                 </h3>
             </div>
         </div>
 
         <div class="col-md-3">
             <div class="card shadow-sm border-0 p-3 h-100">
-                <h6>Employed</h6>
+                <h6><?php echo $ct['employed']; ?></h6>
                 <h3 class="text-success">
-                    <?php echo $total_employed; ?>
+                    <?php echo translateNumber($total_employed, $lang); ?>
                 </h3>
             </div>
         </div>
 
         <div class="col-md-3">
             <div class="card shadow-sm border-0 p-3 h-100">
-                <h6>Training</h6>
+                <h6><?php echo $ct['training']; ?></h6>
                 <h3 class="text-warning">
-                    <?php echo $total_training; ?>
+                    <?php echo translateNumber($total_training, $lang); ?>
                 </h3>
             </div>
         </div>
 
         <div class="col-md-3">
             <div class="card shadow-sm border-0 p-3 h-100">
-                <h6>Self Employed</h6>
+                <h6><?php echo $ct['self_employed']; ?></h6>
                 <h3 class="text-info">
-                    <?php echo $total_self_employed; ?>
+                    <?php echo translateNumber($total_self_employed, $lang); ?>
                 </h3>
             </div>
         </div>
@@ -197,13 +266,13 @@ $total_self_employed = $conn->query("
                 <div class="col-md-4">
 
                     <label class="form-label">
-                        Search User
+                        <?php echo $ct['search_label']; ?>
                     </label>
 
                     <input type="text"
                            name="search"
                            class="form-control"
-                           placeholder="Name / Email / Phone"
+                           placeholder="<?php echo $ct['search_placeholder']; ?>"
                            value="<?php echo htmlspecialchars($search); ?>">
 
                 </div>
@@ -211,31 +280,31 @@ $total_self_employed = $conn->query("
                 <div class="col-md-3">
 
                     <label class="form-label">
-                        Employment Status
+                        <?php echo $ct['status_label']; ?>
                     </label>
 
                     <select name="status" class="form-select">
 
-                        <option value="">All Status</option>
+                        <option value=""><?php echo $ct['all_status']; ?></option>
 
                         <option value="unemployed"
                             <?php echo ($status_filter == 'unemployed') ? 'selected' : ''; ?>>
-                            Unemployed
+                            <?php echo $ct['unemployed']; ?>
                         </option>
 
                         <option value="employed"
                             <?php echo ($status_filter == 'employed') ? 'selected' : ''; ?>>
-                            Employed
+                            <?php echo $ct['employed']; ?>
                         </option>
 
                         <option value="training"
                             <?php echo ($status_filter == 'training') ? 'selected' : ''; ?>>
-                            Training
+                            <?php echo $ct['training']; ?>
                         </option>
 
                         <option value="self_employed"
                             <?php echo ($status_filter == 'self_employed') ? 'selected' : ''; ?>>
-                            Self Employed
+                            <?php echo $ct['self_employed']; ?>
                         </option>
 
                     </select>
@@ -245,12 +314,12 @@ $total_self_employed = $conn->query("
                 <div class="col-md-3">
 
                     <label class="form-label">
-                        District
+                        <?php echo $ct['district_label']; ?>
                     </label>
 
                     <select name="district_id" class="form-select">
 
-                        <option value="">All Districts</option>
+                        <option value=""><?php echo $ct['all_districts']; ?></option>
 
                         <?php
                         if($districts && $districts->num_rows > 0){
@@ -263,7 +332,7 @@ $total_self_employed = $conn->query("
 
                                 echo "
                                     <option value='{$row['district_id']}' $selected>
-                                        ".htmlspecialchars($row['district_name'])."
+                                        ".htmlspecialchars(translateDistrict($row['district_name'], $lang))."
                                     </option>
                                 ";
                             }
@@ -279,7 +348,7 @@ $total_self_employed = $conn->query("
                     <button type="submit"
                             class="btn btn-primary">
 
-                        Apply Filter
+                        <?php echo $ct['filter_btn']; ?>
 
                     </button>
 
@@ -297,12 +366,12 @@ $total_self_employed = $conn->query("
         <div class="d-flex justify-content-between align-items-center mb-3">
 
             <h4 class="mb-0">
-                Workforce Monitoring Table
+                <?php echo $ct['table_title']; ?>
             </h4>
 
             <span class="badge bg-dark">
-                Total Records:
-                <?php echo ($result) ? $result->num_rows : 0; ?>
+                <?php echo $ct['total_records']; ?>
+                <?php echo ($result) ? translateNumber($result->num_rows, $lang) : translateNumber(0, $lang); ?>
             </span>
 
         </div>
@@ -317,15 +386,15 @@ $total_self_employed = $conn->query("
 
                         <tr>
 
-                            <th>#</th>
-                            <th>User</th>
-                            <th>Area</th>
-                            <th>Education</th>
-                            <th>Skills</th>
-                            <th>Status</th>
-                            <th>Remarks</th>
-                            <th>Updated</th>
-                            <th>Action</th>
+                            <th><?php echo $ct['th_serial']; ?></th>
+                            <th><?php echo $ct['th_user']; ?></th>
+                            <th><?php echo $ct['th_area']; ?></th>
+                            <th><?php echo $ct['th_edu']; ?></th>
+                            <th><?php echo $ct['th_skills']; ?></th>
+                            <th><?php echo $ct['th_status']; ?></th>
+                            <th><?php echo $ct['th_remarks']; ?></th>
+                            <th><?php echo $ct['th_updated']; ?></th>
+                            <th><?php echo $ct['th_action']; ?></th>
 
                         </tr>
 
@@ -358,13 +427,13 @@ $total_self_employed = $conn->query("
                             <tr>
 
                                 <td>
-                                    <?php echo $count++; ?>
+                                    <?php echo translateNumber($count++, $lang); ?>
                                 </td>
 
                                 <td>
 
                                     <strong>
-                                        <?php echo htmlspecialchars($row['full_name']); ?>
+                                        <?php echo htmlspecialchars(translateEmployerName($row['full_name'] ?? '', $lang)); ?>
                                     </strong>
 
                                     <br>
@@ -376,7 +445,7 @@ $total_self_employed = $conn->query("
                                     <br>
 
                                     <small>
-                                        <?php echo htmlspecialchars($row['phone']); ?>
+                                        <?php echo htmlspecialchars(translateNumber($row['phone'] ?? '', $lang)); ?>
                                     </small>
 
                                 </td>
@@ -384,7 +453,7 @@ $total_self_employed = $conn->query("
                                 <td>
 
                                     <strong>
-                                        <?php echo htmlspecialchars($row['district_name'] ?? 'N/A'); ?>
+                                        <?php echo htmlspecialchars(translateDistrict($row['district_name'] ?? '', $lang) ?: $ct['na']); ?>
                                     </strong>
 
                                     <br>
@@ -396,7 +465,7 @@ $total_self_employed = $conn->query("
                                 </td>
 
                                 <td>
-                                    <?php echo htmlspecialchars($row['education'] ?? 'N/A'); ?>
+                                    <?php echo htmlspecialchars($row['education'] ?? $ct['na']); ?>
                                 </td>
 
                                 <td>
@@ -417,7 +486,7 @@ $total_self_employed = $conn->query("
 
                                         echo "
                                             <span class='text-muted'>
-                                                No Skills
+                                                ".$ct['no_skills']."
                                             </span>
                                         ";
                                     }
@@ -432,19 +501,19 @@ $total_self_employed = $conn->query("
 
                                     if($status == 'employed'){
 
-                                        echo "<span class='badge bg-success'>Employed</span>";
+                                        echo "<span class='badge bg-success'>" . $ct['employed'] . "</span>";
 
                                     } elseif($status == 'training'){
 
-                                        echo "<span class='badge bg-warning text-dark'>Training</span>";
+                                        echo "<span class='badge bg-warning text-dark'>" . $ct['training'] . "</span>";
 
                                     } elseif($status == 'self_employed'){
 
-                                        echo "<span class='badge bg-info text-dark'>Self Employed</span>";
+                                        echo "<span class='badge bg-info text-dark'>" . $ct['self_employed'] . "</span>";
 
                                     } else {
 
-                                        echo "<span class='badge bg-danger'>Unemployed</span>";
+                                        echo "<span class='badge bg-danger'>" . $ct['unemployed'] . "</span>";
                                     }
                                     ?>
 
@@ -455,7 +524,7 @@ $total_self_employed = $conn->query("
                                 </td>
 
                                 <td>
-                                    <?php echo htmlspecialchars($row['updated_at'] ?? 'N/A'); ?>
+                                    <?php echo htmlspecialchars(!empty($row['updated_at']) ? translateDate($row['updated_at'], $lang) : $ct['na']); ?>
                                 </td>
 
                                 <td>
@@ -463,7 +532,7 @@ $total_self_employed = $conn->query("
                                     <a href="update_status.php?email=<?php echo urlencode($row['email']); ?>"
                                        class="btn btn-primary btn-sm">
 
-                                        Update Status
+                                        <?php echo $ct['update_btn']; ?>
 
                                     </a>
 
@@ -483,7 +552,7 @@ $total_self_employed = $conn->query("
 
             <div class="alert alert-warning mb-0">
 
-                No workforce records found.
+                <?php echo $ct['no_records']; ?>
 
             </div>
 

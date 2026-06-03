@@ -4,6 +4,17 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 require_once('assets/config/db.php');
 
+if (!function_exists('translateNumber')) {
+    function translateNumber($num, $lang) {
+        if ($lang == 'bn') {
+            $eng_nums = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+            $bng_nums = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+            return str_replace($eng_nums, $bng_nums, (string)$num);
+        }
+        return $num;
+    }
+}
+
 if (isset($_GET['lang'])) {
     $_SESSION['lang'] = $_GET['lang'] === 'en' ? 'en' : 'bn';
 }
@@ -89,7 +100,7 @@ include('includes/navbar.php');
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <p class="text-muted text-uppercase small fw-bold mb-1"><?php echo $st['kpi1']; ?></p>
-                            <h3 class="fw-bold text-dark mb-0">125,430</h3>
+                            <h3 class="fw-bold text-dark mb-0"><?php echo translateNumber('125,430', $lang); ?></h3>
                         </div>
                         <div class="bg-success bg-opacity-10 rounded p-3 text-success">
                             <i class="fa-solid fa-users fs-3"></i>
@@ -104,7 +115,7 @@ include('includes/navbar.php');
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <p class="text-muted text-uppercase small fw-bold mb-1"><?php echo $st['kpi2']; ?></p>
-                            <h3 class="fw-bold text-dark mb-0">8,450</h3>
+                            <h3 class="fw-bold text-dark mb-0"><?php echo translateNumber('8,450', $lang); ?></h3>
                         </div>
                         <div class="bg-primary bg-opacity-10 rounded p-3 text-primary">
                             <i class="fa-solid fa-building fs-3"></i>
@@ -119,7 +130,7 @@ include('includes/navbar.php');
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <p class="text-muted text-uppercase small fw-bold mb-1"><?php echo $st['kpi3']; ?></p>
-                            <h3 class="fw-bold text-dark mb-0">14,200</h3>
+                            <h3 class="fw-bold text-dark mb-0"><?php echo translateNumber('14,200', $lang); ?></h3>
                         </div>
                         <div class="bg-danger bg-opacity-10 rounded p-3 text-danger">
                             <i class="fa-solid fa-briefcase fs-3"></i>
@@ -134,7 +145,7 @@ include('includes/navbar.php');
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <p class="text-muted text-uppercase small fw-bold mb-1"><?php echo $st['kpi4']; ?></p>
-                            <h3 class="fw-bold text-dark mb-0">62,890</h3>
+                            <h3 class="fw-bold text-dark mb-0"><?php echo translateNumber('62,890', $lang); ?></h3>
                         </div>
                         <div class="bg-warning bg-opacity-10 rounded p-3 text-warning">
                             <i class="fa-solid fa-handshake fs-3"></i>
@@ -205,28 +216,28 @@ include('includes/navbar.php');
                             <tbody>
                                 <tr>
                                     <td class="ps-4 fw-bold text-dark"><i class="fa-solid fa-shirt text-warning me-2"></i><?php echo $st['ind1']; ?></td>
-                                    <td>1,240</td>
-                                    <td class="text-end pe-4 text-success fw-bold">25,430</td>
+                                    <td><?php echo translateNumber('1,240', $lang); ?></td>
+                                    <td class="text-end pe-4 text-success fw-bold"><?php echo translateNumber('25,430', $lang); ?></td>
                                 </tr>
                                 <tr>
                                     <td class="ps-4 fw-bold text-dark"><i class="fa-solid fa-laptop-code text-primary me-2"></i><?php echo $st['ind2']; ?></td>
-                                    <td>850</td>
-                                    <td class="text-end pe-4 text-success fw-bold">15,200</td>
+                                    <td><?php echo translateNumber('850', $lang); ?></td>
+                                    <td class="text-end pe-4 text-success fw-bold"><?php echo translateNumber('15,200', $lang); ?></td>
                                 </tr>
                                 <tr>
                                     <td class="ps-4 fw-bold text-dark"><i class="fa-solid fa-trowel-bricks text-secondary me-2"></i><?php echo $st['ind3']; ?></td>
-                                    <td>420</td>
-                                    <td class="text-end pe-4 text-success fw-bold">12,100</td>
+                                    <td><?php echo translateNumber('420', $lang); ?></td>
+                                    <td class="text-end pe-4 text-success fw-bold"><?php echo translateNumber('12,100', $lang); ?></td>
                                 </tr>
                                 <tr>
                                     <td class="ps-4 fw-bold text-dark"><i class="fa-solid fa-tractor text-success me-2"></i><?php echo $st['ind4']; ?></td>
-                                    <td>310</td>
-                                    <td class="text-end pe-4 text-success fw-bold">8,050</td>
+                                    <td><?php echo translateNumber('310', $lang); ?></td>
+                                    <td class="text-end pe-4 text-success fw-bold"><?php echo translateNumber('8,050', $lang); ?></td>
                                 </tr>
                                 <tr>
                                     <td class="ps-4 fw-bold text-dark"><i class="fa-solid fa-stethoscope text-danger me-2"></i><?php echo $st['ind5']; ?></td>
-                                    <td>280</td>
-                                    <td class="text-end pe-4 text-success fw-bold">6,120</td>
+                                    <td><?php echo translateNumber('280', $lang); ?></td>
+                                    <td class="text-end pe-4 text-success fw-bold"><?php echo translateNumber('6,120', $lang); ?></td>
                                 </tr>
                             </tbody>
                         </table>

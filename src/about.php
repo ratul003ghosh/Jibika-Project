@@ -88,10 +88,10 @@ $at = $about_text[$lang];
                 <span class="about-badge"><?php echo $at['badge']; ?></span>
                 <h1 class="about-hero-title"><?php echo $at['title']; ?></h1>
                 <p class="about-hero-text"><?php echo $at['desc']; ?></p>
-                <a href="/auth/register.php" class="btn btn-warning btn-lg mt-3"><?php echo $at['join_now']; ?></a>
+                <a href="auth/register.php" class="btn btn-warning btn-lg mt-3"><?php echo $at['join_now']; ?></a>
             </div>
             <div class="col-lg-5 text-center mt-4 mt-lg-0">
-                <img src="/assets/image/govt_data.png" alt="Jibika Platform" class="img-fluid rounded-4 shadow-lg" style="width:100%; max-width:650px; height:auto; border: 5px solid white;">
+                <img src="assets/image/govt_data.png" alt="Jibika Platform" class="img-fluid rounded-4 shadow-lg" style="width:100%; max-width:650px; height:auto; border: 5px solid white;">
             </div>
         </div>
     </div>
@@ -106,7 +106,7 @@ $at = $about_text[$lang];
         </div>
         <div class="row g-4">
             <div class="col-lg-4">
-                <a href="/jobseeker/jobs.php" class="text-decoration-none">
+                <a href="jobseeker/jobs.php" class="text-decoration-none">
                     <div class="about-feature-card">
                         <div class="about-feature-icon">🎯</div>
                         <h4><?php echo $at['mission_card_title']; ?></h4>
@@ -115,7 +115,7 @@ $at = $about_text[$lang];
                 </a>
             </div>
             <div class="col-lg-4">
-                <a href="/admin/reports.php" class="text-decoration-none">
+                <a href="admin/reports.php" class="text-decoration-none">
                     <div class="about-feature-card">
                         <div class="about-feature-icon">🏛️</div>
                         <h4><?php echo $at['govt_card_title']; ?></h4>
@@ -124,7 +124,7 @@ $at = $about_text[$lang];
                 </a>
             </div>
             <div class="col-lg-4">
-                <a href="/jobseeker/partner_finder.php" class="text-decoration-none">
+                <a href="jobseeker/partner_finder.php" class="text-decoration-none">
                     <div class="about-feature-card">
                         <div class="about-feature-icon">🤝</div>
                         <h4><?php echo $at['partner_card_title']; ?></h4>
@@ -144,7 +144,7 @@ $at = $about_text[$lang];
         </div>
         <div class="row g-4">
             <div class="col-md-3">
-                <a href="/auth/register.php" class="text-decoration-none">
+                <a href="auth/register.php" class="text-decoration-none">
                     <div class="about-step-card">
                         <div class="about-step-num"><?php echo $at['step1_num']; ?></div>
                         <h5><?php echo $at['step1_title']; ?></h5>
@@ -153,7 +153,7 @@ $at = $about_text[$lang];
                 </a>
             </div>
             <div class="col-md-3">
-                <a href="/auth/login.php" class="text-decoration-none">
+                <a href="auth/login.php" class="text-decoration-none">
                     <div class="about-step-card">
                         <div class="about-step-num"><?php echo $at['step2_num']; ?></div>
                         <h5><?php echo $at['step2_title']; ?></h5>
@@ -162,7 +162,7 @@ $at = $about_text[$lang];
                 </a>
             </div>
             <div class="col-md-3">
-                <a href="/jobseeker/jobs.php" class="text-decoration-none">
+                <a href="jobseeker/jobs.php" class="text-decoration-none">
                     <div class="about-step-card">
                         <div class="about-step-num"><?php echo $at['step3_num']; ?></div>
                         <h5><?php echo $at['step3_title']; ?></h5>
@@ -171,7 +171,7 @@ $at = $about_text[$lang];
                 </a>
             </div>
             <div class="col-md-3">
-                <a href="/jobseeker/jobs.php" class="text-decoration-none">
+                <a href="jobseeker/jobs.php" class="text-decoration-none">
                     <div class="about-step-card">
                         <div class="about-step-num"><?php echo $at['step4_num']; ?></div>
                         <h5><?php echo $at['step4_title']; ?></h5>
@@ -191,9 +191,9 @@ $at = $about_text[$lang];
         </div>
         <div class="row g-4">
             <div class="col-md-6">
-                <a href="/jobseeker/jobs.php" class="text-decoration-none">
+                <a href="jobseeker/jobs.php" class="text-decoration-none">
                     <div class="about-highlight-card">
-                        <img src="/assets/image/digital_skills.png" alt="Smart Job Matching" class="about-highlight-img">
+                        <img src="assets/image/digital_skills.png" alt="Smart Job Matching" class="about-highlight-img">
                         <div class="about-highlight-body">
                             <h4><?php echo $at['feature1_title']; ?></h4>
                             <p><?php echo $at['feature1_desc']; ?></p>
@@ -202,9 +202,9 @@ $at = $about_text[$lang];
                 </a>
             </div>
             <div class="col-md-6">
-                <a href="/admin/reports.php" class="text-decoration-none">
+                <a href="admin/reports.php" class="text-decoration-none">
                     <div class="about-highlight-card">
-                        <img src="/assets/image/new_jobs.png" alt="Area Monitoring" class="about-highlight-img">
+                        <img src="assets/image/new_jobs.png" alt="Area Monitoring" class="about-highlight-img">
                         <div class="about-highlight-body">
                             <h4><?php echo $at['feature2_title']; ?></h4>
                             <p><?php echo $at['feature2_desc']; ?></p>
@@ -221,7 +221,7 @@ $at = $about_text[$lang];
     <div class="container-fluid px-4 px-xl-5 text-center">
         <h2 class="text-white mb-3" style="font-weight:800; font-size:2.5rem;"><?php echo $at['cta_title']; ?></h2>
         <p class="text-white mb-4" style="font-size:1.2rem; opacity:0.9;"><?php echo $at['cta_sub']; ?></p>
-        <a href="/auth/register.php" class="btn btn-warning btn-lg px-5"><?php echo $at['cta_btn']; ?></a>
+        <a href="auth/register.php" class="btn btn-warning btn-lg px-5"><?php echo $at['cta_btn']; ?></a>
     </div>
 </section>
 

@@ -8,6 +8,86 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'job_seeker') {
 
 include('../assets/config/db.php');
 
+$lang = $_SESSION['lang'] ?? 'bn';
+
+$profText = [
+    'bn' => [
+        'title' => 'আমার প্রোফাইল',
+        'subtitle' => 'আপনার ব্যক্তিগত তথ্য পরিচালনা করুন এবং চাকরির মিল উন্নত করুন।',
+        'back_btn' => 'ড্যাশবোর্ডে ফিরে যান',
+        'profile_completion' => 'প্রোফাইল সম্পন্নতা',
+        'location_info' => 'অবস্থানের তথ্য',
+        'district' => 'জেলা',
+        'upazila' => 'উপজেলা',
+        'ward' => 'ওয়ার্ড',
+        'not_set' => 'সেট করা হয়নি',
+        'skills' => 'দক্ষতাসমূহ',
+        'total_skills' => 'মোট দক্ষতাসমূহ',
+        'manage_skills' => 'দক্ষতা পরিচালনা করুন',
+        'cv' => 'জীবনবৃত্তান্ত (CV)',
+        'cv_uploaded' => 'সিভি আপলোড করা হয়েছে',
+        'view_cv' => 'বর্তমান সিভি দেখুন',
+        'no_cv' => 'কোনো সিভি আপলোড করা হয়নি',
+        'incomplete' => 'প্রোফাইল অসম্পূর্ণ',
+        'edit_details' => 'ব্যক্তিগত বিবরণ সম্পাদনা করুন',
+        'nid' => 'এনআইডি নম্বর',
+        'nid_locked' => 'প্রথমবার সেভ করার পর এনআইডি পরিবর্তন করা যাবে না।',
+        'education' => 'শিক্ষা',
+        'education_placeholder' => 'উদাহরণ: সিএসইতে বিএসসি',
+        'select_district' => 'জেলা নির্বাচন করুন',
+        'select_upazila' => 'উপজেলা নির্বাচন করুন',
+        'select_ward' => 'ওয়ার্ড নির্বাচন করুন',
+        'upload_cv' => 'পেশাদার সিভি আপলোড করুন',
+        'upload_new' => 'নতুন',
+        'drag_drop' => 'টেনে আনুন এবং ছেড়ে দিন অথবা আপলোড করতে ক্লিক করুন',
+        'formats' => 'সমর্থিত ফরম্যাট: PDF, DOC, DOCX (সর্বোচ্চ ৫ মেগাবাইট)',
+        'about_me' => 'আমার সম্পর্কে',
+        'about_me_placeholder' => 'নিজের সম্পর্কে কিছু লিখুন...',
+        'save_btn' => 'প্রোফাইল এবং সিভি সংরক্ষণ করুন',
+        'alert_success' => 'প্রোফাইল সফলভাবে সম্পন্ন হয়েছে!',
+        'upload_failed' => 'সিভি আপলোড করতে ব্যর্থ হয়েছে।',
+        'invalid_format' => 'অবৈধ সিভি ফরম্যাট। কেবল PDF, DOC, DOCX অনুমোদিত।',
+    ],
+    'en' => [
+        'title' => 'My Profile',
+        'subtitle' => 'Manage your personal information and improve your job matching.',
+        'back_btn' => 'Back to Dashboard',
+        'profile_completion' => 'Profile Completion',
+        'location_info' => 'Location Info',
+        'district' => 'District',
+        'upazila' => 'Upazila',
+        'ward' => 'Ward',
+        'not_set' => 'Not Set',
+        'skills' => 'Skills',
+        'total_skills' => 'Total Skills',
+        'manage_skills' => 'Manage Skills',
+        'cv' => 'Curriculum Vitae',
+        'cv_uploaded' => 'CV Uploaded',
+        'view_cv' => 'View Current CV',
+        'no_cv' => 'No CV Uploaded',
+        'incomplete' => 'Profile Incomplete',
+        'edit_details' => 'Edit Personal Details',
+        'nid' => 'NID Number',
+        'nid_locked' => 'NID is locked after first save.',
+        'education' => 'Education',
+        'education_placeholder' => 'Example: BSc in CSE',
+        'select_district' => 'Select District',
+        'select_upazila' => 'Select Upazila',
+        'select_ward' => 'Select Ward',
+        'upload_cv' => 'Upload Professional CV',
+        'upload_new' => 'New',
+        'drag_drop' => 'Drag and drop or click to upload',
+        'formats' => 'Supported formats: PDF, DOC, DOCX (Max 5MB)',
+        'about_me' => 'About Me',
+        'about_me_placeholder' => 'Write something about yourself...',
+        'save_btn' => 'Save Profile & CV',
+        'alert_success' => 'Profile completed successfully!',
+        'upload_failed' => 'Failed to upload CV.',
+        'invalid_format' => 'Invalid CV format. Only PDF, DOC, DOCX are allowed.',
+    ]
+];
+$ct = $profText[$lang];
+
 $message = "";
 $user_id = $_SESSION['user_id'];
 
@@ -38,10 +118,10 @@ if (isset($_POST['save_profile'])) {
             if (move_uploaded_file($file_tmp, $upload_dir . $new_name)) {
                 $cv_path = $upload_dir . $new_name;
             } else {
-                $message = "Failed to upload CV.";
+                $message = $ct['upload_failed'];
             }
         } else {
-            $message = "Invalid CV format. Only PDF, DOC, DOCX are allowed.";
+            $message = $ct['invalid_format'];
         }
     }
 
@@ -52,13 +132,13 @@ if (isset($_POST['save_profile'])) {
         $cv_update = ($cv_path != "") ? ", cv_path='$cv_path'" : "";
         $sql = "UPDATE job_seeker_profiles 
                 SET 
-                    nid='$nid',
-                    district_id=$district_id,
-                    upazila_id=$upazila_id,
-                    ward_id=$ward_id,
-                    education='$education',
-                    about='$about'
-                    $cv_update
+                     nid='$nid',
+                     district_id=$district_id,
+                     upazila_id=$upazila_id,
+                     ward_id=$ward_id,
+                     education='$education',
+                     about='$about'
+                     $cv_update
                 WHERE user_id='$user_id'";
     } else {
         $sql = "INSERT INTO job_seeker_profiles
@@ -70,7 +150,7 @@ if (isset($_POST['save_profile'])) {
     if ($message == "") {
         if ($conn->query($sql)) {
             echo "<script>
-                alert('Profile completed successfully!');
+                alert('" . addslashes($ct['alert_success']) . "');
                 window.location='dashboard.php';
             </script>";
             exit();
@@ -115,11 +195,11 @@ if (!empty($profile['cv_path'])) $profile_completion += 20;
 
     <div class="d-flex justify-content-between align-items-center mb-5 flex-wrap gap-3">
         <div>
-            <h2 class="fw-bold mb-2" style="color: #0a4f32;"><i class="fa-solid fa-id-card me-2"></i>My Profile</h2>
-            <p class="text-muted mb-0 fs-5">Manage your personal information and improve your job matching.</p>
+            <h2 class="fw-bold mb-2" style="color: #0a4f32;"><i class="fa-solid fa-id-card me-2"></i><?php echo $ct['title']; ?></h2>
+            <p class="text-muted mb-0 fs-5"> <?php echo $ct['subtitle']; ?></p>
         </div>
 
-        <a href="dashboard.php" class="btn btn-dark px-4 py-2 rounded-pill shadow-sm fw-bold"><i class="fa-solid fa-arrow-left me-2"></i>Back to Dashboard</a>
+        <a href="dashboard.php" class="btn btn-dark px-4 py-2 rounded-pill shadow-sm fw-bold"><i class="fa-solid fa-arrow-left me-2"></i><?php echo $ct['back_btn']; ?></a>
     </div>
 
     <?php if ($message != ""): ?>
@@ -143,7 +223,7 @@ if (!empty($profile['cv_path'])) $profile_completion += 20;
                 <p class="text-muted mb-4"><i class="fa-solid fa-envelope me-2 text-success"></i><?php echo htmlspecialchars($_SESSION['email']); ?></p>
 
                 <div class="mb-2 text-start d-flex justify-content-between align-items-center">
-                    <small class="fw-bold text-muted text-uppercase" style="letter-spacing:1px;">Profile Completion</small>
+                    <small class="fw-bold text-muted text-uppercase" style="letter-spacing:1px;"><?php echo $ct['profile_completion']; ?></small>
                     <small class="text-success fw-bold fs-6"><?php echo $profile_completion; ?>%</small>
                 </div>
 
@@ -154,60 +234,60 @@ if (!empty($profile['cv_path'])) $profile_completion += 20;
 
             <!-- Saved Area -->
             <div class="card border-0 shadow-sm p-4 mb-4" style="border-radius:20px;">
-                <h5 class="fw-bold mb-4 text-dark"><i class="fa-solid fa-map-location-dot me-2 text-success"></i>Location Info</h5>
+                <h5 class="fw-bold mb-4 text-dark"><i class="fa-solid fa-map-location-dot me-2 text-success"></i><?php echo $ct['location_info']; ?></h5>
                 
                 <div class="d-flex align-items-center mb-3 p-3 bg-light rounded-3">
                     <div class="me-3 text-success fs-4"><i class="fa-solid fa-city"></i></div>
                     <div>
-                        <small class="text-muted d-block text-uppercase fw-bold" style="font-size:0.75rem;">District</small>
-                        <span class="fw-bold text-dark"><?php echo htmlspecialchars($profile['district_name'] ?? 'Not Set'); ?></span>
+                        <small class="text-muted d-block text-uppercase fw-bold" style="font-size:0.75rem;"><?php echo $ct['district']; ?></small>
+                        <span class="fw-bold text-dark"><?php echo htmlspecialchars($profile['district_name'] ?? $ct['not_set']); ?></span>
                     </div>
                 </div>
 
                 <div class="d-flex align-items-center mb-3 p-3 bg-light rounded-3">
                     <div class="me-3 text-success fs-4"><i class="fa-solid fa-map"></i></div>
                     <div>
-                        <small class="text-muted d-block text-uppercase fw-bold" style="font-size:0.75rem;">Upazila</small>
-                        <span class="fw-bold text-dark"><?php echo htmlspecialchars($profile['upazila_name'] ?? 'Not Set'); ?></span>
+                        <small class="text-muted d-block text-uppercase fw-bold" style="font-size:0.75rem;"><?php echo $ct['upazila']; ?></small>
+                        <span class="fw-bold text-dark"><?php echo htmlspecialchars($profile['upazila_name'] ?? $ct['not_set']); ?></span>
                     </div>
                 </div>
 
                 <div class="d-flex align-items-center p-3 bg-light rounded-3">
                     <div class="me-3 text-success fs-4"><i class="fa-solid fa-location-crosshairs"></i></div>
                     <div>
-                        <small class="text-muted d-block text-uppercase fw-bold" style="font-size:0.75rem;">Ward</small>
-                        <span class="fw-bold text-dark"><?php echo htmlspecialchars($profile['ward_name'] ?? 'Not Set'); ?></span>
+                        <small class="text-muted d-block text-uppercase fw-bold" style="font-size:0.75rem;"><?php echo $ct['ward']; ?></small>
+                        <span class="fw-bold text-dark"><?php echo htmlspecialchars($profile['ward_name'] ?? $ct['not_set']); ?></span>
                     </div>
                 </div>
             </div>
 
             <!-- Skills -->
             <div class="card border-0 shadow-sm p-4 mb-4" style="border-radius:20px;">
-                <h5 class="fw-bold mb-3 text-dark"><i class="fa-solid fa-screwdriver-wrench me-2 text-success"></i>Skills</h5>
+                <h5 class="fw-bold mb-3 text-dark"><i class="fa-solid fa-screwdriver-wrench me-2 text-success"></i><?php echo $ct['skills']; ?></h5>
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <span class="text-muted fw-bold">Total Skills</span>
+                    <span class="text-muted fw-bold"><?php echo $ct['total_skills']; ?></span>
                     <span class="badge bg-success rounded-pill px-3 py-2 fs-6 shadow-sm"><?php echo $total_skills; ?></span>
                 </div>
-                <a href="skills.php" class="btn btn-outline-success w-100 rounded-pill fw-bold border-2">Manage Skills</a>
+                <a href="skills.php" class="btn btn-outline-success w-100 rounded-pill fw-bold border-2"><?php echo $ct['manage_skills']; ?></a>
             </div>
 
             <!-- CV Status -->
             <div class="card border-0 shadow-sm p-4 text-center" style="border-radius:20px; background:linear-gradient(135deg, #198754, #0a4f32); color:#fff;">
-                <h5 class="fw-bold mb-3"><i class="fa-solid fa-file-pdf me-2"></i>Curriculum Vitae</h5>
+                <h5 class="fw-bold mb-3"><i class="fa-solid fa-file-pdf me-2"></i><?php echo $ct['cv']; ?></h5>
                 <?php if (!empty($profile['cv_path'])): ?>
                     <div class="mb-3">
                         <i class="fa-solid fa-circle-check text-white fs-1 mb-2 d-block"></i>
-                        <span class="fw-bold">CV Uploaded</span>
+                        <span class="fw-bold"><?php echo $ct['cv_uploaded']; ?></span>
                     </div>
                     <a href="<?php echo htmlspecialchars($profile['cv_path']); ?>" target="_blank" class="btn btn-light rounded-pill fw-bold w-100 shadow-sm text-success">
-                        <i class="fa-solid fa-eye me-2"></i>View Current CV
+                        <i class="fa-solid fa-eye me-2"></i><?php echo $ct['view_cv']; ?>
                     </a>
                 <?php else: ?>
                     <div class="mb-3">
                         <i class="fa-solid fa-circle-xmark text-white-50 fs-1 mb-2 d-block"></i>
-                        <span class="fw-bold text-white-50">No CV Uploaded</span>
+                        <span class="fw-bold text-white-50"><?php echo $ct['no_cv']; ?></span>
                     </div>
-                    <span class="badge bg-danger rounded-pill px-3 py-2 border border-white">Profile Incomplete</span>
+                    <span class="badge bg-danger rounded-pill px-3 py-2 border border-white"><?php echo $ct['incomplete']; ?></span>
                 <?php endif; ?>
             </div>
 
@@ -215,35 +295,35 @@ if (!empty($profile['cv_path'])) $profile_completion += 20;
 
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm p-5 h-100" style="border-radius:20px;">
-                <h4 class="fw-bold mb-4 text-dark border-bottom pb-3"><i class="fa-solid fa-user-pen me-2 text-success"></i>Edit Personal Details</h4>
+                <h4 class="fw-bold mb-4 text-dark border-bottom pb-3"><i class="fa-solid fa-user-pen me-2 text-success"></i><?php echo $ct['edit_details']; ?></h4>
 
                 <form method="POST" enctype="multipart/form-data">
                     <div class="row g-4">
                         <div class="col-md-6">
-                            <label class="form-label fw-bold text-muted">NID Number</label>
+                            <label class="form-label fw-bold text-muted"><?php echo $ct['nid']; ?></label>
                             <div class="input-group input-group-lg shadow-sm rounded-3">
                                 <span class="input-group-text bg-light border-0"><i class="fa-regular fa-id-card text-success"></i></span>
                                 <input type="text" name="nid" class="form-control border-0 bg-light" value="<?php echo htmlspecialchars($profile['nid'] ?? ''); ?>" <?php echo !empty($profile['nid']) ? 'readonly' : ''; ?>>
                             </div>
                             <?php if (!empty($profile['nid'])): ?>
-                                <small class="text-muted mt-1 d-block"><i class="fa-solid fa-lock me-1"></i>NID is locked after first save.</small>
+                                <small class="text-muted mt-1 d-block"><i class="fa-solid fa-lock me-1"></i><?php echo $ct['nid_locked']; ?></small>
                             <?php endif; ?>
                         </div>
 
                         <div class="col-md-6">
-                            <label class="form-label fw-bold text-muted">Education</label>
+                            <label class="form-label fw-bold text-muted"><?php echo $ct['education']; ?></label>
                             <div class="input-group input-group-lg shadow-sm rounded-3">
                                 <span class="input-group-text bg-light border-0"><i class="fa-solid fa-graduation-cap text-success"></i></span>
-                                <input type="text" name="education" class="form-control border-0 bg-light" placeholder="Example: BSc in CSE" value="<?php echo htmlspecialchars($profile['education'] ?? ''); ?>">
+                                <input type="text" name="education" class="form-control border-0 bg-light" placeholder="<?php echo $ct['education_placeholder']; ?>" value="<?php echo htmlspecialchars($profile['education'] ?? ''); ?>">
                             </div>
                         </div>
 
                         <div class="col-md-4">
-                            <label class="form-label fw-bold text-muted">District</label>
+                            <label class="form-label fw-bold text-muted"><?php echo $ct['district']; ?></label>
                             <div class="input-group input-group-lg shadow-sm rounded-3">
                                 <span class="input-group-text bg-light border-0"><i class="fa-solid fa-building text-success"></i></span>
                                 <select name="district_id" class="form-select border-0 bg-light">
-                                    <option value="">Select District</option>
+                                    <option value=""><?php echo $ct['select_district']; ?></option>
                                     <?php
                                     if ($districts && $districts->num_rows > 0) {
                                         while ($row = $districts->fetch_assoc()) {
@@ -257,11 +337,11 @@ if (!empty($profile['cv_path'])) $profile_completion += 20;
                         </div>
 
                         <div class="col-md-4">
-                            <label class="form-label fw-bold text-muted">Upazila</label>
+                            <label class="form-label fw-bold text-muted"><?php echo $ct['upazila']; ?></label>
                             <div class="input-group input-group-lg shadow-sm rounded-3">
                                 <span class="input-group-text bg-light border-0"><i class="fa-solid fa-road text-success"></i></span>
                                 <select name="upazila_id" class="form-select border-0 bg-light">
-                                    <option value="">Select Upazila</option>
+                                    <option value=""><?php echo $ct['select_upazila']; ?></option>
                                     <?php
                                     if ($upazilas && $upazilas->num_rows > 0) {
                                         while ($row = $upazilas->fetch_assoc()) {
@@ -275,11 +355,11 @@ if (!empty($profile['cv_path'])) $profile_completion += 20;
                         </div>
 
                         <div class="col-md-4">
-                            <label class="form-label fw-bold text-muted">Ward</label>
+                            <label class="form-label fw-bold text-muted"><?php echo $ct['ward']; ?></label>
                             <div class="input-group input-group-lg shadow-sm rounded-3">
                                 <span class="input-group-text bg-light border-0"><i class="fa-solid fa-house-chimney text-success"></i></span>
                                 <select name="ward_id" class="form-select border-0 bg-light">
-                                    <option value="">Select Ward</option>
+                                    <option value=""><?php echo $ct['select_ward']; ?></option>
                                     <?php
                                     if ($wards && $wards->num_rows > 0) {
                                         while ($row = $wards->fetch_assoc()) {
@@ -293,27 +373,27 @@ if (!empty($profile['cv_path'])) $profile_completion += 20;
                         </div>
 
                         <div class="col-12">
-                            <label class="form-label fw-bold text-muted">Upload Professional CV <span class="badge bg-success rounded-pill ms-2">New</span></label>
+                            <label class="form-label fw-bold text-muted"><?php echo $ct['upload_cv']; ?> <span class="badge bg-success rounded-pill ms-2"><?php echo $ct['upload_new']; ?></span></label>
                             <div class="p-4 border border-2 border-dashed rounded-3 bg-light text-center" style="border-color: #198754 !important;">
                                 <i class="fa-solid fa-cloud-arrow-up fs-1 text-success mb-3"></i>
-                                <h6 class="fw-bold text-dark mb-1">Drag and drop or click to upload</h6>
-                                <p class="text-muted small mb-3">Supported formats: PDF, DOC, DOCX (Max 5MB)</p>
+                                <h6 class="fw-bold text-dark mb-1"><?php echo $ct['drag_drop']; ?></h6>
+                                <p class="text-muted small mb-3"><?php echo $ct['formats']; ?></p>
                                 <input type="file" name="cv_file" class="form-control form-control-lg bg-white shadow-sm rounded-pill" accept=".pdf,.doc,.docx">
                             </div>
                         </div>
 
                         <div class="col-12">
-                            <label class="form-label fw-bold text-muted">About Me</label>
+                            <label class="form-label fw-bold text-muted"><?php echo $ct['about_me']; ?></label>
                             <div class="input-group shadow-sm rounded-3">
                                 <span class="input-group-text bg-light border-0 align-items-start pt-3"><i class="fa-solid fa-pen-clip text-success"></i></span>
-                                <textarea name="about" class="form-control border-0 bg-light" rows="5" placeholder="Write something about yourself..."><?php echo htmlspecialchars($profile['about'] ?? ''); ?></textarea>
+                                <textarea name="about" class="form-control border-0 bg-light" rows="5" placeholder="<?php echo $ct['about_me_placeholder']; ?>"><?php echo htmlspecialchars($profile['about'] ?? ''); ?></textarea>
                             </div>
                         </div>
                     </div>
 
                     <div class="mt-5 d-flex justify-content-end align-items-center border-top pt-4">
                         <button type="submit" name="save_profile" class="btn btn-success px-5 py-3 rounded-pill fw-bold shadow-lg" style="font-size:1.1rem; background: linear-gradient(135deg, #198754, #0a4f32); border: none;">
-                            <i class="fa-solid fa-floppy-disk me-2"></i>Save Profile & CV
+                            <i class="fa-solid fa-floppy-disk me-2"></i><?php echo $ct['save_btn']; ?>
                         </button>
                     </div>
                 </form>

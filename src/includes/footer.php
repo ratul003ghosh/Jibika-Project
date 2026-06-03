@@ -1,5 +1,17 @@
 <?php
 $lang = $_SESSION['lang'] ?? 'bn';
+if (!isset($path_prefix)) {
+    $current_script = $_SERVER['SCRIPT_NAME'];
+    $src_pos = strrpos($current_script, '/src/');
+    if ($src_pos !== false) {
+        $sub_path = substr($current_script, $src_pos + 5);
+        $slash_count = substr_count($sub_path, '/');
+        $path_prefix = str_repeat('../', $slash_count);
+    } else {
+        $slash_count = substr_count(ltrim($current_script, '/'), '/');
+        $path_prefix = str_repeat('../', $slash_count);
+    }
+}
 $footer_text = [
     'bn' => [
         'desc' => 'এলাকাভিত্তিক বেকারত্ব পর্যবেক্ষণ ও স্মার্ট কর্মসংস্থান প্ল্যাটফর্ম। Connecting talent with opportunity across Bangladesh.',
@@ -85,22 +97,22 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             <div class="col-lg-2 col-md-6">
                 <h5 class="fw-bold mb-4"><?php echo $ft['quick_links']; ?></h5>
                 <ul class="list-unstyled d-flex flex-column gap-3">
-                    <li><a href="/" class="footer-link <?php echo $currentPage == 'index.php' ? 'active' : ''; ?>"><?php echo $ft['home']; ?></a></li>
-                    <li><a href="/about.php" class="footer-link <?php echo $currentPage == 'about.php' ? 'active' : ''; ?>"><?php echo $ft['about']; ?></a></li>
-                    <li><a href="/jobseeker/jobs.php" class="footer-link <?php echo in_array($currentPage, ['jobs.php', 'manage_jobs.php']) ? 'active' : ''; ?>"><?php echo $ft['find_job']; ?></a></li>
-                    <li><a href="/auth/register.php" class="footer-link <?php echo $currentPage == 'register.php' ? 'active' : ''; ?>"><?php echo $ft['register']; ?></a></li>
-                    <li><a href="/contact.php" class="footer-link <?php echo $currentPage == 'contact.php' ? 'active' : ''; ?>"><?php echo $ft['contact']; ?></a></li>
+                    <li><a href="<?php echo $path_prefix; ?>index.php" class="footer-link <?php echo $currentPage == 'index.php' ? 'active' : ''; ?>"><?php echo $ft['home']; ?></a></li>
+                    <li><a href="<?php echo $path_prefix; ?>about.php" class="footer-link <?php echo $currentPage == 'about.php' ? 'active' : ''; ?>"><?php echo $ft['about']; ?></a></li>
+                    <li><a href="<?php echo $path_prefix; ?>jobseeker/jobs.php" class="footer-link <?php echo in_array($currentPage, ['jobs.php', 'manage_jobs.php']) ? 'active' : ''; ?>"><?php echo $ft['find_job']; ?></a></li>
+                    <li><a href="<?php echo $path_prefix; ?>auth/register.php" class="footer-link <?php echo $currentPage == 'register.php' ? 'active' : ''; ?>"><?php echo $ft['register']; ?></a></li>
+                    <li><a href="<?php echo $path_prefix; ?>contact.php" class="footer-link <?php echo $currentPage == 'contact.php' ? 'active' : ''; ?>"><?php echo $ft['contact']; ?></a></li>
                 </ul>
             </div>
             
             <div class="col-lg-2 col-md-6">
                 <h5 class="fw-bold mb-4"><?php echo $ft['services']; ?></h5>
                 <ul class="list-unstyled d-flex flex-column gap-3">
-                    <li><a href="/eservices.php" class="footer-link <?php echo $currentPage == 'eservices.php' ? 'active' : ''; ?>"><?php echo $ft['eservices']; ?></a></li>
-                    <li><a href="/trainings.php" class="footer-link <?php echo $currentPage == 'trainings.php' ? 'active' : ''; ?>"><?php echo $ft['trainings']; ?></a></li>
-                    <li><a href="/notice.php" class="footer-link <?php echo $currentPage == 'notice.php' ? 'active' : ''; ?>"><?php echo $ft['notice']; ?></a></li>
-                    <li><a href="/statistics.php" class="footer-link <?php echo $currentPage == 'statistics.php' ? 'active' : ''; ?>"><?php echo $ft['stats']; ?></a></li>
-                    <li><a href="/cv_guide.php" class="footer-link <?php echo $currentPage == 'cv_guide.php' ? 'active' : ''; ?>"><?php echo $ft['cv_guide']; ?></a></li>
+                    <li><a href="<?php echo $path_prefix; ?>eservices.php" class="footer-link <?php echo $currentPage == 'eservices.php' ? 'active' : ''; ?>"><?php echo $ft['eservices']; ?></a></li>
+                    <li><a href="<?php echo $path_prefix; ?>trainings.php" class="footer-link <?php echo $currentPage == 'trainings.php' ? 'active' : ''; ?>"><?php echo $ft['trainings']; ?></a></li>
+                    <li><a href="<?php echo $path_prefix; ?>notice.php" class="footer-link <?php echo $currentPage == 'notice.php' ? 'active' : ''; ?>"><?php echo $ft['notice']; ?></a></li>
+                    <li><a href="<?php echo $path_prefix; ?>statistics.php" class="footer-link <?php echo $currentPage == 'statistics.php' ? 'active' : ''; ?>"><?php echo $ft['stats']; ?></a></li>
+                    <li><a href="<?php echo $path_prefix; ?>cv_guide.php" class="footer-link <?php echo $currentPage == 'cv_guide.php' ? 'active' : ''; ?>"><?php echo $ft['cv_guide']; ?></a></li>
                 </ul>
             </div>
             
@@ -136,7 +148,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="/assets/js/main.js"></script>
+<script src="<?php echo $path_prefix; ?>assets/js/main.js"></script>
 <script>
 async function handleSubscribe(event) {
     event.preventDefault();
@@ -150,7 +162,7 @@ async function handleSubscribe(event) {
         const formData = new FormData();
         formData.append('email', email);
 
-        const response = await fetch('/subscribe.php', {
+        const response = await fetch('<?php echo $path_prefix; ?>subscribe.php', {
             method: 'POST',
             body: formData
         });

@@ -7,20 +7,20 @@ include('assets/config/db.php');
 
 <?php
 $role_route = $_SESSION['role'] ?? 'guest';
-$jobs_link = "/jobseeker/jobs.php";
-$skills_link = "/jobseeker/skills.php";
-$dashboard_link = "/auth/login.php";
+$jobs_link = "jobseeker/jobs.php";
+$skills_link = "jobseeker/skills.php";
+$dashboard_link = "auth/login.php";
 
 if ($role_route == 'admin') {
-    $jobs_link = "/admin/jobs.php";
-    $skills_link = "/admin/reports.php";
-    $dashboard_link = "/admin/dashboard.php";
+    $jobs_link = "admin/jobs.php";
+    $skills_link = "admin/reports.php";
+    $dashboard_link = "admin/dashboard.php";
 } elseif ($role_route == 'employer') {
-    $jobs_link = "/employer/manage_jobs.php";
-    $skills_link = "/employer/dashboard.php";
-    $dashboard_link = "/employer/dashboard.php";
+    $jobs_link = "employer/manage_jobs.php";
+    $skills_link = "employer/dashboard.php";
+    $dashboard_link = "employer/dashboard.php";
 } elseif ($role_route == 'job_seeker') {
-    $dashboard_link = "/jobseeker/dashboard.php";
+    $dashboard_link = "jobseeker/dashboard.php";
 }
 
 $total_districts = 0;
@@ -326,9 +326,9 @@ $ht = $home_text[$lang];
     <section class="hero-section" style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding: 90px 0 100px; position:relative;">
         
         <!-- BACKGROUND SLIDER LAYERS -->
-        <div class="hero-slider-bg active" style="background-image: url('/assets/image/bd.jpg');"></div>
-        <div class="hero-slider-bg" style="background-image: url('/assets/image/bd_2.png');"></div>
-        <div class="hero-slider-bg" style="background-image: url('/assets/image/bd_4.png');"></div>
+        <div class="hero-slider-bg active" style="background-image: url('assets/image/bd.jpg');"></div>
+        <div class="hero-slider-bg" style="background-image: url('assets/image/bd_2.png');"></div>
+        <div class="hero-slider-bg" style="background-image: url('assets/image/bd_4.png');"></div>
         
         <!-- LATEST UPDATE TICKER -->
         <div class="w-100 shadow-sm" style="background: rgba(0, 0, 0, 0.4); border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding: 10px 0; position:absolute; top:0; left:0; z-index:10; backdrop-filter: blur(10px);">
@@ -356,7 +356,7 @@ $ht = $home_text[$lang];
             <p class="hero-subtitle mx-auto" style="font-size:1.15rem; opacity:0.95; max-width:650px; text-shadow: 0 2px 6px rgba(0,0,0,0.5); line-height:1.6; margin-bottom: 40px; color:#e2e8f0;"><?php echo $ht['hero_subtitle']; ?></p>
             
             <div class="search-box bg-white rounded-pill shadow-lg mt-4 mx-auto" style="max-width: 1050px; padding: 8px;">
-                <form action="/jobseeker/jobs.php" method="GET">
+                <form action="jobseeker/jobs.php" method="GET">
                     <div class="row g-0 align-items-center">
                         <div class="col-md-4 d-flex align-items-center bg-transparent ps-4">
                             <i class="fa-solid fa-magnifying-glass text-muted fs-5"></i>
@@ -396,12 +396,12 @@ $ht = $home_text[$lang];
             </div>
             
             <div class="d-flex flex-wrap justify-content-center gap-2 mt-4 pt-2" style="max-width: 900px; margin: 0 auto;">
-                <a href="/jobseeker/jobs.php" class="btn rounded-pill px-3 py-2 text-white d-flex align-items-center gap-2 shadow-sm job-filter-btn" style="background-color: #10B981; border:none; font-weight:600; font-size:1rem;"><i class="fa-solid fa-border-all"></i> All Jobs</a>
-                <a href="/jobseeker/jobs.php?job_type=Full-time" class="btn btn-outline-light rounded-pill px-3 py-2 d-flex align-items-center gap-2 job-filter-btn" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(5px); font-weight:600; font-size:1rem; border-color: rgba(255,255,255,0.25);"><i class="fa-solid fa-briefcase"></i> Full-time</a>
-                <a href="/jobseeker/jobs.php?job_type=Part-time+(Student)" class="btn btn-outline-light rounded-pill px-3 py-2 d-flex align-items-center gap-2 job-filter-btn" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(5px); font-weight:600; font-size:1rem; border-color: rgba(255,255,255,0.25);"><i class="fa-solid fa-graduation-cap"></i> Part-time</a>
-                <a href="/jobseeker/jobs.php?job_type=Internship" class="btn btn-outline-light rounded-pill px-3 py-2 d-flex align-items-center gap-2 job-filter-btn" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(5px); font-weight:600; font-size:1rem; border-color: rgba(255,255,255,0.25);"><i class="fa-solid fa-star"></i> Internship</a>
-                <a href="/jobseeker/jobs.php?job_type=Day+Labor" class="btn btn-outline-light rounded-pill px-3 py-2 d-flex align-items-center gap-2 job-filter-btn" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(5px); font-weight:600; font-size:1rem; border-color: rgba(255,255,255,0.25);"><i class="fa-solid fa-hammer"></i> Day Labor</a>
-                <a href="/jobseeker/jobs.php?job_type=Remote" class="btn btn-outline-light rounded-pill px-3 py-2 d-flex align-items-center gap-2 job-filter-btn" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(5px); font-weight:600; font-size:1rem; border-color: rgba(255,255,255,0.25);"><i class="fa-solid fa-house-laptop"></i> Remote</a>
+                <a href="jobseeker/jobs.php" class="btn rounded-pill px-3 py-2 text-white d-flex align-items-center gap-2 shadow-sm job-filter-btn" style="background-color: #10B981; border:none; font-weight:600; font-size:1rem;"><i class="fa-solid fa-border-all"></i> All Jobs</a>
+                <a href="jobseeker/jobs.php?job_type=Full-time" class="btn btn-outline-light rounded-pill px-3 py-2 d-flex align-items-center gap-2 job-filter-btn" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(5px); font-weight:600; font-size:1rem; border-color: rgba(255,255,255,0.25);"><i class="fa-solid fa-briefcase"></i> Full-time</a>
+                <a href="jobseeker/jobs.php?job_type=Part-time+(Student)" class="btn btn-outline-light rounded-pill px-3 py-2 d-flex align-items-center gap-2 job-filter-btn" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(5px); font-weight:600; font-size:1rem; border-color: rgba(255,255,255,0.25);"><i class="fa-solid fa-graduation-cap"></i> Part-time</a>
+                <a href="jobseeker/jobs.php?job_type=Internship" class="btn btn-outline-light rounded-pill px-3 py-2 d-flex align-items-center gap-2 job-filter-btn" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(5px); font-weight:600; font-size:1rem; border-color: rgba(255,255,255,0.25);"><i class="fa-solid fa-star"></i> Internship</a>
+                <a href="jobseeker/jobs.php?job_type=Day+Labor" class="btn btn-outline-light rounded-pill px-3 py-2 d-flex align-items-center gap-2 job-filter-btn" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(5px); font-weight:600; font-size:1rem; border-color: rgba(255,255,255,0.25);"><i class="fa-solid fa-hammer"></i> Day Labor</a>
+                <a href="jobseeker/jobs.php?job_type=Remote" class="btn btn-outline-light rounded-pill px-3 py-2 d-flex align-items-center gap-2 job-filter-btn" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(5px); font-weight:600; font-size:1rem; border-color: rgba(255,255,255,0.25);"><i class="fa-solid fa-house-laptop"></i> Remote</a>
             </div>
         </div>
         
@@ -531,46 +531,46 @@ $ht = $home_text[$lang];
             </div>
             <div class="row g-4">
                 <div class="col-md-6 col-xl-3">
-                    <div class="journey-card glass-card" style="background-image: url('/assets/image/journey_jobseeker.png');">
+                    <div class="journey-card glass-card" style="background-image: url('assets/image/journey_jobseeker.png');">
                         <div class="journey-overlay-content">
                             <h5><?php echo $ht['journey_jobseeker']; ?></h5>
                             <p><?php echo $ht['journey_js_sub']; ?></p>
                             <?php if(isset($_SESSION['user_id']) && $_SESSION['role'] == 'job_seeker'): ?>
-                                <a href="/jobseeker/dashboard.php" class="btn btn-sm journey-btn"><?php echo $ht['explore']; ?></a>
+                                <a href="jobseeker/dashboard.php" class="btn btn-sm journey-btn"><?php echo $ht['explore']; ?></a>
                             <?php else: ?>
-                                <a href="/auth/login.php" class="btn btn-sm journey-btn"><?php echo $ht['explore']; ?></a>
+                                <a href="auth/login.php" class="btn btn-sm journey-btn"><?php echo $ht['explore']; ?></a>
                             <?php endif; ?>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6 col-xl-3">
-                    <div class="journey-card glass-card" style="background-image: url('/assets/image/journey_employer.png');">
+                    <div class="journey-card glass-card" style="background-image: url('assets/image/journey_employer.png');">
                         <div class="journey-overlay-content">
                             <h5><?php echo $ht['journey_employer']; ?></h5>
                             <p><?php echo $ht['journey_emp_sub']; ?></p>
                             <?php if(isset($_SESSION['user_id']) && $_SESSION['role'] == 'employer'): ?>
-                                <a href="/employer/dashboard.php" class="btn btn-sm journey-btn"><?php echo $ht['hire_now']; ?></a>
+                                <a href="employer/dashboard.php" class="btn btn-sm journey-btn"><?php echo $ht['hire_now']; ?></a>
                             <?php else: ?>
-                                <a href="/auth/register.php" class="btn btn-sm journey-btn"><?php echo $ht['hire_now']; ?></a>
+                                <a href="auth/register.php" class="btn btn-sm journey-btn"><?php echo $ht['hire_now']; ?></a>
                             <?php endif; ?>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6 col-xl-3">
-                    <div class="journey-card glass-card" style="background-image: url('/assets/image/journey_government.png');">
+                    <div class="journey-card glass-card" style="background-image: url('assets/image/journey_government.png');">
                         <div class="journey-overlay-content">
                             <h5><?php echo $ht['journey_govt']; ?></h5>
                             <p><?php echo $ht['journey_govt_sub']; ?></p>
-                            <a href="/admin_login.php" class="btn btn-sm journey-btn"><?php echo $ht['view_access']; ?></a>
+                            <a href="admin_login.php" class="btn btn-sm journey-btn"><?php echo $ht['view_access']; ?></a>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6 col-xl-3">
-                    <div class="journey-card glass-card" style="background-image: url('/assets/image/journey_entrepreneur.png');">
+                    <div class="journey-card glass-card" style="background-image: url('assets/image/journey_entrepreneur.png');">
                         <div class="journey-overlay-content">
                             <h5><?php echo $ht['journey_entre']; ?></h5>
                             <p><?php echo $ht['journey_entre_sub']; ?></p>
-                            <a href="/jobseeker/partner_finder.php" class="btn btn-sm journey-btn"><?php echo $ht['start_building']; ?></a>
+                            <a href="jobseeker/partner_finder.php" class="btn btn-sm journey-btn"><?php echo $ht['start_building']; ?></a>
                         </div>
                     </div>
                 </div>
@@ -729,7 +729,7 @@ $ht = $home_text[$lang];
                                     <span>📍 <?php echo htmlspecialchars($job['location']); ?></span>
                                     <span>💰 <?php echo !empty($job['salary']) ? htmlspecialchars($job['salary']) : $ht['negotiable']; ?></span>
                                 </div>
-                                <a href="/jobseeker/jobs.php" class="btn btn-apply"><?php echo $ht['apply_btn']; ?></a>
+                                <a href="jobseeker/jobs.php" class="btn btn-apply"><?php echo $ht['apply_btn']; ?></a>
                             </div>
                         </div>
                     <?php $ji++; endwhile; ?>
@@ -757,7 +757,7 @@ $ht = $home_text[$lang];
             <div class="row g-4">
                 <div class="col-lg-4 col-md-6">
                     <div class="update-card-v2">
-                        <img src="/assets/image/update_training.png" alt="Training">
+                        <img src="assets/image/update_training.png" alt="Training">
                         <div class="update-card-body">
                             <span class="update-tag"><?php echo $ht['tag_training']; ?></span>
                             <h5><?php echo $ht['update1_title']; ?></h5>
@@ -767,7 +767,7 @@ $ht = $home_text[$lang];
                 </div>
                 <div class="col-lg-4 col-md-6">
                     <div class="update-card-v2">
-                        <img src="/assets/image/update_hiring.png" alt="New Jobs">
+                        <img src="assets/image/update_hiring.png" alt="New Jobs">
                         <div class="update-card-body">
                             <span class="update-tag"><?php echo $ht['tag_employment']; ?></span>
                             <h5><?php echo $ht['update2_title']; ?></h5>
@@ -777,7 +777,7 @@ $ht = $home_text[$lang];
                 </div>
                 <div class="col-lg-4 col-md-6">
                     <div class="update-card-v2">
-                        <img src="/assets/image/update_govt.png" alt="Govt Data">
+                        <img src="assets/image/update_govt.png" alt="Govt Data">
                         <div class="update-card-body">
                             <span class="update-tag"><?php echo $ht['tag_govt']; ?></span>
                             <h5><?php echo $ht['update3_title']; ?></h5>
@@ -800,12 +800,12 @@ $ht = $home_text[$lang];
                     <?php $area_images = ['city_dhaka.png','city_ctg.png','city_sylhet.png','city_general.png']; $ai=0; ?>
                     <?php while ($area = mysqli_fetch_assoc($top_areas_result)): ?>
                         <div class="col-lg-3 col-md-6">
-                            <div class="area-card-v3" style="background-image: url('/assets/image/<?php echo $area_images[$ai % 4]; ?>');">
+                            <div class="area-card-v3" style="background-image: url('assets/image/<?php echo $area_images[$ai % 4]; ?>');">
                                 <div class="area-overlay">
                                     <div class="area-icon-v3"><i class="fa-solid fa-location-dot"></i></div>
                                     <h5><?php echo htmlspecialchars($area['location']); ?></h5>
                                     <div class="area-count"><?php echo (int)$area['total_jobs']; ?> <?php echo $ht['jobs_count_suffix']; ?></div>
-                                    <a href="/jobseeker/jobs.php" class="btn btn-sm btn-light mt-3 fw-bold rounded-pill px-3 shadow-sm text-primary"><?php echo $ht['view_jobs']; ?></a>
+                                    <a href="jobseeker/jobs.php" class="btn btn-sm btn-light mt-3 fw-bold rounded-pill px-3 shadow-sm text-primary"><?php echo $ht['view_jobs']; ?></a>
                                 </div>
                             </div>
                         </div>
@@ -825,49 +825,49 @@ $ht = $home_text[$lang];
             </div>
             <div class="row g-4">
                 <div class="col-lg-4 col-md-6 mb-4">
-                    <a href="/cv_guide.php" class="text-decoration-none text-dark d-block hover-lift">
+                    <a href="cv_guide.php" class="text-decoration-none text-dark d-block hover-lift">
                         <div class="resource-card-v2 p-0 overflow-hidden text-start bg-white border-0">
-                            <img src="/assets/image/cv_guide.png" style="width:100%; height:220px; object-fit:cover;" alt="CV Guide">
+                            <img src="assets/image/cv_guide.png" style="width:100%; height:220px; object-fit:cover;" alt="CV Guide">
                             <div class="p-4"><h5 class="fw-bold mb-2"><?php echo $ht['cv_guide']; ?></h5><p class="text-muted small mb-0"><?php echo $ht['cv_guide_sub']; ?></p></div>
                         </div>
                     </a>
                 </div>
                 <div class="col-lg-4 col-md-6 mb-4">
-                    <a href="/interview_tips.php" class="text-decoration-none text-dark d-block hover-lift">
+                    <a href="interview_tips.php" class="text-decoration-none text-dark d-block hover-lift">
                         <div class="resource-card-v2 p-0 overflow-hidden text-start bg-white border-0">
-                            <img src="/assets/image/interview_tips.png" style="width:100%; height:220px; object-fit:cover;" alt="Interview Tips">
+                            <img src="assets/image/interview_tips.png" style="width:100%; height:220px; object-fit:cover;" alt="Interview Tips">
                             <div class="p-4"><h5 class="fw-bold mb-2"><?php echo $ht['interview_tips']; ?></h5><p class="text-muted small mb-0"><?php echo $ht['interview_tips_sub']; ?></p></div>
                         </div>
                     </a>
                 </div>
                 <div class="col-lg-4 col-md-6 mb-4">
-                    <a href="/trainings.php" class="text-decoration-none text-dark d-block hover-lift">
+                    <a href="trainings.php" class="text-decoration-none text-dark d-block hover-lift">
                         <div class="resource-card-v2 p-0 overflow-hidden text-start bg-white border-0">
-                            <img src="/assets/image/skill_dev.png" style="width:100%; height:220px; object-fit:cover;" alt="Skill Development">
+                            <img src="assets/image/skill_dev.png" style="width:100%; height:220px; object-fit:cover;" alt="Skill Development">
                             <div class="p-4"><h5 class="fw-bold mb-2"><?php echo $ht['skill_dev']; ?></h5><p class="text-muted small mb-0"><?php echo $ht['skill_dev_sub']; ?></p></div>
                         </div>
                     </a>
                 </div>
                 <div class="col-lg-4 col-md-6 mb-4">
-                    <a href="/career_counseling.php" class="text-decoration-none text-dark d-block hover-lift">
+                    <a href="career_counseling.php" class="text-decoration-none text-dark d-block hover-lift">
                         <div class="resource-card-v2 p-0 overflow-hidden text-start bg-white border-0">
-                            <img src="/assets/image/career_counseling.png" style="width:100%; height:220px; object-fit:cover;" alt="Career Counseling">
+                            <img src="assets/image/career_counseling.png" style="width:100%; height:220px; object-fit:cover;" alt="Career Counseling">
                             <div class="p-4"><h5 class="fw-bold mb-2"><?php echo $ht['career_counsel']; ?></h5><p class="text-muted small mb-0"><?php echo $ht['career_counsel_sub']; ?></p></div>
                         </div>
                     </a>
                 </div>
                 <div class="col-lg-4 col-md-6 mb-4">
-                    <a href="/entrepreneur_support.php" class="text-decoration-none text-dark d-block hover-lift">
+                    <a href="entrepreneur_support.php" class="text-decoration-none text-dark d-block hover-lift">
                         <div class="resource-card-v2 p-0 overflow-hidden text-start bg-white border-0">
-                            <img src="/assets/image/entrepreneur.png" style="width:100%; height:220px; object-fit:cover;" alt="Entrepreneur Support">
+                            <img src="assets/image/entrepreneur.png" style="width:100%; height:220px; object-fit:cover;" alt="Entrepreneur Support">
                             <div class="p-4"><h5 class="fw-bold mb-2"><?php echo $ht['entrepreneur']; ?></h5><p class="text-muted small mb-0"><?php echo $ht['entrepreneur_sub']; ?></p></div>
                         </div>
                     </a>
                 </div>
                 <div class="col-lg-4 col-md-6 mb-4">
-                    <a href="/jobseeker/partner_finder.php" class="text-decoration-none text-dark d-block hover-lift">
+                    <a href="jobseeker/partner_finder.php" class="text-decoration-none text-dark d-block hover-lift">
                         <div class="resource-card-v2 p-0 overflow-hidden text-start bg-white border-0">
-                            <img src="/assets/image/partner_finder.png" style="width:100%; height:220px; object-fit:cover;" alt="Partner Finder">
+                            <img src="assets/image/partner_finder.png" style="width:100%; height:220px; object-fit:cover;" alt="Partner Finder">
                             <div class="p-4"><h5 class="fw-bold mb-2"><?php echo $ht['partner_finder']; ?></h5><p class="text-muted small mb-0"><?php echo $ht['partner_finder_sub']; ?></p></div>
                         </div>
                     </a>
