@@ -10,7 +10,7 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
- 
+
 # XAMPP / Local Logs
 error_log
 access_log
