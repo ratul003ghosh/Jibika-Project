@@ -2,242 +2,448 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-require_once('assets/config/db.php');
-
-if (!function_exists('translateNumber')) {
-    function translateNumber($num, $lang) {
-        if ($lang == 'bn') {
-            $eng_nums = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-            $bng_nums = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-            return str_replace($eng_nums, $bng_nums, (string)$num);
-        }
-        return $num;
-    }
-}
+include('assets/config/db.php');
 
 if (isset($_GET['lang'])) {
     $_SESSION['lang'] = $_GET['lang'] === 'en' ? 'en' : 'bn';
 }
 $lang = $_SESSION['lang'] ?? 'bn';
 
-$s_text = [
-    'en' => [
-        'title' => 'National Employment Statistics',
-        'sub' => 'Real-time data visualization of jobs, skills, and platform engagement across Bangladesh.',
-        'kpi1' => 'Registered Seekers',
-        'kpi2' => 'Verified Employers',
-        'kpi3' => 'Active Job Postings',
-        'kpi4' => 'Total Hires (2026)',
-        'chart1' => 'Employment by Sector (2026)',
-        'chart2' => 'Job Seekers by Division',
-        'chart3' => 'Monthly Job Postings Trend',
-        'table_title' => 'Top Hiring Industries',
-        'th_ind' => 'Industry',
-        'th_emp' => 'Active Employers',
-        'th_hires' => 'Total Hires',
-        'ind1' => 'Garments & Textile',
-        'ind2' => 'IT & Software',
-        'ind3' => 'Construction',
-        'ind4' => 'Agriculture',
-        'ind5' => 'Healthcare',
-        // Chart JS Labels
-        'lbl_jobs_filled' => 'Number of Jobs Filled',
-        'lbl_new_jobs' => 'New Job Postings',
-        'sectors' => ['Garments', 'IT & Tech', 'Agriculture', 'Construction', 'Healthcare', 'Education'],
-        'divisions' => ['Dhaka', 'Chittagong', 'Rajshahi', 'Khulna', 'Sylhet', 'Others'],
-        'months' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
-    ],
-    'bn' => [
-        'title' => 'জাতীয় কর্মসংস্থান পরিসংখ্যান',
-        'sub' => 'সারা বাংলাদেশে চাকরি, দক্ষতা এবং প্ল্যাটফর্মে নিযুক্তির রিয়েল-টাইম ডেটা ভিজ্যুয়ালাইজেশন।',
-        'kpi1' => 'নিবন্ধিত চাকরিপ্রার্থী',
-        'kpi2' => 'যাচাইকৃত নিয়োগকর্তা',
-        'kpi3' => 'সক্রিয় চাকরির পোস্টিং',
-        'kpi4' => 'মোট নিয়োগ (২০২৬)',
-        'chart1' => 'খাতভিত্তিক কর্মসংস্থান (২০২৬)',
-        'chart2' => 'বিভাগ অনুযায়ী চাকরিপ্রার্থী',
-        'chart3' => 'মাসিক চাকরির পোস্টিংয়ের ধারা',
-        'table_title' => 'শীর্ষ নিয়োগকারী শিল্প',
-        'th_ind' => 'শিল্প',
-        'th_emp' => 'সক্রিয় নিয়োগকর্তা',
-        'th_hires' => 'মোট নিয়োগ',
-        'ind1' => 'গার্মেন্টস ও টেক্সটাইল',
-        'ind2' => 'আইটি এবং সফটওয়্যার',
-        'ind3' => 'নির্মাণ',
-        'ind4' => 'কৃষি',
-        'ind5' => 'স্বাস্থ্যসেবা',
-        // Chart JS Labels
-        'lbl_jobs_filled' => 'পূরণকৃত চাকরির সংখ্যা',
-        'lbl_new_jobs' => 'নতুন চাকরির পোস্টিং',
-        'sectors' => ['গার্মেন্টস', 'আইটি ও টেক', 'কৃষি', 'নির্মাণ', 'স্বাস্থ্যসেবা', 'শিক্ষা'],
-        'divisions' => ['ঢাকা', 'চট্টগ্রাম', 'রাজশাহী', 'খুলনা', 'সিলেট', 'অন্যান্য'],
-        'months' => ['জানু', 'ফেব্রু', 'মার্চ', 'এপ্রিল', 'মে', 'জুন']
-    ]
+
+
+$stats_en = [
+    'title' => 'National Employment Intelligence',
+    'subtitle' => 'Real-time macro analytics and workforce distribution across Bangladesh.',
+    'global_filters' => 'Global Filters',
+    'all_div' => 'All Divisions',
+    'all_dist' => 'All Districts',
+    'all_ind' => 'All Industries',
+    'all_type' => 'All Job Types',
+    'kpi1' => 'Registered Seekers',
+    'kpi2' => 'Verified Employers',
+    'kpi3' => 'Active Job Postings',
+    'kpi4' => 'Total Placements',
+    'pulse' => 'Employment Pulse',
+    'p1' => 'Today\'s Active Jobs',
+    'p2' => 'New Jobs This Month',
+    'p3' => 'Most In-Demand',
+    'p4' => 'Most Active District',
+    'p5' => 'Placement Rate',
+    'trends' => 'Employment Trends',
+    '6m' => '6M',
+    '12m' => '12M',
+    'all_time' => 'All Time',
+    'geo' => 'Geographic Insights (Division Wise)',
+    'map' => 'Map Coming Soon',
+    'type' => 'Job Type Distribution',
+    'skills' => 'Top 10 In-Demand Skills',
+    'ind' => 'Industry Insights',
+    'export' => 'Export',
+    'th1' => 'Industry Name',
+    'th2' => 'Active Employers',
+    'th3' => 'Total Hires',
+    'th4' => 'Avg. Salary',
+    'th5' => 'Growth Trend',
+    'imp1' => 'Jibika Platform Impact',
+    'imp2' => 'People Employed',
+    'imp3' => 'Districts Covered',
+    'imp4' => 'Applications Processed',
+    'd_dhaka' => 'Dhaka',
+    'd_ctg' => 'Chittagong',
+    'd_raj' => 'Rajshahi',
+    'd_khu' => 'Khulna',
+    'd_syl' => 'Sylhet',
+    'd_bar' => 'Barishal',
+    'd_rng' => 'Rangpur',
+    'd_mym' => 'Mymensingh',
+    'i_it' => 'IT & Software',
+    'i_gar' => 'Garments & Textile',
+    'i_con' => 'Construction',
+    'i_agr' => 'Agriculture',
+    'i_hea' => 'Healthcare',
+    't_ft' => 'Full-Time',
+    't_pt' => 'Part-Time',
+    't_in' => 'Internship',
+    't_rm' => 'Remote',
+    't_dl' => 'Day Labor',
+    'c_post' => 'Job Postings',
+    'c_place' => 'Placements',
+    'c_act' => 'Active Jobs',
+    'c_seek' => 'Job Seekers',
+    'c_dem' => 'Demand Index',
+    'months' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    'sk_list' => ['Python', 'Excel', 'Digital Mkt.', 'Graphic Design', 'Java', 'Accounting', 'Data Entry', 'Driving', 'Nursing', 'Plumbing']
 ];
-$st = $s_text[$lang];
 
-include('includes/header.php');
-include('includes/navbar.php');
+$stats_bn = [
+    'title' => 'জাতীয় কর্মসংস্থান বুদ্ধিমত্তা',
+    'subtitle' => 'সারা বাংলাদেশে রিয়েল-টাইম ম্যাক্রো বিশ্লেষণ এবং কর্মশক্তি বন্টন।',
+    'global_filters' => 'গ্লোবাল ফিল্টার',
+    'all_div' => 'সকল বিভাগ',
+    'all_dist' => 'সকল জেলা',
+    'all_ind' => 'সকল শিল্প',
+    'all_type' => 'সকল কাজের ধরন',
+    'kpi1' => 'নিবন্ধিত চাকরিপ্রার্থী',
+    'kpi2' => 'যাচাইকৃত নিয়োগকর্তা',
+    'kpi3' => 'সক্রিয় চাকরির পোস্টিং',
+    'kpi4' => 'মোট নিয়োগ',
+    'pulse' => 'কর্মসংস্থান পালস',
+    'p1' => 'আজকের সক্রিয় চাকরি',
+    'p2' => 'এই মাসে নতুন চাকরি',
+    'p3' => 'সবচেয়ে বেশি চাহিদা',
+    'p4' => 'সবচেয়ে সক্রিয় জেলা',
+    'p5' => 'নিয়োগের হার',
+    'trends' => 'কর্মসংস্থানের প্রবণতা',
+    '6m' => '৬ মাস',
+    '12m' => '১২ মাস',
+    'all_time' => 'সব সময়',
+    'geo' => 'ভৌগলিক অন্তর্দৃষ্টি (বিভাগ অনুযায়ী)',
+    'map' => 'ম্যাপ শীঘ্রই আসছে',
+    'type' => 'কাজের ধরন বন্টন',
+    'skills' => 'শীর্ষ ১০টি চাহিদাসম্পন্ন দক্ষতা',
+    'ind' => 'শিল্পের অন্তর্দৃষ্টি',
+    'export' => 'এক্সপোর্ট',
+    'th1' => 'শিল্পের নাম',
+    'th2' => 'সক্রিয় নিয়োগকর্তা',
+    'th3' => 'মোট নিয়োগ',
+    'th4' => 'গড় বেতন',
+    'th5' => 'বৃদ্ধির ধারা',
+    'imp1' => 'জীবিকা প্ল্যাটফর্মের প্রভাব',
+    'imp2' => 'কর্মসংস্থানপ্রাপ্ত মানুষ',
+    'imp3' => 'অন্তর্ভুক্ত জেলা',
+    'imp4' => 'আবেদন প্রক্রিয়া সম্পন্ন',
+    'd_dhaka' => 'ঢাকা',
+    'd_ctg' => 'চট্টগ্রাম',
+    'd_raj' => 'রাজশাহী',
+    'd_khu' => 'খুলনা',
+    'd_syl' => 'সিলেট',
+    'd_bar' => 'বরিশাল',
+    'd_rng' => 'রংপুর',
+    'd_mym' => 'ময়মনসিংহ',
+    'i_it' => 'আইটি এবং সফটওয়্যার',
+    'i_gar' => 'গার্মেন্টস ও টেক্সটাইল',
+    'i_con' => 'নির্মাণ',
+    'i_agr' => 'কৃষি',
+    'i_hea' => 'স্বাস্থ্যসেবা',
+    't_ft' => 'ফুল-টাইম',
+    't_pt' => 'পার্ট-টাইম',
+    't_in' => 'ইন্টার্নশিপ',
+    't_rm' => 'রিমোট',
+    't_dl' => 'দিনমজুর',
+    'c_post' => 'চাকরির পোস্টিং',
+    'c_place' => 'নিয়োগ',
+    'c_act' => 'সক্রিয় চাকরি',
+    'c_seek' => 'চাকরিপ্রার্থী',
+    'c_dem' => 'চাহিদা সূচক',
+    'months' => ['জানু', 'ফেব্রু', 'মার্চ', 'এপ্রিল', 'মে', 'জুন'],
+    'sk_list' => ['পাইথন', 'এক্সেল', 'ডিজিটাল মার্কেটিং', 'গ্রাফিক ডিজাইন', 'জাভা', 'অ্যাকাউন্টিং', 'ডেটা এন্ট্রি', 'ড্রাইভিং', 'নার্সিং', 'প্লাম্বিং']
+];
+
+$stats_t = $lang === 'en' ? $stats_en : $stats_bn;
 ?>
+<?php include('includes/header.php'); ?>
+<?php include('includes/navbar.php'); ?>
 
-<!-- Include Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<div class="container-fluid px-4 px-lg-5 py-5 mt-3 mb-5">
-    <div class="row mb-5">
-        <div class="col-12">
-            <h2 class="fw-bold" style="color: #006a4e; margin-bottom: 5px;"><?php echo $st['title']; ?></h2>
-            <div style="width: 60px; height: 4px; background-color: #f42a41; margin-bottom: 15px;"></div>
-            <p class="text-muted fs-5"><?php echo $st['sub']; ?></p>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--bg);
+        color: #1F2937;
+    }
+    .dashboard-header { background: #152334; color: white; padding: 3rem 0; margin-bottom: -50px; padding-bottom: 80px; }
+    .filter-bar { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 1rem; padding: 1.5rem; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); margin-top: -30px; position: relative; z-index: 10; border: 1px solid rgba(0,0,0,0.05); }
+    .dash-card { background: #ffffff; border-radius: 1rem; border: none; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); transition: transform 0.2s, box-shadow 0.2s; height: 100%; overflow: hidden; }
+    .dash-card:hover { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+    .dash-card-header { background: transparent; border-bottom: 1px solid #f1f5f9; padding: 1.5rem 1.5rem 1rem; font-weight: 700; color: #152334; display: flex; justify-content: space-between; align-items: center; }
+    .dash-card-body { padding: 1.5rem; }
+    .kpi-card { padding: 1.5rem; position: relative; }
+    .kpi-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+    .kpi-value { font-size: 2.25rem; font-weight: 800; color: #152334; margin: 0.5rem 0; }
+    .kpi-label { color: #64748b; font-weight: 600; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    .kpi-growth { font-size: 0.875rem; font-weight: 600; padding: 0.25rem 0.75rem; border-radius: 50px; }
+    .bg-emerald-light { background: #e6f7f1; color: #129B6F; }
+    .bg-navy-light { background: #e2e8f0; color: #152334; }
+    .bg-warning-light { background: #fef3c7; color: #d97706; }
+    .bg-info-light { background: #e0f2fe; color: #0284c7; }
+    .text-emerald { color: #129B6F; }
+    .pulse-item { border-bottom: 1px solid #f1f5f9; padding: 1rem 0; }
+    .pulse-item:last-child { border-bottom: none; }
+    .pulse-value { font-weight: 700; color: #152334; }
+    .pulse-label { color: #64748b; font-size: 0.9rem; }
+    .impact-section { background: linear-gradient(135deg, #129B6F 0%, #152334 100%); color: white; padding: 5rem 0; border-radius: 1rem; margin-top: 3rem; margin-bottom: 3rem; }
+    .impact-counter { font-size: 3.5rem; font-weight: 900; margin-bottom: 0.5rem; }
+    .table-progress { height: 8px; border-radius: 4px; background: #f1f5f9; overflow: hidden; }
+    .table-progress-bar { height: 100%; border-radius: 4px; }
+</style>
+
+<div class="dashboard-header">
+    <div class="container-fluid px-4 px-xl-5">
+        <h1 class="fw-bold mb-2"><?= $stats_t['title'] ?></h1>
+        <p class="fs-5 opacity-75 mb-0"><?= $stats_t['subtitle'] ?></p>
+    </div>
+</div>
+
+<div class="container-fluid px-4 px-xl-5 pb-5">
+
+    <div class="filter-bar mb-5">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-2 fw-bold text-muted">
+                <i class="fa-solid fa-filter me-2"></i> <?= $stats_t['global_filters'] ?>
+            </div>
+            <div class="col-md-2">
+                <select class="form-select form-select-sm border-0 bg-light">
+                    <option><?= $stats_t['all_div'] ?></option>
+                    <option><?= $stats_t['d_dhaka'] ?></option>
+                    <option><?= $stats_t['d_ctg'] ?></option>
+                    <option><?= $stats_t['d_raj'] ?></option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select class="form-select form-select-sm border-0 bg-light">
+                    <option><?= $stats_t['all_dist'] ?></option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select class="form-select form-select-sm border-0 bg-light">
+                    <option><?= $stats_t['all_ind'] ?></option>
+                    <option><?= $stats_t['i_it'] ?></option>
+                    <option><?= $stats_t['i_gar'] ?></option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select class="form-select form-select-sm border-0 bg-light">
+                    <option><?= $stats_t['all_type'] ?></option>
+                    <option><?= $stats_t['t_ft'] ?></option>
+                    <option><?= $stats_t['t_pt'] ?></option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select class="form-select form-select-sm border-0 bg-light">
+                    <option><?= translateNumber('2026', $lang) ?></option>
+                    <option><?= translateNumber('2025', $lang) ?></option>
+                </select>
+            </div>
         </div>
     </div>
 
-    <!-- Top KPI Cards -->
-    <div class="row g-4 mb-5">
+    <div class="row g-4 mb-4">
         <div class="col-xl-3 col-md-6">
-            <div class="card border-0 shadow-sm h-100 rounded-3 border-start border-success border-4 py-2">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <p class="text-muted text-uppercase small fw-bold mb-1"><?php echo $st['kpi1']; ?></p>
-                            <h3 class="fw-bold text-dark mb-0"><?php echo translateNumber('125,430', $lang); ?></h3>
-                        </div>
-                        <div class="bg-success bg-opacity-10 rounded p-3 text-success">
-                            <i class="fa-solid fa-users fs-3"></i>
-                        </div>
+            <div class="dash-card">
+                <div class="kpi-card border-top border-4 border-success rounded-top">
+                    <div class="d-flex justify-content-between">
+                        <div class="kpi-icon bg-emerald-light"><i class="fa-solid fa-users"></i></div>
+                        <div class="kpi-growth bg-success-subtle text-success"><i class="fa-solid fa-arrow-trend-up"></i> <?= translateNumber('+12.5%', $lang) ?></div>
                     </div>
+                    <div class="kpi-value mt-3"><?= translateNumber('125,430', $lang) ?></div>
+                    <div class="kpi-label"><?= $stats_t['kpi1'] ?></div>
                 </div>
             </div>
         </div>
         <div class="col-xl-3 col-md-6">
-            <div class="card border-0 shadow-sm h-100 rounded-3 border-start border-primary border-4 py-2">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <p class="text-muted text-uppercase small fw-bold mb-1"><?php echo $st['kpi2']; ?></p>
-                            <h3 class="fw-bold text-dark mb-0"><?php echo translateNumber('8,450', $lang); ?></h3>
-                        </div>
-                        <div class="bg-primary bg-opacity-10 rounded p-3 text-primary">
-                            <i class="fa-solid fa-building fs-3"></i>
-                        </div>
+            <div class="dash-card">
+                <div class="kpi-card border-top border-4 border-primary rounded-top">
+                    <div class="d-flex justify-content-between">
+                        <div class="kpi-icon bg-navy-light"><i class="fa-solid fa-building"></i></div>
+                        <div class="kpi-growth bg-success-subtle text-success"><i class="fa-solid fa-arrow-trend-up"></i> <?= translateNumber('+5.2%', $lang) ?></div>
                     </div>
+                    <div class="kpi-value mt-3"><?= translateNumber('8,450', $lang) ?></div>
+                    <div class="kpi-label"><?= $stats_t['kpi2'] ?></div>
                 </div>
             </div>
         </div>
         <div class="col-xl-3 col-md-6">
-            <div class="card border-0 shadow-sm h-100 rounded-3 border-start border-danger border-4 py-2">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <p class="text-muted text-uppercase small fw-bold mb-1"><?php echo $st['kpi3']; ?></p>
-                            <h3 class="fw-bold text-dark mb-0"><?php echo translateNumber('14,200', $lang); ?></h3>
-                        </div>
-                        <div class="bg-danger bg-opacity-10 rounded p-3 text-danger">
-                            <i class="fa-solid fa-briefcase fs-3"></i>
-                        </div>
+            <div class="dash-card">
+                <div class="kpi-card border-top border-4 border-warning rounded-top">
+                    <div class="d-flex justify-content-between">
+                        <div class="kpi-icon bg-warning-light"><i class="fa-solid fa-briefcase"></i></div>
+                        <div class="kpi-growth bg-success-subtle text-success"><i class="fa-solid fa-arrow-trend-up"></i> <?= translateNumber('+18.1%', $lang) ?></div>
                     </div>
+                    <div class="kpi-value mt-3"><?= translateNumber('14,200', $lang) ?></div>
+                    <div class="kpi-label"><?= $stats_t['kpi3'] ?></div>
                 </div>
             </div>
         </div>
         <div class="col-xl-3 col-md-6">
-            <div class="card border-0 shadow-sm h-100 rounded-3 border-start border-warning border-4 py-2">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <p class="text-muted text-uppercase small fw-bold mb-1"><?php echo $st['kpi4']; ?></p>
-                            <h3 class="fw-bold text-dark mb-0"><?php echo translateNumber('62,890', $lang); ?></h3>
-                        </div>
-                        <div class="bg-warning bg-opacity-10 rounded p-3 text-warning">
-                            <i class="fa-solid fa-handshake fs-3"></i>
-                        </div>
+            <div class="dash-card">
+                <div class="kpi-card border-top border-4 border-info rounded-top">
+                    <div class="d-flex justify-content-between">
+                        <div class="kpi-icon bg-info-light"><i class="fa-solid fa-handshake"></i></div>
+                        <div class="kpi-growth bg-success-subtle text-success"><i class="fa-solid fa-arrow-trend-up"></i> <?= translateNumber('+22.4%', $lang) ?></div>
                     </div>
+                    <div class="kpi-value mt-3"><?= translateNumber('62,890', $lang) ?></div>
+                    <div class="kpi-label"><?= $stats_t['kpi4'] ?></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Charts Section -->
-    <div class="row g-4 mb-5">
-        <!-- Bar Chart -->
-        <div class="col-lg-8">
-            <div class="card border-0 shadow-sm rounded-3 h-100">
-                <div class="card-header bg-white py-3 border-bottom">
-                    <h6 class="fw-bold text-dark mb-0"><?php echo $st['chart1']; ?></h6>
+    <div class="row g-4 mb-4">
+        <div class="col-lg-4">
+            <div class="dash-card">
+                <div class="dash-card-header">
+                    <span><?= $stats_t['pulse'] ?></span>
+                    <i class="fa-solid fa-heart-pulse text-danger"></i>
                 </div>
-                <div class="card-body p-4">
-                    <canvas id="sectorChart" height="100"></canvas>
+                <div class="dash-card-body">
+                    <div class="pulse-item d-flex justify-content-between align-items-center">
+                        <span class="pulse-label"><i class="fa-solid fa-clock me-2 text-muted"></i><?= $stats_t['p1'] ?></span>
+                        <span class="pulse-value fs-5"><?= translateNumber('1,245', $lang) ?></span>
+                    </div>
+                    <div class="pulse-item d-flex justify-content-between align-items-center">
+                        <span class="pulse-label"><i class="fa-solid fa-calendar-plus me-2 text-muted"></i><?= $stats_t['p2'] ?></span>
+                        <span class="pulse-value fs-5 text-success"><?= translateNumber('+4,820', $lang) ?></span>
+                    </div>
+                    <div class="pulse-item d-flex justify-content-between align-items-center">
+                        <span class="pulse-label"><i class="fa-solid fa-industry me-2 text-muted"></i><?= $stats_t['p3'] ?></span>
+                        <span class="pulse-value"><span class="badge bg-navy-light text-dark"><?= $stats_t['i_it'] ?></span></span>
+                    </div>
+                    <div class="pulse-item d-flex justify-content-between align-items-center">
+                        <span class="pulse-label"><i class="fa-solid fa-location-dot me-2 text-muted"></i><?= $stats_t['p4'] ?></span>
+                        <span class="pulse-value"><?= $stats_t['d_dhaka'] ?></span>
+                    </div>
+                    <div class="pulse-item d-flex justify-content-between align-items-center">
+                        <span class="pulse-label"><i class="fa-solid fa-chart-line me-2 text-muted"></i><?= $stats_t['p5'] ?></span>
+                        <span class="pulse-value text-emerald"><?= translateNumber('78.4%', $lang) ?></span>
+                    </div>
                 </div>
             </div>
         </div>
         
-        <!-- Doughnut Chart -->
-        <div class="col-lg-4">
-            <div class="card border-0 shadow-sm rounded-3 h-100">
-                <div class="card-header bg-white py-3 border-bottom">
-                    <h6 class="fw-bold text-dark mb-0"><?php echo $st['chart2']; ?></h6>
+        <div class="col-lg-8">
+            <div class="dash-card">
+                <div class="dash-card-header">
+                    <span><?= $stats_t['trends'] ?></span>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-secondary active"><?= $stats_t['6m'] ?></button>
+                        <button class="btn btn-outline-secondary"><?= $stats_t['12m'] ?></button>
+                        <button class="btn btn-outline-secondary"><?= $stats_t['all_time'] ?></button>
+                    </div>
                 </div>
-                <div class="card-body p-4 d-flex justify-content-center align-items-center">
-                    <canvas id="regionChart" height="250"></canvas>
+                <div class="dash-card-body" style="position: relative; height: 350px; width: 100%;">
+                    <canvas id="trendsChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Additional Data Section -->
-    <div class="row g-4">
-        <!-- Line Chart -->
-        <div class="col-lg-6">
-            <div class="card border-0 shadow-sm rounded-3 h-100">
-                <div class="card-header bg-white py-3 border-bottom">
-                    <h6 class="fw-bold text-dark mb-0"><?php echo $st['chart3']; ?></h6>
+    <div class="row g-4 mb-4">
+        <div class="col-lg-8">
+            <div class="dash-card">
+                <div class="dash-card-header">
+                    <span><?= $stats_t['geo'] ?></span>
+                    <span class="badge bg-success-subtle text-success"><?= $stats_t['map'] ?></span>
                 </div>
-                <div class="card-body p-4">
-                    <canvas id="trendChart" height="150"></canvas>
+                <div class="dash-card-body" style="position: relative; height: 350px; width: 100%;">
+                    <canvas id="geoChart"></canvas>
                 </div>
             </div>
         </div>
-
-        <!-- Top Industries Table -->
-        <div class="col-lg-6">
-            <div class="card border-0 shadow-sm rounded-3 h-100">
-                <div class="card-header bg-white py-3 border-bottom">
-                    <h6 class="fw-bold text-dark mb-0"><?php echo $st['table_title']; ?></h6>
+        <div class="col-lg-4">
+            <div class="dash-card">
+                <div class="dash-card-header">
+                    <span><?= $stats_t['type'] ?></span>
                 </div>
-                <div class="card-body p-0">
+                <div class="dash-card-body d-flex justify-content-center align-items-center" style="position: relative; height: 350px; width: 100%;">
+                    <canvas id="jobTypeChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-lg-5">
+            <div class="dash-card">
+                <div class="dash-card-header">
+                    <span><?= $stats_t['skills'] ?></span>
+                </div>
+                <div class="dash-card-body" style="position: relative; height: 400px; width: 100%;">
+                    <canvas id="skillsChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-7">
+            <div class="dash-card">
+                <div class="dash-card-header">
+                    <span><?= $stats_t['ind'] ?></span>
+                    <button class="btn btn-sm btn-light border"><i class="fa-solid fa-download"></i> <?= $stats_t['export'] ?></button>
+                </div>
+                <div class="dash-card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0 align-middle">
-                            <thead class="table-light text-muted">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light text-muted" style="font-size: 0.85rem; text-transform: uppercase;">
                                 <tr>
-                                    <th class="ps-4 py-3"><?php echo $st['th_ind']; ?></th>
-                                    <th class="py-3"><?php echo $st['th_emp']; ?></th>
-                                    <th class="text-end pe-4 py-3"><?php echo $st['th_hires']; ?></th>
+                                    <th class="ps-4 py-3"><?= $stats_t['th1'] ?></th>
+                                    <th class="py-3"><?= $stats_t['th2'] ?></th>
+                                    <th class="py-3"><?= $stats_t['th3'] ?></th>
+                                    <th class="py-3"><?= $stats_t['th4'] ?></th>
+                                    <th class="pe-4 py-3" style="width: 150px;"><?= $stats_t['th5'] ?></th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody class="border-top-0">
                                 <tr>
-                                    <td class="ps-4 fw-bold text-dark"><i class="fa-solid fa-shirt text-warning me-2"></i><?php echo $st['ind1']; ?></td>
-                                    <td><?php echo translateNumber('1,240', $lang); ?></td>
-                                    <td class="text-end pe-4 text-success fw-bold"><?php echo translateNumber('25,430', $lang); ?></td>
+                                    <td class="ps-4 fw-bold"><i class="fa-solid fa-shirt text-warning me-2"></i><?= $stats_t['i_gar'] ?></td>
+                                    <td><?= translateNumber('1,240', $lang) ?></td>
+                                    <td class="text-success fw-bold"><?= translateNumber('25,430', $lang) ?></td>
+                                    <td class="text-muted"><?= translateNumber('৳18,500', $lang) ?></td>
+                                    <td class="pe-4">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="small text-muted"><?= translateNumber('85%', $lang) ?></span>
+                                            <div class="table-progress flex-grow-1"><div class="table-progress-bar" style="width: 85%; background: #129B6F;"></div></div>
+                                        </div>
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td class="ps-4 fw-bold text-dark"><i class="fa-solid fa-laptop-code text-primary me-2"></i><?php echo $st['ind2']; ?></td>
-                                    <td><?php echo translateNumber('850', $lang); ?></td>
-                                    <td class="text-end pe-4 text-success fw-bold"><?php echo translateNumber('15,200', $lang); ?></td>
+                                    <td class="ps-4 fw-bold"><i class="fa-solid fa-laptop-code text-primary me-2"></i><?= $stats_t['i_it'] ?></td>
+                                    <td><?= translateNumber('850', $lang) ?></td>
+                                    <td class="text-success fw-bold"><?= translateNumber('15,200', $lang) ?></td>
+                                    <td class="text-muted"><?= translateNumber('৳45,000', $lang) ?></td>
+                                    <td class="pe-4">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="small text-muted"><?= translateNumber('92%', $lang) ?></span>
+                                            <div class="table-progress flex-grow-1"><div class="table-progress-bar" style="width: 92%; background: #129B6F;"></div></div>
+                                        </div>
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td class="ps-4 fw-bold text-dark"><i class="fa-solid fa-trowel-bricks text-secondary me-2"></i><?php echo $st['ind3']; ?></td>
-                                    <td><?php echo translateNumber('420', $lang); ?></td>
-                                    <td class="text-end pe-4 text-success fw-bold"><?php echo translateNumber('12,100', $lang); ?></td>
+                                    <td class="ps-4 fw-bold"><i class="fa-solid fa-trowel-bricks text-secondary me-2"></i><?= $stats_t['i_con'] ?></td>
+                                    <td><?= translateNumber('420', $lang) ?></td>
+                                    <td class="text-success fw-bold"><?= translateNumber('12,100', $lang) ?></td>
+                                    <td class="text-muted"><?= translateNumber('৳22,000', $lang) ?></td>
+                                    <td class="pe-4">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="small text-muted"><?= translateNumber('65%', $lang) ?></span>
+                                            <div class="table-progress flex-grow-1"><div class="table-progress-bar" style="width: 65%; background: #152334;"></div></div>
+                                        </div>
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td class="ps-4 fw-bold text-dark"><i class="fa-solid fa-tractor text-success me-2"></i><?php echo $st['ind4']; ?></td>
-                                    <td><?php echo translateNumber('310', $lang); ?></td>
-                                    <td class="text-end pe-4 text-success fw-bold"><?php echo translateNumber('8,050', $lang); ?></td>
+                                    <td class="ps-4 fw-bold"><i class="fa-solid fa-tractor text-success me-2"></i><?= $stats_t['i_agr'] ?></td>
+                                    <td><?= translateNumber('310', $lang) ?></td>
+                                    <td class="text-success fw-bold"><?= translateNumber('8,050', $lang) ?></td>
+                                    <td class="text-muted"><?= translateNumber('৳15,000', $lang) ?></td>
+                                    <td class="pe-4">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="small text-muted"><?= translateNumber('45%', $lang) ?></span>
+                                            <div class="table-progress flex-grow-1"><div class="table-progress-bar" style="width: 45%; background: #f59e0b;"></div></div>
+                                        </div>
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td class="ps-4 fw-bold text-dark"><i class="fa-solid fa-stethoscope text-danger me-2"></i><?php echo $st['ind5']; ?></td>
-                                    <td><?php echo translateNumber('280', $lang); ?></td>
-                                    <td class="text-end pe-4 text-success fw-bold"><?php echo translateNumber('6,120', $lang); ?></td>
+                                    <td class="ps-4 fw-bold"><i class="fa-solid fa-stethoscope text-danger me-2"></i><?= $stats_t['i_hea'] ?></td>
+                                    <td><?= translateNumber('280', $lang) ?></td>
+                                    <td class="text-success fw-bold"><?= translateNumber('6,120', $lang) ?></td>
+                                    <td class="text-muted"><?= translateNumber('৳35,000', $lang) ?></td>
+                                    <td class="pe-4">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="small text-muted"><?= translateNumber('78%', $lang) ?></span>
+                                            <div class="table-progress flex-grow-1"><div class="table-progress-bar" style="width: 78%; background: #129B6F;"></div></div>
+                                        </div>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -246,99 +452,145 @@ include('includes/navbar.php');
             </div>
         </div>
     </div>
+
+    <div class="impact-section text-center shadow-lg">
+        <h2 class="fw-bold mb-5"><?= $stats_t['imp1'] ?></h2>
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="impact-counter text-warning"><?= translateNumber('62K+', $lang) ?></div>
+                <div class="text-uppercase fw-bold letter-spacing-1 opacity-75"><?= $stats_t['imp2'] ?></div>
+            </div>
+            <div class="col-md-3">
+                <div class="impact-counter text-white"><?= translateNumber('64', $lang) ?></div>
+                <div class="text-uppercase fw-bold letter-spacing-1 opacity-75"><?= $stats_t['imp3'] ?></div>
+            </div>
+            <div class="col-md-3">
+                <div class="impact-counter text-white"><?= translateNumber('8.4K', $lang) ?></div>
+                <div class="text-uppercase fw-bold letter-spacing-1 opacity-75"><?= $stats_t['th2'] ?></div>
+            </div>
+            <div class="col-md-3">
+                <div class="impact-counter text-warning"><?= translateNumber('350K+', $lang) ?></div>
+                <div class="text-uppercase fw-bold letter-spacing-1 opacity-75"><?= $stats_t['imp4'] ?></div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const jsData = <?php echo json_encode($st); ?>;
+document.addEventListener("DOMContentLoaded", function() {
+    const colorEmerald = '#129B6F';
+    const colorNavy = '#152334';
+    const colorAmber = '#F59E0B';
+    const colorRed = '#dc2626';
 
-        // Bar Chart (Employment by Sector)
-        const ctxSector = document.getElementById('sectorChart').getContext('2d');
-        new Chart(ctxSector, {
-            type: 'bar',
-            data: {
-                labels: jsData.sectors,
-                datasets: [{
-                    label: jsData.lbl_jobs_filled,
-                    data: [25000, 15000, 8000, 12000, 6000, 4500],
-                    backgroundColor: [
-                        'rgba(0, 106, 78, 0.7)',  // Gov Green
-                        'rgba(244, 42, 65, 0.7)', // Gov Red
-                        'rgba(54, 162, 235, 0.7)',
-                        'rgba(255, 206, 86, 0.7)',
-                        'rgba(153, 102, 255, 0.7)',
-                        'rgba(255, 159, 64, 0.7)'
-                    ],
-                    borderWidth: 1,
-                    borderRadius: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: false }
-                },
-                scales: {
-                    y: { beginAtZero: true }
-                }
-            }
-        });
+    const t = <?php echo json_encode($stats_t); ?>;
 
-        // Doughnut Chart (Seekers by Division)
-        const ctxRegion = document.getElementById('regionChart').getContext('2d');
-        new Chart(ctxRegion, {
-            type: 'doughnut',
-            data: {
-                labels: jsData.divisions,
-                datasets: [{
-                    data: [40, 20, 15, 10, 10, 5],
-                    backgroundColor: [
-                        '#006a4e',
-                        '#f42a41',
-                        '#2c3e50',
-                        '#f39c12',
-                        '#2980b9',
-                        '#bdc3c7'
-                    ],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                cutout: '65%',
-                plugins: {
-                    legend: { position: 'bottom' }
-                }
-            }
-        });
-
-        // Line Chart (Monthly Trends)
-        const ctxTrend = document.getElementById('trendChart').getContext('2d');
-        new Chart(ctxTrend, {
-            type: 'line',
-            data: {
-                labels: jsData.months,
-                datasets: [{
-                    label: jsData.lbl_new_jobs,
-                    data: [4500, 5200, 4800, 6100, 5900, 7200],
-                    borderColor: '#f42a41',
-                    backgroundColor: 'rgba(244, 42, 65, 0.1)',
+    const ctxTrends = document.getElementById('trendsChart').getContext('2d');
+    new Chart(ctxTrends, {
+        type: 'line',
+        data: {
+            labels: t.months,
+            datasets: [
+                {
+                    label: t.c_post,
+                    data: [2500, 3200, 3800, 4100, 3900, 5200],
+                    borderColor: colorNavy,
+                    backgroundColor: colorNavy,
                     borderWidth: 2,
-                    fill: true,
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: false }
+                    tension: 0.4,
+                    yAxisID: 'y'
                 },
-                scales: {
-                    y: { beginAtZero: true }
+                {
+                    label: t.c_place,
+                    data: [1200, 1500, 2100, 2800, 3100, 4000],
+                    borderColor: colorEmerald,
+                    backgroundColor: 'rgba(18, 155, 111, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    yAxisID: 'y'
                 }
-            }
-        });
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: { legend: { position: 'top', align: 'end' } },
+            scales: { y: { type: 'linear', display: true, position: 'left', beginAtZero: true } }
+        }
     });
+
+    const ctxGeo = document.getElementById('geoChart').getContext('2d');
+    new Chart(ctxGeo, {
+        type: 'bar',
+        data: {
+            labels: [t.d_dhaka, t.d_ctg, t.d_raj, t.d_khu, t.d_syl, t.d_bar, t.d_rng, t.d_mym],
+            datasets: [
+                {
+                    label: t.c_act,
+                    data: [6500, 3200, 1800, 1500, 1200, 900, 1100, 800],
+                    backgroundColor: colorNavy,
+                    borderRadius: 4
+                },
+                {
+                    label: t.c_seek,
+                    data: [45000, 25000, 15000, 12000, 10000, 8000, 9000, 6000],
+                    backgroundColor: colorEmerald,
+                    borderRadius: 4
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'top', align: 'end' } },
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+
+    const ctxType = document.getElementById('jobTypeChart').getContext('2d');
+    new Chart(ctxType, {
+        type: 'doughnut',
+        data: {
+            labels: [t.t_ft, t.t_pt, t.t_in, t.t_rm, t.t_dl],
+            datasets: [{
+                data: [55, 15, 10, 12, 8],
+                backgroundColor: [colorNavy, colorEmerald, colorAmber, '#3b82f6', colorRed],
+                borderWidth: 0,
+                hoverOffset: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '70%',
+            plugins: { legend: { position: 'bottom' } }
+        }
+    });
+
+    const ctxSkills = document.getElementById('skillsChart').getContext('2d');
+    new Chart(ctxSkills, {
+        type: 'bar',
+        data: {
+            labels: t.sk_list,
+            datasets: [{
+                label: t.c_dem,
+                data: [95, 88, 82, 75, 70, 68, 65, 55, 50, 45],
+                backgroundColor: colorEmerald,
+                borderRadius: 4
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { x: { beginAtZero: true } }
+        }
+    });
+});
 </script>
 
 <?php include('includes/footer.php'); ?>

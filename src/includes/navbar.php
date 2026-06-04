@@ -79,83 +79,68 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 <style>
     /* ── Top Mini Bar ── */
     .gov-top-bar {
-        background-color: #f1f5f9;
-        border-bottom: 1px solid #dde3ec;
+        background-color: #05261d;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         font-size: 0.8rem;
-        padding: 6px 0;
-        color: #475569;
+        padding: 8px 0;
+        color: #94a3b8;
         letter-spacing: 0.01em;
     }
     .gov-top-bar a {
-        color: #475569;
+        color: #cbd5e1;
         text-decoration: none;
         margin-right: 14px;
         font-weight: 500;
         transition: color 0.15s;
     }
-    .gov-top-bar a:hover { color: #006a4e; }
+    .gov-top-bar a:hover { color: #34d399; }
+    .gov-top-bar .text-success {
+        color: #34d399 !important;
+    }
+    .gov-top-bar .fw-bold.text-success {
+        color: #34d399 !important;
+        border-bottom: 2px solid #34d399;
+        padding-bottom: 2px;
+    }
 
+    .main-navbar-gov {
+        background: #09372a !important;
+        border-bottom: 3px solid #e11d48;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+        padding: 12px 0 !important;
+        transition: all 0.3s ease;
+    }
+    .navbar-scrolled .main-navbar-gov {
+        padding: 8px 0 !important;
+        background: rgba(9, 55, 42, 0.96) !important;
+        backdrop-filter: blur(8px);
+    }
+    .main-navbar-gov .container-fluid {
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+    }
 
-   .main-navbar-gov {
-    background: linear-gradient(90deg, #003d2b 0%, #005c42 30%, #006a4e 65%, #007a5a 100%) !important;
-    border-bottom: 3px solid #f42a41;
-    box-shadow: 0 3px 16px rgba(0,0,0,0.22);
-    padding: 0 !important;
-}
-   .main-navbar-gov .container-fluid {
-    flex-direction: column !important;
-    align-items: stretch !important;
-}
     /* Brand (logo + title inside navbar) */
-    .nav-brand-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    padding: 8px 0;
-}
     .nav-brand-gov {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    text-decoration: none;
-    flex-shrink: 0;
-}
- .nav-brand-gov .nb-logo {
-    position: relative;
-    width: 48px;
-    height: 48px;
-    flex-shrink: 0;
-}
-    .nav-brand-gov .nb-logo-ring {
-        position: absolute; inset: 0;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        text-decoration: none;
+        flex-shrink: 0;
+    }
+    .nb-logo-img {
+        width: 48px;
+        height: 48px;
         border-radius: 50%;
-        border: 2px solid rgba(255,255,255,0.28);
-        animation: nbPulse 2.6s ease-in-out infinite;
+        object-fit: contain;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        background: #ffffff;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-    @keyframes nbPulse {
-        0%,100% { transform: scale(1);   opacity: 0.6; }
-        50%      { transform: scale(1.1); opacity: 0.12; }
-    }
-.nav-brand-gov .nb-logo-inner {
-    position: relative;
-    z-index: 1;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.15);
-    border: 2px solid rgba(255,255,255,0.45);
-    color: #ffffff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.25rem;
-    backdrop-filter: blur(4px);
-    transition: background 0.3s, transform 0.3s;
-}
-    .nav-brand-gov:hover .nb-logo-inner {
-        background: rgba(255,255,255,0.24);
-        transform: scale(1.06);
+    .nav-brand-gov:hover .nb-logo-img {
+        transform: scale(1.08);
+        box-shadow: 0 4px 12px rgba(244, 42, 65, 0.25);
     }
     .nav-brand-gov .nb-text .nb-title {
         font-size: 1.2rem;
@@ -166,7 +151,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         white-space: nowrap;
     }
     .nav-brand-gov .nb-text .nb-title .nb-accent {
-        color: #ff6b7a;
+        color: #e11d48;
     }
     .nav-brand-gov .nb-text .nb-sub {
         font-size: 0.64rem;
@@ -176,102 +161,6 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         text-transform: uppercase;
         margin-top: 2px;
         white-space: nowrap;
-    }
-    .main-navbar-gov .navbar-collapse {
-        border-top: 1px solid rgba(255, 255, 255, 0.12);
-        padding: 6px 0 8px 0;
-    }
-    .main-navbar-gov .navbar-nav {
-        display: flex;
-        margin: 0;
-        padding: 0;
-        list-style: none;
-    }
-    @media (min-width: 992px) {
-        .main-navbar-gov .navbar-nav {
-            flex-direction: row !important;
-            justify-content: flex-start;
-            gap: 6px;
-        }
-    }
-    @media (max-width: 991.98px) {
-        .main-navbar-gov .navbar-collapse {
-            border-top: 1px solid rgba(255, 255, 255, 0.12);
-            padding: 8px 0;
-        }
-        .main-navbar-gov .navbar-nav {
-            flex-direction: column !important;
-            align-items: stretch;
-            gap: 4px;
-            padding-top: 8px;
-        }
-    }
-    .main-navbar-gov .nav-item {
-        display: flex;
-        align-items: center;
-    }
-    .main-navbar-gov .nav-link {
-        color: rgba(255,255,255,0.85) !important;
-        font-weight: 500;
-        padding: 8px 14px !important;
-        font-size: 0.9rem;
-        border-radius: 6px;
-        transition: all 0.2s ease;
-        letter-spacing: 0.01em;
-        white-space: nowrap;
-    }
-    .main-navbar-gov .nav-link:hover {
-        background-color: rgba(255,255,255,0.13);
-        color: #ffffff !important;
-    }
-    .main-navbar-gov .nav-item.active .nav-link {
-        background-color: #f42a41;
-        color: #ffffff !important;
-        font-weight: 600;
-        box-shadow: 0 2px 8px rgba(244,42,65,0.4);
-    }
-
-    /* ── Top Row Info Block ── */
-    .gov-info-badge {
-        display: flex;
-        align-items: center;
-        background: rgba(255, 255, 255, 0.08);
-        border: 1px solid rgba(255, 255, 255, 0.18);
-        padding: 5px 12px;
-        border-radius: 30px;
-        color: #ffffff;
-        font-size: 0.76rem;
-        font-weight: 600;
-        letter-spacing: 0.02em;
-    }
-    .gov-info-badge i {
-        color: #ffd700;
-        font-size: 0.85rem;
-    }
-    .gov-info-divider {
-        width: 1px;
-        height: 24px;
-        background: rgba(255, 255, 255, 0.15);
-    }
-    .gov-info-stat {
-        display: flex;
-        flex-direction: column;
-        line-height: 1.1;
-    }
-    .gov-info-stat .stat-value {
-        font-size: 0.88rem;
-        font-weight: 800;
-        color: #ffd700;
-        text-align: center;
-    }
-    .gov-info-stat .stat-desc {
-        font-size: 0.62rem;
-        font-weight: 500;
-        color: rgba(255, 255, 255, 0.7);
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-        text-align: center;
-        margin-top: 1px;
     }
 
     /* ── Profile Trigger ── */
@@ -321,7 +210,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         height: 32px;
         border-radius: 50%;
         background: #ffffff;
-        color: #006a4e;
+        color: #09372a;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -347,9 +236,8 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         from { opacity: 0; transform: translateY(-6px); }
         to   { opacity: 1; transform: translateY(0); }
     }
-    /* Header card inside dropdown */
     .profile-dropdown .profile-card-header {
-        background: linear-gradient(135deg, #005c42 0%, #007a5a 100%);
+        background: linear-gradient(135deg, #09372a 0%, #10b981 100%);
         padding: 16px 18px;
         display: flex;
         align-items: center;
@@ -397,7 +285,6 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         letter-spacing: 0.06em;
         border: 1px solid rgba(255,255,255,0.3);
     }
-    /* Dropdown items */
     .profile-dropdown .drop-menu-body {
         padding: 6px 0;
     }
@@ -431,10 +318,23 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         border-top: 1px solid #e8edf3;
         margin: 2px 0;
     }
-    .icon-dashboard { background: #ecfdf5; color: #006a4e; }
+    .icon-dashboard { background: #ecfdf5; color: #09372a; }
     .icon-logout    { background: #fef2f2; color: #dc2626; }
 
     /* ── Auth Buttons ── */
+    .btn-nav-login {
+        color: #ffffff !important;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-decoration: none;
+        transition: color 0.2s ease;
+        padding: 0 10px;
+        margin-right: 8px;
+    }
+    .btn-nav-login:hover {
+        color: #f42a41 !important;
+    }
+
     .btn-nav-register {
         background-color: #198754;
         color: #ffffff !important;
@@ -443,34 +343,73 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         padding: 7px 20px !important;
         font-size: 0.9rem;
         transition: background 0.2s, box-shadow 0.2s;
+        text-decoration: none;
     }
     .btn-nav-register:hover {
-        background-color: #157347;
-        box-shadow: 0 4px 12px rgba(25,135,84,0.35);
+        background-color: #f42a41;
+        box-shadow: 0 4px 12px rgba(244,42,65,0.35);
     }
     .btn-nav-register.active-reg {
         background-color: #f42a41;
         box-shadow: 0 2px 8px rgba(244,42,65,0.4);
     }
 
-    /* Scroll transitions for premium sticky behavior */
-    .main-navbar-gov {
-        transition: all 0.3s ease-in-out;
+    /* ── 3-Bar Menu Trigger ── */
+    .btn-menu-trigger {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: #ffffff;
+        width: 42px;
+        height: 42px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.15rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
     }
-    .nav-brand-row {
-        transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out, opacity 0.2s ease-in-out;
-        max-height: 80px;
-        opacity: 1;
-        overflow: hidden;
+    .btn-menu-trigger:hover {
+        background: rgba(244, 42, 65, 0.15);
+        border-color: rgba(244, 42, 65, 0.3);
+        color: #f42a41;
+        transform: scale(1.05);
     }
-    @media (min-width: 992px) {
-        .navbar-scrolled .nav-brand-row {
-            max-height: 0;
-            padding-top: 0 !important;
-            padding-bottom: 0 !important;
-            opacity: 0;
-            pointer-events: none;
-        }
+
+    /* ── Offcanvas Sidebar Styling ── */
+    .nav-link-offcanvas {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: rgba(255, 255, 255, 0.75) !important;
+        font-weight: 500;
+        font-size: 0.95rem;
+        padding: 10px 16px;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+    .nav-link-offcanvas .icon-w {
+        width: 20px;
+        text-align: center;
+        font-size: 1.15rem;
+        color: rgba(255, 255, 255, 0.4);
+        transition: color 0.2s ease;
+    }
+    .nav-link-offcanvas:hover {
+        background: rgba(244, 42, 65, 0.08);
+        color: #f42a41 !important;
+    }
+    .nav-link-offcanvas:hover .icon-w {
+        color: #f42a41;
+    }
+    .nav-link-offcanvas.active {
+        background: rgba(244, 42, 65, 0.12) !important;
+        color: #f42a41 !important;
+        font-weight: 600;
+    }
+    .nav-link-offcanvas.active .icon-w {
+        color: #f42a41 !important;
     }
 </style>
 
@@ -490,86 +429,24 @@ $currentPage = basename($_SERVER['PHP_SELF']);
     </div>
 </div>
 
+<!-- Primary Navigation Bar -->
+<nav class="navbar navbar-dark main-navbar-gov sticky-top">
+    <div class="container-fluid px-3 px-lg-4 d-flex align-items-center justify-content-between flex-row">
 
-<!-- Navigation Bar -->
-<nav class="navbar navbar-expand-lg navbar-dark main-navbar-gov sticky-top">
-    <div class="container-fluid px-3 px-lg-4">
-
-        <!-- Top Row: Brand & Mobile Toggler -->
-        <div class="nav-brand-row">
-            <!-- Brand: Logo + Title -->
-            <a class="navbar-brand nav-brand-gov" href="<?php echo $path_prefix; ?>index.php">
-                <div class="nb-logo">
-                    <div class="nb-logo-ring"></div>
-                    <div class="nb-logo-inner">
-                        <i class="fa-solid fa-hands-holding-circle"></i>
-                    </div>
-                </div>
-                <div class="nb-text d-none d-md-block">
-                    <span class="nb-title">জীবিকা <span class="nb-accent">|</span> Jibika</span>
-                    <span class="d-block nb-sub"><?php echo $t['gov_subtitle']; ?></span>
-                </div>
-            </a>
-
-            <!-- Center/Right info block (desktop only) -->
-            <div class="d-none d-lg-flex align-items-center gap-3 ms-auto me-4">
-                <!-- Official Badge -->
-                <div class="gov-info-badge">
-                    <i class="fa-solid fa-shield-halved me-2"></i>
-                    <span><?php echo $lang == 'bn' ? 'সরকারি কর্মসংস্থান পোর্টাল' : 'Official Government Job Portal'; ?></span>
-                </div>
-                <!-- Divider -->
-                <div class="gov-info-divider"></div>
-                <!-- Stat chips -->
-                <div class="gov-info-stats d-flex align-items-center gap-3">
-                    <div class="gov-info-stat">
-                        <span class="stat-value"><?php echo $lang == 'bn' ? '৬৪+' : '64+'; ?></span>
-                        <span class="stat-desc"><?php echo $lang == 'bn' ? 'জেলা' : 'Districts'; ?></span>
-                    </div>
-                    <div class="gov-info-stat">
-                        <span class="stat-value"><?php echo $lang == 'bn' ? '৫কে+' : '5K+'; ?></span>
-                        <span class="stat-desc"><?php echo $lang == 'bn' ? 'চাকরি' : 'Jobs'; ?></span>
-                    </div>
-                    <div class="gov-info-stat">
-                        <span class="stat-value"><?php echo $lang == 'bn' ? '২৫কে+' : '25K+'; ?></span>
-                        <span class="stat-desc"><?php echo $lang == 'bn' ? 'ব্যবহারকারী' : 'Users'; ?></span>
-                    </div>
-                </div>
+        <!-- Left: Logo + Title -->
+        <a class="navbar-brand nav-brand-gov" href="<?php echo $path_prefix; ?>index.php">
+            <img src="<?php echo $path_prefix; ?>assets/images/jibika_logo.png" alt="Jibika Logo" class="nb-logo-img">
+            <div class="nb-text d-none d-md-block">
+                <span class="nb-title">জীবিকা <span class="nb-accent">|</span> Jibika</span>
+                <span class="d-block nb-sub"><?php echo $t['gov_subtitle']; ?></span>
             </div>
+        </a>
 
-            <!-- Mobile toggler -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-        </div>
-
-        <!-- Bottom Row: Collapse containing centered Nav Links -->
-        <div class="collapse navbar-collapse" id="mainNav">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item <?php echo $currentPage == 'index.php' ? 'active' : ''; ?>">
-                    <a class="nav-link" href="<?php echo $path_prefix; ?>index.php"><i class="fa-solid fa-house me-1"></i> <?php echo $t['home']; ?></a>
-                </li>
-                <li class="nav-item <?php echo $currentPage == 'about.php' ? 'active' : ''; ?>">
-                    <a class="nav-link" href="<?php echo $path_prefix; ?>about.php"><?php echo $t['about']; ?></a>
-                </li>
-                <li class="nav-item <?php echo in_array($currentPage, ['jobs.php', 'manage_jobs.php']) ? 'active' : ''; ?>">
-                    <?php if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin'): ?>
-                        <a class="nav-link" href="<?php echo $path_prefix; ?>admin/jobs.php"><?php echo $t['job_portal']; ?></a>
-                    <?php elseif (isset($_SESSION['role']) && $_SESSION['role'] == 'employer'): ?>
-                        <a class="nav-link" href="<?php echo $path_prefix; ?>employer/manage_jobs.php"><?php echo $t['job_portal']; ?></a>
-                    <?php else: ?>
-                        <a class="nav-link" href="<?php echo $path_prefix; ?>jobseeker/jobs.php"><?php echo $t['job_portal']; ?></a>
-                    <?php endif; ?>
-                </li>
-                <li class="nav-item <?php echo $currentPage == 'eservices.php' ? 'active' : ''; ?>"><a class="nav-link" href="<?php echo $path_prefix; ?>eservices.php"><?php echo $t['eservices']; ?></a></li>
-                <li class="nav-item <?php echo $currentPage == 'trainings.php' ? 'active' : ''; ?>"><a class="nav-link" href="<?php echo $path_prefix; ?>trainings.php"><?php echo $t['trainings']; ?></a></li>
-                <li class="nav-item <?php echo $currentPage == 'notice.php' ? 'active' : ''; ?>"><a class="nav-link" href="<?php echo $path_prefix; ?>notice.php"><?php echo $t['notice']; ?></a></li>
-                <li class="nav-item <?php echo $currentPage == 'statistics.php' ? 'active' : ''; ?>"><a class="nav-link" href="<?php echo $path_prefix; ?>statistics.php"><?php echo $t['statistics']; ?></a></li>
-                <li class="nav-item <?php echo $currentPage == 'contact.php' ? 'active' : ''; ?>"><a class="nav-link" href="<?php echo $path_prefix; ?>contact.php"><?php echo $t['contact']; ?></a></li>
-            </ul>
-
-            <!-- Profile / Auth links (always aligned right inside collapse on desktop) -->
-            <div class="d-flex align-items-center ms-0 ms-lg-auto mt-2 mt-lg-0 py-1 py-lg-0">
+        <!-- Right: Auth Options + 3-Bar Menu -->
+        <div class="d-flex align-items-center gap-3">
+            
+            <!-- Auth Buttons / Profile Trigger -->
+            <div class="d-flex align-items-center">
                 <?php if (isset($_SESSION['user_id']) && isset($_SESSION['role'])): ?>
                     <?php
                         $role_display = str_replace('_', ' ', $_SESSION['role']);
@@ -583,21 +460,15 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                         $initial = strtoupper(mb_substr($_SESSION['full_name'], 0, 1, 'UTF-8'));
                     ?>
                     <div class="dropdown">
-                        <!-- Pill-shaped profile trigger -->
-                        <a class="profile-trigger" href="#" id="profileDropdown"
-                           role="button" data-bs-toggle="dropdown"
-                           aria-expanded="false">
-                            <div class="d-none d-sm-block lh-1">
-                                <span class="profile-name"><?php echo htmlspecialchars($_SESSION['full_name']); ?></span>
-                                <span class="d-block profile-role"><?php echo $role_label; ?></span>
+                        <a class="profile-trigger" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="d-none d-sm-block lh-1 text-end me-1">
+                                <span class="profile-name d-block"><?php echo htmlspecialchars($_SESSION['full_name']); ?></span>
+                                <span class="profile-role" style="font-size: 0.65rem; color: #34d399; font-weight: 600;"><?php echo $role_label; ?></span>
                             </div>
                             <div class="profile-avatar"><?php echo $initial; ?></div>
-                            <i class="fa-solid fa-chevron-down profile-chevron d-none d-sm-block"></i>
+                            <i class="fa-solid fa-chevron-down profile-chevron d-none d-sm-block ms-1"></i>
                         </a>
-
-                        <!-- Professional dropdown -->
                         <div class="dropdown-menu dropdown-menu-end profile-dropdown" aria-labelledby="profileDropdown">
-                            <!-- Green identity card header -->
                             <div class="profile-card-header">
                                 <div class="drop-avatar"><?php echo $initial; ?></div>
                                 <div>
@@ -606,8 +477,6 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                                     <span class="drop-role-badge"><?php echo $role_label; ?></span>
                                 </div>
                             </div>
-
-                            <!-- Menu items -->
                             <div class="drop-menu-body">
                                 <a class="drop-item" href="<?php echo $profile_link; ?>">
                                     <span class="drop-item-icon icon-dashboard"><i class="fa-solid fa-gauge-high"></i></span>
@@ -621,18 +490,81 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                             </div>
                         </div>
                     </div>
-
                 <?php else: ?>
-                    <a class="nav-link text-white me-2 px-2" href="<?php echo $path_prefix; ?>auth/login.php"><?php echo $t['login']; ?></a>
+                    <a class="btn-nav-login" href="<?php echo $path_prefix; ?>auth/login.php"><?php echo $t['login']; ?></a>
                     <a class="btn-nav-register<?php echo $currentPage == 'register.php' ? ' active-reg' : ''; ?>" href="<?php echo $path_prefix; ?>auth/register.php">
                         <?php echo $t['register']; ?>
                     </a>
                 <?php endif; ?>
             </div>
-        </div>
 
+            <!-- 3-Bar Hamburger Menu Trigger (Triggers Offcanvas Menu) -->
+            <button class="btn-menu-trigger" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+        </div>
     </div>
 </nav>
+
+<!-- Offcanvas Sidebar Menu -->
+<div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel" style="background: #06231a !important; width: 320px; border-left: 1px solid rgba(255,255,255,0.08);">
+  <div class="offcanvas-header border-bottom border-light border-opacity-10 py-3 px-4 d-flex justify-content-between align-items-center">
+    <h5 class="offcanvas-title" id="offcanvasNavbarLabel" style="color: #34d399; font-weight: 700; font-size: 1.15rem; display: flex; align-items: center; gap: 8px;">
+        <i class="fa-solid fa-compass"></i> <?php echo $lang == 'bn' ? 'মেনু নেভিগেশন' : 'Navigation Menu'; ?>
+    </h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body p-4">
+     
+     <ul class="navbar-nav flex-column gap-2">
+         <li class="nav-item-offcanvas">
+             <a class="nav-link-offcanvas <?php echo $currentPage == 'index.php' ? 'active' : ''; ?>" href="<?php echo $path_prefix; ?>index.php">
+                 <i class="fa-solid fa-house icon-w"></i> <?php echo $t['home']; ?>
+             </a>
+         </li>
+         <li class="nav-item-offcanvas">
+             <a class="nav-link-offcanvas <?php echo $currentPage == 'about.php' ? 'active' : ''; ?>" href="<?php echo $path_prefix; ?>about.php">
+                 <i class="fa-solid fa-address-card icon-w"></i> <?php echo $t['about']; ?>
+             </a>
+         </li>
+         <li class="nav-item-offcanvas">
+             <a class="nav-link-offcanvas <?php echo in_array($currentPage, ['jobs.php', 'manage_jobs.php']) ? 'active' : ''; ?>" href="<?php echo $path_prefix; ?><?php 
+                 if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') echo 'admin/jobs.php';
+                 elseif (isset($_SESSION['role']) && $_SESSION['role'] == 'employer') echo 'employer/manage_jobs.php';
+                 else echo 'jobseeker/jobs.php';
+             ?>">
+                 <i class="fa-solid fa-briefcase icon-w"></i> <?php echo $t['job_portal']; ?>
+             </a>
+         </li>
+         <li class="nav-item-offcanvas">
+             <a class="nav-link-offcanvas <?php echo $currentPage == 'eservices.php' ? 'active' : ''; ?>" href="<?php echo $path_prefix; ?>eservices.php">
+                 <i class="fa-solid fa-server icon-w"></i> <?php echo $t['eservices']; ?>
+             </a>
+         </li>
+         <li class="nav-item-offcanvas">
+             <a class="nav-link-offcanvas <?php echo $currentPage == 'trainings.php' ? 'active' : ''; ?>" href="<?php echo $path_prefix; ?>trainings.php">
+                 <i class="fa-solid fa-graduation-cap icon-w"></i> <?php echo $t['trainings']; ?>
+             </a>
+         </li>
+         <li class="nav-item-offcanvas">
+             <a class="nav-link-offcanvas <?php echo $currentPage == 'notice.php' ? 'active' : ''; ?>" href="<?php echo $path_prefix; ?>notice.php">
+                 <i class="fa-solid fa-bullhorn icon-w"></i> <?php echo $t['notice']; ?>
+             </a>
+         </li>
+         <li class="nav-item-offcanvas">
+             <a class="nav-link-offcanvas <?php echo $currentPage == 'statistics.php' ? 'active' : ''; ?>" href="<?php echo $path_prefix; ?>statistics.php">
+                 <i class="fa-solid fa-chart-simple icon-w"></i> <?php echo $t['statistics']; ?>
+             </a>
+         </li>
+         <li class="nav-item-offcanvas">
+             <a class="nav-link-offcanvas <?php echo $currentPage == 'contact.php' ? 'active' : ''; ?>" href="<?php echo $path_prefix; ?>contact.php">
+                 <i class="fa-solid fa-envelope icon-w"></i> <?php echo $t['contact']; ?>
+             </a>
+         </li>
+     </ul>
+  </div>
+</div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {

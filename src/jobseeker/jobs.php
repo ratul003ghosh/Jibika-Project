@@ -1401,8 +1401,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
                         $already_applied = ($ch_app->get_result()->num_rows > 0);
 
                         $ch_save = $conn->prepare("SELECT id FROM saved_jobs WHERE user_id=? AND job_id=?");
-                        $ch_save->bind_param("ii", $user_id, $job_id); $ch_save->execute();
-                        $already_saved = ($ch_save->get_result()->num_rows > 0);
+                        $already_saved = false;
+                        if ($ch_save) {
+                            $ch_save->bind_param("ii", $user_id, $job_id); 
+                            $ch_save->execute();
+                            $already_saved = ($ch_save->get_result()->num_rows > 0);
+                        }
 
                         $deadline = $job['application_deadline'] ?? '';
                         $deadline_over = (!empty($deadline) && $deadline < date('Y-m-d'));

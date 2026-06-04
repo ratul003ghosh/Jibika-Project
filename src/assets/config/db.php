@@ -116,8 +116,8 @@ function translateDistrict($district, $lang) {
 
 function translateNumber($num, $lang) {
     if ($lang !== 'bn') return $num;
-    $eng_nums = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-    $bng_nums = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+    $eng_nums = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'K', 'k', '+', ',', '৳', '%'];
+    $bng_nums = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯', ' হাজার', ' হাজার', '+', ',', '৳', '%'];
     return str_replace($eng_nums, $bng_nums, (string)$num);
 }
 
