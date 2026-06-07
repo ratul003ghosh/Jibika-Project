@@ -237,24 +237,26 @@ $exp_translations = [
 
 $cat_translations = [
     'bn' => [
-        'IT & Tech' => 'আইটি ও টেক',
+        'IT & Computer' => 'আইটি ও কম্পিউটার',
         'Garments' => 'গার্মেন্টস',
         'Driving' => 'ড্রাইভিং',
         'Education' => 'শিক্ষা',
-        'Health' => 'স্বাস্থ্য',
-        'Marketing' => 'মার্কেটিং',
-        'Engineering' => 'ইঞ্জিনিয়ারিং',
-        'Finance' => 'অর্থনীতি ও অর্থ',
+        'Healthcare' => 'স্বাস্থ্যসেবা',
+        'Sales & Marketing' => 'বিক্রয় ও বিপণন',
+        'Office Support' => 'অফিস সাপোর্ট',
+        'Small Business' => 'ক্ষুদ্র ব্যবসা',
+        'Other' => 'অন্যান্য',
     ],
     'en' => [
-        'IT & Tech' => 'IT & Tech',
+        'IT & Computer' => 'IT & Computer',
         'Garments' => 'Garments',
         'Driving' => 'Driving',
         'Education' => 'Education',
-        'Health' => 'Health',
-        'Marketing' => 'Marketing',
-        'Engineering' => 'Engineering',
-        'Finance' => 'Finance',
+        'Healthcare' => 'Healthcare',
+        'Sales & Marketing' => 'Sales & Marketing',
+        'Office Support' => 'Office Support',
+        'Small Business' => 'Small Business',
+        'Other' => 'Other',
     ]
 ];
 
@@ -422,7 +424,7 @@ $type_icons = [
         <!-- Top Category Pills -->
         <div class="top-category-pills">
             <?php
-            $cat_list = ['IT & Tech','Garments','Driving','Education','Health','Marketing','Engineering','Finance'];
+            $cat_list = ['IT & Computer','Garments','Driving','Education','Healthcare','Sales & Marketing','Office Support','Small Business','Other'];
             foreach ($cat_list as $cat):
                 $is_active = in_array($cat, $categories);
             ?>
