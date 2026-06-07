@@ -59,27 +59,7 @@ $footer_text = [
 $ft = $footer_text[$lang];
 $currentPage = basename($_SERVER['PHP_SELF']);
 ?>
-<style>
-    .footer-link {
-        color: #cbd5e1;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        padding-left: 0;
-        border-left: 3px solid transparent;
-        display: block; /* So padding/border looks like a list item */
-        line-height: 1.5;
-    }
-    .footer-link:hover {
-        color: #10B981;
-        padding-left: 8px;
-    }
-    .footer-link.active {
-        color: #10B981;
-        font-weight: 700;
-        padding-left: 10px;
-        border-left-color: #10B981;
-    }
-</style>
+<link rel="stylesheet" href="<?php echo $path_prefix; ?>assets/css/footer.css">
 <footer style="background-color: #0f172a; color: #f8fafc; padding: 4rem 0 2rem;">
     <div class="container-fluid px-4 px-xl-5">
         <div class="row gy-5">
@@ -149,46 +129,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="<?php echo $path_prefix; ?>assets/js/main.js"></script>
-<script>
-async function handleSubscribe(event) {
-    event.preventDefault();
-    const emailInput = document.getElementById('subscribeEmail');
-    const messageDiv = document.getElementById('subscribeMessage');
-    const email = emailInput.value;
-    
-    if(!email) return;
-
-    try {
-        const formData = new FormData();
-        formData.append('email', email);
-
-        const response = await fetch('<?php echo $path_prefix; ?>subscribe.php', {
-            method: 'POST',
-            body: formData
-        });
-        
-        const data = await response.json();
-        
-        messageDiv.style.display = 'block';
-        if(data.success) {
-            messageDiv.className = 'mb-3 small fw-bold text-success';
-            messageDiv.innerText = data.message;
-            emailInput.value = '';
-        } else {
-            messageDiv.className = 'mb-3 small fw-bold text-danger';
-            messageDiv.innerText = data.message;
-        }
-        
-        setTimeout(() => {
-            messageDiv.style.display = 'none';
-        }, 5000);
-        
-    } catch (error) {
-        messageDiv.style.display = 'block';
-        messageDiv.className = 'mb-3 small fw-bold text-danger';
-        messageDiv.innerText = 'Something went wrong. Please try again.';
-    }
-}
-</script>
+<script>window.jibikaPathPrefix = '<?php echo $path_prefix; ?>';</script>
+<script src="<?php echo $path_prefix; ?>assets/js/footer.js"></script>
 </body>
 </html>

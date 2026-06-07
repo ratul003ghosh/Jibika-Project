@@ -33,9 +33,9 @@ $e_text = [
 ];
 $et = $e_text[$lang];
 
-include('includes/header.php');
-include('includes/navbar.php');
-?>
+<?php include('includes/header.php'); ?>
+<?php include('includes/navbar.php'); ?>
+<link rel="stylesheet" href="assets/css/eservices.css">
 
 <div class="container py-5 mt-4 mb-5">
     <div class="row mb-5">
@@ -90,16 +90,7 @@ include('includes/navbar.php');
     </div>
 </div>
 
-<style>
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
-    }
-    .btn-outline-success:hover {
-        background-color: #006a4e !important;
-        color: white !important;
-    }
-</style>
+
 
 <!-- Service Modal -->
 <div class="modal fade" id="serviceModal" tabindex="-1" aria-hidden="true">
@@ -124,12 +115,6 @@ include('includes/navbar.php');
   </div>
 </div>
 
-<script>
-function showServiceModal(serviceName) {
-    document.getElementById('modalServiceName').textContent = serviceName;
-    var myModal = new bootstrap.Modal(document.getElementById('serviceModal'));
-    myModal.show();
-}
-</script>
+<script src="assets/js/eservices.js"></script>
 
 <?php include('includes/footer.php'); ?>

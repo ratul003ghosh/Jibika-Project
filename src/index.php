@@ -4,6 +4,7 @@ include('assets/config/db.php');
 ?>
 <?php include('includes/header.php'); ?>
 <?php include('includes/navbar.php'); ?>
+<link rel="stylesheet" href="assets/css/index.css">
 
 <?php
 $role_route = $_SESSION['role'] ?? 'guest';
@@ -342,10 +343,7 @@ $ht = $home_text[$lang];
             </div>
         </div>
 
-        <style>
-            .job-filter-btn { transition: all 0.3s ease; }
-            .job-filter-btn:hover { background-color: #10B981 !important; border-color: #10B981 !important; color: #fff !important; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(16,185,129,0.4); }
-        </style>
+
         <div class="container-fluid px-4 px-xl-5 hero-content" style="max-width: 1100px; margin: 0 auto; padding-top: 0;">
             <div class="mb-4">
                 <span class="badge rounded-pill shadow-sm" style="font-size:0.85rem; font-weight:700; color: #fff; background-color: rgba(16, 185, 129, 0.25); border: 1px solid rgba(16, 185, 129, 0.5); padding: 8px 18px; letter-spacing: 0.5px; backdrop-filter: blur(4px);">
@@ -405,121 +403,7 @@ $ht = $home_text[$lang];
             </div>
         </div>
         
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const upazilaData = {
-                    'Dhaka': ['Savar', 'Dhamrai', 'Keraniganj', 'Nawabganj', 'Dohar'],
-                    'Chattogram': ['Hathazari', 'Sitakunda', 'Mirsharai', 'Patiya', 'Fatikchhari'],
-                    'Sylhet': ['Sylhet Sadar', 'Beanibazar', 'Golapganj', 'Companiganj', 'Gowainghat'],
-                    'Rajshahi': ['Paba', 'Godagari', 'Tanor', 'Bagmara', 'Mohanpur'],
-                    'Khulna': ['Batiaghata', 'Dacope', 'Dumuria', 'Koyra', 'Paikgachha'],
-                    'Barishal': ['Agailjhara', 'Babuganj', 'Bakerganj', 'Banaripara', 'Gournadi'],
-                    'Rangpur': ['Badarganj', 'Gangachhara', 'Kaunia', 'Mithapukur', 'Pirgachha'],
-                    'Mymensingh': ['Bhaluka', 'Dhobaura', 'Fulbaria', 'Gaffargaon', 'Gauripur'],
-                    'Comilla': ['Barura', 'Brahmanpara', 'Burichang', 'Chandina', 'Chauddagram'],
-                    'Gazipur': ['Gazipur Sadar', 'Kaliakair', 'Kaliganj', 'Kapasia', 'Sreepur'],
-                    'Narayanganj': ['Araihazar', 'Bandar', 'Narayanganj Sadar', 'Rupganj', 'Sonargaon']
-                };
 
-                const districtSelect = document.getElementById('districtSelect');
-                if(districtSelect) {
-                    districtSelect.addEventListener('change', function() {
-                        const upazilaList = document.getElementById('upazilaList');
-                        upazilaList.innerHTML = '';
-                        const selectedDistrict = this.value;
-                        if (upazilaData[selectedDistrict]) {
-                            upazilaData[selectedDistrict].forEach(upazila => {
-                                const option = document.createElement('option');
-                                option.value = upazila;
-                                upazilaList.appendChild(option);
-                            });
-                        }
-                    });
-                }
-
-                // --- Hero Background Slider (3D Prism Transition) ---
-                const slides = document.querySelectorAll('.hero-slider-bg');
-                let currentSlide = 0;
-                if(slides.length > 0) {
-                    setInterval(() => {
-                        // Remove classes from all slides
-                        slides.forEach(slide => {
-                            slide.classList.remove('active', 'prev');
-                        });
-                        
-                        // Mark the outgoing slide as 'prev'
-                        slides[currentSlide].classList.add('prev');
-                        
-                        // Select the next slide
-                        currentSlide = (currentSlide + 1) % slides.length;
-                        
-                        // Mark the incoming slide as 'active'
-                        slides[currentSlide].classList.add('active');
-                    }, 5500); // 5.5 seconds delay (2s slower for optimal reading pace)
-                }
-
-                // --- Testimonial 3D Stack Slider ---
-                const stackCards = document.querySelectorAll('.testimonial-card-3d');
-                const stackDots = document.querySelectorAll('.stack-dot');
-                const stackPrevBtn = document.querySelector('.stack-nav-btn.prev');
-                const stackNextBtn = document.querySelector('.stack-nav-btn.next');
-                let activeStackIndex = 0;
-
-                function updateStackSlider() {
-                    stackCards.forEach((card, idx) => {
-                        card.classList.remove('active', 'prev-card', 'next-card');
-                        
-                        if (idx === activeStackIndex) {
-                            card.classList.add('active');
-                        } else if (idx === (activeStackIndex - 1 + stackCards.length) % stackCards.length) {
-                            card.classList.add('prev-card');
-                        } else if (idx === (activeStackIndex + 1) % stackCards.length) {
-                            card.classList.add('next-card');
-                        }
-                    });
-
-                    stackDots.forEach((dot, idx) => {
-                        dot.classList.toggle('active', idx === activeStackIndex);
-                    });
-                }
-
-                let stackInterval;
-                
-                function startStackTimer() {
-                    clearInterval(stackInterval);
-                    stackInterval = setInterval(() => {
-                        activeStackIndex = (activeStackIndex + 1) % stackCards.length;
-                        updateStackSlider();
-                    }, 3500); // Snappy 3.5s delay
-                }
-
-                if (stackCards.length > 0) {
-                    // Initialize positions
-                    updateStackSlider();
-                    startStackTimer();
-
-                    stackNextBtn.addEventListener('click', () => {
-                        activeStackIndex = (activeStackIndex + 1) % stackCards.length;
-                        updateStackSlider();
-                        startStackTimer(); // reset interval on user click
-                    });
-
-                    stackPrevBtn.addEventListener('click', () => {
-                        activeStackIndex = (activeStackIndex - 1 + stackCards.length) % stackCards.length;
-                        updateStackSlider();
-                        startStackTimer(); // reset interval on user click
-                    });
-
-                    stackDots.forEach((dot, idx) => {
-                        dot.addEventListener('click', () => {
-                            activeStackIndex = idx;
-                            updateStackSlider();
-                            startStackTimer(); // reset interval on user click
-                        });
-                    });
-                }
-            });
-        </script>
     </section>
 
     <!-- START JOURNEY -->
@@ -636,29 +520,7 @@ $ht = $home_text[$lang];
                         <div class="sector-img-overlay"><h5><?php echo $ht['sec_biz']; ?></h5><span><?php echo $ht['sec_biz_sub']; ?></span></div>
                     </a>
                 </div>
-                <style>
-                    .sector-img-card .sector-img-bg {
-                        position: absolute; inset: 0;
-                        background-size: cover; background-position: center;
-                        transition: transform 0.5s ease;
-                    }
-                    .sector-img-card:hover .sector-img-bg { transform: scale(1.08); }
-                    .sector-img-card .sector-img-overlay {
-                        position: absolute; inset: 0;
-                        background: linear-gradient(to top, rgba(10,20,50,0.88) 0%, rgba(10,20,50,0.3) 55%, transparent 100%);
-                        display: flex; flex-direction: column; justify-content: flex-end;
-                        padding: 1.4rem 1.2rem;
-                    }
-                    .sector-img-overlay h5 {
-                        color: #fff; font-weight: 700; margin-bottom: 4px; font-size: 1rem;
-                        text-shadow: 0 1px 4px rgba(0,0,0,0.4);
-                    }
-                    .sector-img-overlay span {
-                        color: rgba(255,255,255,0.65); font-size: 0.8rem;
-                    }
-                    .hover-lift { transition: transform 0.2s ease, box-shadow 0.2s ease; }
-                    .hover-lift:hover { transform: translateY(-5px); box-shadow: 0 12px 32px rgba(37,99,235,0.18) !important; }
-                </style>
+
             </div>
         </div>
     </section>
@@ -698,11 +560,7 @@ $ht = $home_text[$lang];
                         </div>
                     </a>
                 </div>
-                <style>
-                    .hover-lift:hover .specialized-bg { transform: scale(1.05); }
-                    .hover-lift { transition: transform 0.2s; }
-                    .hover-lift:hover { transform: translateY(-5px); }
-                </style>
+
             </div>
         </div>
     </section>
@@ -1006,179 +864,10 @@ $ht = $home_text[$lang];
             </div>
         </div>
 
-        <style>
-            .testimonial-3d-stack-wrapper {
-                margin: 40px auto 20px;
-                max-width: 680px;
-                position: relative;
-            }
-            .testimonial-stack-container {
-                position: relative;
-                height: 380px;
-                width: 100%;
-                perspective: 1200px;
-                transform-style: preserve-3d;
-            }
-            .testimonial-card-3d {
-                position: absolute;
-                width: 100%;
-                height: 100%;
-                left: 0;
-                top: 0;
-                background: #0b0f19; /* Sleek elegant near-black like the attachment */
-                border: 1px solid rgba(255, 255, 255, 0.08);
-                border-radius: 28px;
-                padding: 2.8rem;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7);
-                transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1);
-                opacity: 0;
-                transform: translateX(100%) scale(0.9) rotateY(15deg);
-                pointer-events: none;
-                text-align: left;
-                z-index: 1;
-            }
-            
-            /* Active top card */
-            .testimonial-card-3d.active {
-                opacity: 1;
-                transform: translateX(0) scale(1) rotateY(0deg);
-                z-index: 5;
-                pointer-events: auto;
-            }
-            
-            /* Outgoing animated transition (sliding to left and fading out) */
-            .testimonial-card-3d.prev-card {
-                opacity: 0;
-                transform: translateX(-100%) scale(0.9) rotateY(-15deg);
-                z-index: 2;
-            }
 
-            /* Incoming transition (placed on right) */
-            .testimonial-card-3d.next-card {
-                opacity: 0;
-                transform: translateX(100%) scale(0.9) rotateY(15deg);
-                z-index: 2;
-            }
-
-            .card-brand-header {
-                display: flex;
-                align-items: center;
-                gap: 0.8rem;
-                margin-bottom: 1.5rem;
-            }
-            .brand-logo {
-                font-size: 1.6rem;
-                color: #10B981;
-            }
-            .brand-name {
-                font-size: 1.1rem;
-                font-weight: 700;
-                letter-spacing: 1.5px;
-                color: #fff;
-            }
-            .card-quote {
-                font-size: 1.25rem;
-                line-height: 1.7;
-                color: #e5e7eb;
-                font-style: italic;
-                font-weight: 400;
-                margin-bottom: 2rem;
-                flex-grow: 1;
-            }
-            .card-author-footer {
-                display: flex;
-                align-items: center;
-                border-top: 1px solid rgba(255, 255, 255, 0.06);
-                padding-top: 1.5rem;
-                gap: 1rem;
-            }
-            .author-avatar {
-                width: 50px;
-                height: 50px;
-                border-radius: 50%;
-                color: #fff;
-                font-size: 1.3rem;
-                font-weight: 800;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            }
-            .author-info {
-                flex-grow: 1;
-            }
-            .author-name {
-                font-size: 1.1rem;
-                font-weight: 700;
-                color: #fff;
-                margin: 0 0 3px 0;
-            }
-            .author-role {
-                font-size: 0.85rem;
-                color: #9CA3AF;
-            }
-            .author-rating {
-                background: rgba(255,255,255,0.06);
-                padding: 6px 14px;
-                border-radius: 50px;
-                font-weight: 700;
-                color: #10B981;
-                display: flex;
-                align-items: center;
-                gap: 6px;
-                font-size: 0.95rem;
-                border: 1px solid rgba(255,255,255,0.03);
-            }
-
-            .stack-navigation {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 2rem;
-            }
-            .stack-nav-btn {
-                background: rgba(255, 255, 255, 0.05);
-                border: 1px solid rgba(255, 255, 255, 0.08);
-                color: #fff;
-                width: 52px;
-                height: 52px;
-                border-radius: 50%;
-                cursor: pointer;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                font-size: 1.1rem;
-                transition: all 0.3s;
-            }
-            .stack-nav-btn:hover {
-                background: #10B981;
-                border-color: #10B981;
-                box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
-                transform: scale(1.08);
-            }
-            .stack-indicators {
-                display: flex;
-                gap: 8px;
-            }
-            .stack-dot {
-                width: 8px;
-                height: 8px;
-                border-radius: 50%;
-                background: rgba(255, 255, 255, 0.2);
-                cursor: pointer;
-                transition: all 0.3s;
-            }
-            .stack-dot.active {
-                background: #10B981;
-                transform: scale(1.4);
-                box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
-            }
-        </style>
     </section>
 
 </div>
 
+<script src="assets/js/index.js"></script>
 <?php include('includes/footer.php'); ?>

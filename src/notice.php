@@ -59,25 +59,7 @@ include('includes/header.php');
 include('includes/navbar.php');
 ?>
 
-<style>
-    .notice-ticker {
-        background-color: #006a4e;
-        color: white;
-        padding: 8px 0;
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-    }
-    .notice-ticker-label {
-        background-color: #f42a41;
-        color: white;
-        padding: 8px 15px;
-        font-weight: bold;
-        white-space: nowrap;
-        z-index: 2;
-        position: relative;
-    }
-</style>
+<link rel="stylesheet" href="assets/css/notice.css">
 
 <!-- Scrolling Ticker -->
 <div class="d-flex border-bottom mb-4">
@@ -200,45 +182,6 @@ include('includes/navbar.php');
     </div>
 </div>
 
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    const noticeRows = document.querySelectorAll('.notice-row');
-
-    filterBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            // Update active state
-            filterBtns.forEach(b => {
-                b.classList.remove('bg-success', 'text-white');
-                const badge = b.querySelector('.badge');
-                badge.classList.remove('bg-light', 'text-success');
-                badge.classList.add('bg-secondary');
-            });
-            btn.classList.add('bg-success', 'text-white');
-            const activeBadge = btn.querySelector('.badge');
-            activeBadge.classList.remove('bg-secondary');
-            activeBadge.classList.add('bg-light', 'text-success');
-
-            const category = btn.getAttribute('data-category');
-
-            // Filter rows
-            noticeRows.forEach(row => {
-                if (category === 'All' || row.getAttribute('data-category') === category) {
-                    row.style.display = 'table-row';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        });
-    });
-});
-</script>
-
-<style>
-    .hover-success:hover {
-        color: #006a4e !important;
-        text-decoration: underline !important;
-    }
-</style>
+<script src="assets/js/notice.js"></script>
 
 <?php include('includes/footer.php'); ?>

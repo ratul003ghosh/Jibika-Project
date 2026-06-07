@@ -46,35 +46,7 @@ include('includes/header.php');
 include('includes/navbar.php');
 ?>
 
-<style>
-    body { background-color: #f8f9fa; }
-    .resource-header {
-        background: linear-gradient(135deg, #00563f 0%, #006a4e 100%);
-        color: white;
-        padding: 60px 0;
-        margin-bottom: 40px;
-    }
-    .support-card {
-        background: white;
-        border-radius: 12px;
-        padding: 30px;
-        height: 100%;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        border: 1px solid #e9ecef;
-    }
-    .support-icon {
-        background-color: #e6f0ed;
-        color: #006a4e;
-        width: 60px;
-        height: 60px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.8rem;
-        margin-bottom: 20px;
-    }
-</style>
+<link rel="stylesheet" href="assets/css/entrepreneur_support.css">
 
 <div class="resource-header">
     <div class="container-fluid px-4 px-xl-5">

@@ -191,11 +191,6 @@ include('includes/navbar.php');
   </div>
 </div>
 
-<script>
-function submitContactForm() {
-    var myModal = new bootstrap.Modal(document.getElementById('contactSuccessModal'));
-    myModal.show();
-}
-</script>
+<script src="assets/js/contact.js"></script>
 
 <?php include('includes/footer.php'); ?>

@@ -144,41 +144,9 @@ $stats_t = $lang === 'en' ? $stats_en : $stats_bn;
 <?php include('includes/header.php'); ?>
 <?php include('includes/navbar.php'); ?>
 
+<link rel="stylesheet" href="assets/css/statistics.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
-    body {
-        font-family: 'Inter', sans-serif;
-        background-color: var(--bg);
-        color: #1F2937;
-    }
-    .dashboard-header { background: #152334; color: white; padding: 3rem 0; margin-bottom: -50px; padding-bottom: 80px; }
-    .filter-bar { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 1rem; padding: 1.5rem; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); margin-top: -30px; position: relative; z-index: 10; border: 1px solid rgba(0,0,0,0.05); }
-    .dash-card { background: #ffffff; border-radius: 1rem; border: none; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); transition: transform 0.2s, box-shadow 0.2s; height: 100%; overflow: hidden; }
-    .dash-card:hover { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
-    .dash-card-header { background: transparent; border-bottom: 1px solid #f1f5f9; padding: 1.5rem 1.5rem 1rem; font-weight: 700; color: #152334; display: flex; justify-content: space-between; align-items: center; }
-    .dash-card-body { padding: 1.5rem; }
-    .kpi-card { padding: 1.5rem; position: relative; }
-    .kpi-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
-    .kpi-value { font-size: 2.25rem; font-weight: 800; color: #152334; margin: 0.5rem 0; }
-    .kpi-label { color: #64748b; font-weight: 600; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.5px; }
-    .kpi-growth { font-size: 0.875rem; font-weight: 600; padding: 0.25rem 0.75rem; border-radius: 50px; }
-    .bg-emerald-light { background: #e6f7f1; color: #129B6F; }
-    .bg-navy-light { background: #e2e8f0; color: #152334; }
-    .bg-warning-light { background: #fef3c7; color: #d97706; }
-    .bg-info-light { background: #e0f2fe; color: #0284c7; }
-    .text-emerald { color: #129B6F; }
-    .pulse-item { border-bottom: 1px solid #f1f5f9; padding: 1rem 0; }
-    .pulse-item:last-child { border-bottom: none; }
-    .pulse-value { font-weight: 700; color: #152334; }
-    .pulse-label { color: #64748b; font-size: 0.9rem; }
-    .impact-section { background: linear-gradient(135deg, #129B6F 0%, #152334 100%); color: white; padding: 5rem 0; border-radius: 1rem; margin-top: 3rem; margin-bottom: 3rem; }
-    .impact-counter { font-size: 3.5rem; font-weight: 900; margin-bottom: 0.5rem; }
-    .table-progress { height: 8px; border-radius: 4px; background: #f1f5f9; overflow: hidden; }
-    .table-progress-bar { height: 100%; border-radius: 4px; }
-</style>
 
 <div class="dashboard-header">
     <div class="container-fluid px-4 px-xl-5">
@@ -478,119 +446,8 @@ $stats_t = $lang === 'en' ? $stats_en : $stats_bn;
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    const colorEmerald = '#129B6F';
-    const colorNavy = '#152334';
-    const colorAmber = '#F59E0B';
-    const colorRed = '#dc2626';
-
-    const t = <?php echo json_encode($stats_t); ?>;
-
-    const ctxTrends = document.getElementById('trendsChart').getContext('2d');
-    new Chart(ctxTrends, {
-        type: 'line',
-        data: {
-            labels: t.months,
-            datasets: [
-                {
-                    label: t.c_post,
-                    data: [2500, 3200, 3800, 4100, 3900, 5200],
-                    borderColor: colorNavy,
-                    backgroundColor: colorNavy,
-                    borderWidth: 2,
-                    tension: 0.4,
-                    yAxisID: 'y'
-                },
-                {
-                    label: t.c_place,
-                    data: [1200, 1500, 2100, 2800, 3100, 4000],
-                    borderColor: colorEmerald,
-                    backgroundColor: 'rgba(18, 155, 111, 0.1)',
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.4,
-                    yAxisID: 'y'
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            interaction: { mode: 'index', intersect: false },
-            plugins: { legend: { position: 'top', align: 'end' } },
-            scales: { y: { type: 'linear', display: true, position: 'left', beginAtZero: true } }
-        }
-    });
-
-    const ctxGeo = document.getElementById('geoChart').getContext('2d');
-    new Chart(ctxGeo, {
-        type: 'bar',
-        data: {
-            labels: [t.d_dhaka, t.d_ctg, t.d_raj, t.d_khu, t.d_syl, t.d_bar, t.d_rng, t.d_mym],
-            datasets: [
-                {
-                    label: t.c_act,
-                    data: [6500, 3200, 1800, 1500, 1200, 900, 1100, 800],
-                    backgroundColor: colorNavy,
-                    borderRadius: 4
-                },
-                {
-                    label: t.c_seek,
-                    data: [45000, 25000, 15000, 12000, 10000, 8000, 9000, 6000],
-                    backgroundColor: colorEmerald,
-                    borderRadius: 4
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { position: 'top', align: 'end' } },
-            scales: { y: { beginAtZero: true } }
-        }
-    });
-
-    const ctxType = document.getElementById('jobTypeChart').getContext('2d');
-    new Chart(ctxType, {
-        type: 'doughnut',
-        data: {
-            labels: [t.t_ft, t.t_pt, t.t_in, t.t_rm, t.t_dl],
-            datasets: [{
-                data: [55, 15, 10, 12, 8],
-                backgroundColor: [colorNavy, colorEmerald, colorAmber, '#3b82f6', colorRed],
-                borderWidth: 0,
-                hoverOffset: 4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            cutout: '70%',
-            plugins: { legend: { position: 'bottom' } }
-        }
-    });
-
-    const ctxSkills = document.getElementById('skillsChart').getContext('2d');
-    new Chart(ctxSkills, {
-        type: 'bar',
-        data: {
-            labels: t.sk_list,
-            datasets: [{
-                label: t.c_dem,
-                data: [95, 88, 82, 75, 70, 68, 65, 55, 50, 45],
-                backgroundColor: colorEmerald,
-                borderRadius: 4
-            }]
-        },
-        options: {
-            indexAxis: 'y',
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: { x: { beginAtZero: true } }
-        }
-    });
-});
+window.statsTranslations = <?php echo json_encode($stats_t); ?>;
 </script>
+<script src="assets/js/statistics.js"></script>
 
 <?php include('includes/footer.php'); ?>

@@ -1,0 +1,23 @@
+/* ── trainings.php Styles ── */
+.training-hero {
+    background: linear-gradient(135deg, #00563f 0%, #006a4e 100%);
+    padding: 80px 0;
+    color: white;
+    text-align: center;
+    border-bottom: 5px solid #f42a41;
+}
+.training-card {
+    border-radius: 16px;
+    transition: all 0.3s ease;
+}
+.training-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.08) !important;
+}
+.icon-box {
+    transition: all 0.3s ease;
+}
+.training-card:hover .icon-box {
+    background-color: #006a4e !important;
+    color: white !important;
+}

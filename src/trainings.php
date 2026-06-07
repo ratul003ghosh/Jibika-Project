@@ -67,30 +67,7 @@ $trText = [
 $t = $trText[$lang];
 ?>
 
-<style>
-    .training-hero {
-        background: linear-gradient(135deg, #00563f 0%, #006a4e 100%);
-        padding: 80px 0;
-        color: white;
-        text-align: center;
-        border-bottom: 5px solid #f42a41;
-    }
-    .training-card {
-        border-radius: 16px;
-        transition: all 0.3s ease;
-    }
-    .training-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.08) !important;
-    }
-    .icon-box {
-        transition: all 0.3s ease;
-    }
-    .training-card:hover .icon-box {
-        background-color: #006a4e !important;
-        color: white !important;
-    }
-</style>
+<link rel="stylesheet" href="assets/css/trainings.css">
 
 <!-- Hero Section -->
 <div class="training-hero">
@@ -302,76 +279,7 @@ $t = $trText[$lang];
     </div>
 </div>
 
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    // Category Filtering
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    const items = document.querySelectorAll('.training-item');
-
-    filterBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            // Update active state of buttons
-            filterBtns.forEach(b => {
-                b.classList.remove('btn-success', 'fw-bold');
-                b.classList.add('btn-outline-secondary');
-            });
-            btn.classList.remove('btn-outline-secondary');
-            btn.classList.add('btn-success', 'fw-bold');
-
-            const filterValue = btn.getAttribute('data-filter');
-
-            // Show/Hide cards
-            items.forEach(item => {
-                if (filterValue === 'all') {
-                    item.style.display = 'block';
-                } else {
-                    if (item.getAttribute('data-group') === filterValue) {
-                        item.style.display = 'block';
-                    } else {
-                        item.style.display = 'none';
-                    }
-                }
-            });
-        });
-    });
-
-    // Real-time Search Filtering
-    const searchInput = document.getElementById('searchInput');
-    const searchBtn = document.getElementById('searchBtn');
-
-    function performSearch() {
-        const query = searchInput.value.toLowerCase().trim();
-        items.forEach(item => {
-            const title = item.querySelector('.training-title-text').textContent.toLowerCase();
-            const desc = item.querySelector('p').textContent.toLowerCase();
-            const matches = title.includes(query) || desc.includes(query);
-
-            // Respect both current category filter and search query
-            const activeFilter = document.querySelector('.filter-btn.btn-success').getAttribute('data-filter');
-            const matchesCategory = (activeFilter === 'all') || (item.getAttribute('data-group') === activeFilter);
-
-            if (matches && matchesCategory) {
-                item.style.display = 'block';
-            } else {
-                item.style.display = 'none';
-            }
-        });
-    }
-
-    if (searchInput) {
-        searchInput.addEventListener('input', performSearch);
-    }
-    if (searchBtn) {
-        searchBtn.addEventListener('click', performSearch);
-    }
-});
-
-function showTrainingModal(courseName) {
-    document.getElementById('modalCourseName').textContent = courseName;
-    var myModal = new bootstrap.Modal(document.getElementById('trainingModal'));
-    myModal.show();
-}
-</script>
+<script src="assets/js/trainings.js"></script>
 
 <!-- Training Application Modal -->
 <div class="modal fade" id="trainingModal" tabindex="-1" aria-hidden="true">

@@ -58,37 +58,7 @@ $ccText = [
 $ct = $ccText[$lang];
 ?>
 
-<style>
-    body { background-color: #f8f9fa; }
-    .resource-header {
-        background: linear-gradient(135deg, #00563f 0%, #006a4e 100%);
-        color: white;
-        padding: 60px 0;
-        margin-bottom: 40px;
-    }
-    .counselor-card {
-        background: white;
-        border-radius: 12px;
-        padding: 20px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        border: 1px solid #e9ecef;
-        display: flex;
-        align-items: center;
-        gap: 20px;
-    }
-    .counselor-img {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        background-color: #006a4e;
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2rem;
-        font-weight: bold;
-    }
-</style>
+<link rel="stylesheet" href="assets/css/career_counseling.css">
 
 <div class="resource-header">
     <div class="container-fluid px-4 px-xl-5">

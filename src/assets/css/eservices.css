@@ -1,0 +1,9 @@
+/* ── eservices.php Styles ── */
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
+}
+.btn-outline-success:hover {
+    background-color: #006a4e !important;
+    color: white !important;
+}

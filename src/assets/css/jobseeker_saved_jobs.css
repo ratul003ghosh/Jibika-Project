@@ -1,0 +1,49 @@
+/* ── jobseeker/saved_jobs.php Styles ── */
+.saved-hero { background: linear-gradient(135deg, #0a3d2a, #006a4e); padding: 50px 0 80px; }
+.saved-hero h1 { color:#fff; font-weight:800; font-size:2.4rem; margin-bottom:8px; }
+.saved-hero p { color:rgba(255,255,255,0.75); font-size:1.05rem; margin:0; }
+.saved-wrap { margin-top:-50px; padding-bottom: 60px; }
+.saved-card {
+    background:#fff; border-radius:16px; border:1.5px solid #e5e7eb;
+    padding:20px; transition:all 0.3s; position:relative; overflow:hidden;
+    display:flex; flex-direction:column; height:100%;
+}
+.job-cover {
+    height: 140px;
+    background-size: cover;
+    background-position: center;
+    margin: -20px -20px 16px -20px;
+    border-bottom: 1px solid #e5e7eb;
+}
+.saved-card:hover { border-color:#006a4e; box-shadow:0 12px 35px rgba(0,106,78,0.12); transform:translateY(-3px); }
+.saved-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,#006a4e,#009966); opacity:0; transition:opacity 0.3s; }
+.saved-card:hover::before { opacity:1; }
+.sc-logo { width:48px; height:48px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.2rem; flex-shrink:0; }
+.sc-company { font-size:0.82rem; color:#64748b; font-weight:600; margin-bottom:3px; }
+.sc-title { font-size:1rem; font-weight:700; color:#1e293b; }
+.sctag { border-radius:6px; padding:3px 9px; font-size:0.76rem; font-weight:600; display:inline-flex; align-items:center; gap:4px; }
+.sctag-active { background:#ecfdf5; color:#065f46; }
+.sctag-type   { background:#ecfdf5; color:#065f46; }
+.sctag-loc    { background:#eff6ff; color:#1e40af; }
+.sctag-closed { background:#fef2f2; color:#991b1b; }
+.sc-meta { display:flex; flex-wrap:wrap; gap:10px; font-size:0.82rem; color:#64748b; }
+.sc-meta span { display:inline-flex; align-items:center; gap:5px; }
+.saved-at-lbl { font-size:0.74rem; color:#94a3b8; }
+.sc-actions { display:flex; gap:8px; padding-top:14px; border-top:1px solid #f1f5f9; margin-top:auto; }
+.btn-sc-apply {
+    background:#006a4e; color:#fff; border:none; border-radius:8px;
+    padding:8px 16px; font-size:0.84rem; font-weight:700; flex:1;
+    text-align:center; text-decoration:none; transition:all 0.2s;
+    display:inline-flex; align-items:center; justify-content:center; gap:5px;
+    cursor:pointer;
+}
+.btn-sc-apply:hover { background:#005a42; color:#fff; }
+.btn-sc-apply.btn-applied { background:#ecfdf5; color:#065f46; border:1.5px solid #6ee7b7; cursor:default; }
+.btn-sc-apply.btn-closed  { background:#f1f5f9; color:#94a3b8; cursor:default; }
+.btn-sc-remove {
+    border:1.5px solid #fee2e2; background:#fff; color:#f42a41; border-radius:8px;
+    padding:8px 14px; font-size:0.84rem; font-weight:600; text-decoration:none;
+    display:inline-flex; align-items:center; gap:5px; transition:all 0.2s;
+}
+.btn-sc-remove:hover { background:#fef2f2; color:#f42a41; }
+.empty-saved { background:#fff; border-radius:20px; padding:60px 20px; text-align:center; border:1.5px dashed #e5e7eb; }
