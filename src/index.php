@@ -71,8 +71,8 @@ $home_text = [
     'bn' => [
         // Hero
         'hero_quote'        => 'প্রতিটি দক্ষতার পেছনে লুকিয়ে আছে একটি সম্ভাবনার গল্প',
-        'hero_title'        => "আজই আপনার স্বপ্নের চাকরি খুঁজুন!",
-        'hero_subtitle'     => 'জীবিকা আপনাকে বাংলাদেশের সেরা নিয়োগকর্তাদের সাথে যুক্ত করে — এলাকাভিত্তিক, স্মার্ট এবং দ্রুততম সময়ে।',
+        'hero_title'        => "একটি দক্ষতা, একটি সুযোগ —<br>বদলে দিন আপনার গল্প",
+        'hero_subtitle'     => 'Jibika is an area-based unemployment monitoring and smart job matching system.',
         'my_dashboard'      => 'আমার ড্যাশবোর্ড',
         'employer_dashboard'=> 'নিয়োগকর্তার ড্যাশবোর্ড',
         'go_panel'          => 'প্যানেলে যান',
@@ -195,8 +195,8 @@ $home_text = [
     'en' => [
         // Hero
         'hero_quote'        => 'Behind every skill lies a story of potential',
-        'hero_title'        => "Find Your Dream Job<br>Today!",
-        'hero_subtitle'     => 'Jibika connects skilled job seekers with top employers across Bangladesh — area-based, smart, and fast.',
+        'hero_title'        => "One Skill, One Opportunity —<br>Rewrite Your Story",
+        'hero_subtitle'     => 'Jibika is a location-based unemployment monitoring and smart job-matching platform designed to connect job seekers with the right opportunities.',
         'my_dashboard'      => 'My Dashboard',
         'employer_dashboard'=> 'Employer Dashboard',
         'go_panel'          => 'Go to Panel',
