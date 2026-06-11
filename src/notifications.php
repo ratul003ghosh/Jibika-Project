@@ -57,10 +57,10 @@ $result = $conn->query($sql);
                             <h5 class="mb-1 text-primary">
                                 <?php echo htmlspecialchars($lang == 'bn' ? $n['title_bn'] : $n['title_en']); ?>
                             </h5>
-                            <p class="mb-1">
+                            <p class="mb-1 fw-bold fs-5 text-dark">
                                 <?php echo htmlspecialchars($lang == 'bn' ? $n['message_bn'] : $n['message_en']); ?>
                             </p>
-                            <small class="text-muted"><?php echo translateDate(date('d M Y, h:i A', strtotime($n['created_at'])), $lang); ?></small>
+                            <small class="text-muted"><?php echo translateNumber(date('d M Y, h:i A', strtotime($n['created_at'])), $lang); ?></small>
                         </div>
                         <?php if ($n['job_id'] > 0): ?>
                             <a href="job_details.php?id=<?php echo $n['job_id']; ?>" class="btn btn-outline-success btn-sm">

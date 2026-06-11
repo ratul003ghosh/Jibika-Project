@@ -100,128 +100,27 @@ $t = $trText[$lang];
 
     <div class="row g-4" id="trainingsGrid">
         <?php
-        $trainings = [
-            [
-                "icon" => "fa-cloud", 
-                "date" => "Jul 15", 
-                "cat_bn" => "আইটি ও ক্লাউড", "cat_en" => "IT & Cloud", 
-                "group" => "IT", 
-                "title_bn" => "SEIP: অ্যাডভান্সড ক্লাউড কম্পিউটিং এবং এডাব্লুএস", "title_en" => "SEIP: Advanced Cloud Computing & AWS", 
-                "loc_bn" => "বিসিসি আইটি হাব, আগারগাঁও", "loc_en" => "BCC IT Hub, Agargaon", 
-                "duration_bn" => "১২ সপ্তাহ", "duration_en" => "12 Weeks", 
-                "desc_bn" => "ক্লাউড আর্কিটেকচার এবং অ্যাজিউর/এডাব্লুএস ডিপ্লয়মেন্টের উপর জোর দিয়ে সরকারি অর্থায়নে পরিচালিত স্কিলস ফর এমপ্লয়মেন্ট ইনভেস্টমেন্ট প্রোগ্রাম।", "desc_en" => "Government-sponsored Skill for Employment Investment Program focusing on cloud architecture and Azure/AWS deployment."
-            ],
-            [
-                "icon" => "fa-shoe-prints", 
-                "date" => "Aug 02", 
-                "cat_bn" => "ম্যানুফ্যাকচারিং", "cat_en" => "Manufacturing", 
-                "group" => "Industry", 
-                "title_bn" => "চামড়াজাত পণ্য ও জুতো উৎপাদন", "title_en" => "Leather Goods & Footwear Manufacturing", 
-                "loc_bn" => "এলএসসি ট্রেনিং সেন্টার, গাজীপুর", "loc_en" => "LSC Training Center, Gazipur", 
-                "duration_bn" => "৮ সপ্তাহ", "duration_en" => "8 Weeks", 
-                "desc_bn" => "রপ্তানিমুখী কারখানার জন্য চামড়া প্রক্রিয়াকরণ, জুতো ডিজাইন এবং মান নিশ্চিতকরণের বিশেষ প্রযুক্তিগত প্রশিক্ষণ।", "desc_en" => "Specialized technical training in leather processing, footwear design, and quality assurance for export-oriented factories."
-            ],
-            [
-                "icon" => "fa-plane", 
-                "date" => "Aug 10", 
-                "cat_bn" => "এভিয়েশন", "cat_en" => "Aviation", 
-                "group" => "Engineering", 
-                "title_bn" => "বিমান গ্রাউন্ড হ্যান্ডলিং ও লজিস্টিকস", "title_en" => "Biman Ground Handling & Logistics", 
-                "loc_bn" => "হযরত শাহজালাল বিমানবন্দর প্রশাসন", "loc_en" => "Hazrat Shahjalal Airport Admin", 
-                "duration_bn" => "৬ সপ্তাহ", "duration_en" => "6 Weeks", 
-                "desc_bn" => "বিমানবন্ধরের গ্রাউন্ড অপারেশন, লজিস্টিকস ম্যানেজমেন্ট এবং কার্গো হ্যান্ডলিংয়ে পেশাদার সার্টিফিকেশন।", "desc_en" => "Professional certification in airport ground operations, logistics management, and cargo handling."
-            ],
-            [
-                "icon" => "fa-shield-halved", 
-                "date" => "Sep 01", 
-                "cat_bn" => "সাইবার সিকিউরিটি", "cat_en" => "Cybersecurity", 
-                "group" => "IT", 
-                "title_bn" => "জাতীয় সাইবার নিরাপত্তা সার্টিফিকেশন", "title_en" => "National Cyber Security Certification", 
-                "loc_bn" => "তথ্য ও যোগাযোগ প্রযুক্তি বিভাগ প্রধান কার্যালয়", "loc_en" => "ICT Division Head Office", 
-                "duration_bn" => "১৬ সপ্তাহ", "duration_en" => "16 Weeks", 
-                "desc_bn" => "সরকারি ও ব্যাংকিং আইটি পেশাদারদের জন্য ডিজাইন করা নিবিড় ইথিক্যাল হ্যাকিং এবং নেটওয়ার্ক নিরাপত্তা কোর্স।", "desc_en" => "Intensive ethical hacking and network security defense course designed for government and banking IT professionals."
-            ],
-            [
-                "icon" => "fa-ship", 
-                "date" => "Sep 15", 
-                "cat_bn" => "মেরিন ইঞ্জি.", "cat_en" => "Marine Eng.", 
-                "group" => "Engineering", 
-                "title_bn" => "অ্যাডভান্সড শিপবিল্ডিং ও মেরিন ওয়েল্ডিং", "title_en" => "Advanced Shipbuilding & Marine Welding", 
-                "loc_bn" => "চট্টগ্রাম মেরিন একাডেমি", "loc_en" => "Chittagong Marine Academy", 
-                "duration_bn" => "১০ সপ্তাহ", "duration_en" => "10 Weeks", 
-                "desc_bn" => "গভীর সমুদ্রের জাহাজ নির্মাণ শিল্পের জন্য বিশেষভাবে প্রয়োজনীয় উচ্চ-স্তরের টিআইজি (TIG) এবং এমআইজি (MIG) ওয়েল্ডিং সার্টিফিকেশন।", "desc_en" => "High-tier TIG and MIG welding certifications specifically required for the deep-sea shipbuilding industry."
-            ],
-            [
-                "icon" => "fa-chart-line", 
-                "date" => "Oct 05", 
-                "cat_bn" => "ব্যবসা", "cat_en" => "Business", 
-                "group" => "Business", 
-                "title_bn" => "বিডা উদ্যোক্তা উন্নয়ন প্রশিক্ষণ", "title_en" => "BIDA Entrepreneurship Development", 
-                "loc_bn" => "বিডা প্রধান কার্যালয়, ঢাকা", "loc_en" => "BIDA HQ, Dhaka", 
-                "duration_bn" => "৪ সপ্তাহ", "duration_en" => "4 Weeks", 
-                "desc_bn" => "নতুন স্টার্টআপগুলোর জন্য কোম্পানি গঠন, কর কমপ্লায়েন্স এবং সরকারি তহবিল প্রাপ্তির সম্পূর্ণ প্রশিক্ষণ।", "desc_en" => "Complete training on company formation, tax compliance, and securing government funding for new startups."
-            ],
-            [
-                "icon" => "fa-robot", 
-                "date" => "Oct 20", 
-                "cat_bn" => "এআই ও রোবোটিক্স", "cat_en" => "AI & Robotics", 
-                "group" => "IT", 
-                "title_bn" => "হাই-টেক পার্ক এআই ও মেশিন লার্নিং", "title_en" => "Hi-Tech Park AI & Machine Learning", 
-                "loc_bn" => "বঙ্গবন্ধু হাই-টেক সিটি", "loc_en" => "Bangabandhu Hi-Tech City", 
-                "duration_bn" => "১৪ সপ্তাহ", "duration_en" => "14 Weeks", 
-                "desc_bn" => "পাইথন ডেটা সায়েন্স, নিউরাল নেটওয়ার্ক এবং কম্পিউটার ভিশন অ্যালগরিদমের উপর অত্যাধুনিক বুটক্যাম্প।", "desc_en" => "Cutting-edge bootcamp on Python data science, neural networks, and computer vision algorithms."
-            ],
-            [
-                "icon" => "fa-truck-monster", 
-                "date" => "Nov 02", 
-                "cat_bn" => "অবকাঠামো", "cat_en" => "Infrastructure", 
-                "group" => "Engineering", 
-                "title_bn" => "ভারী যন্ত্রপাতি চালনা (সওজ)", "title_en" => "Heavy Equipment Operations (RHD)", 
-                "loc_bn" => "সড়ক ও জনপথ বিভাগ, সাভার", "loc_en" => "Roads & Highways Dept, Savar", 
-                "duration_bn" => "৮ সপ্তাহ", "duration_en" => "8 Weeks", 
-                "desc_bn" => "এস্কেভেটর, ক্রেন এবং ভারী সড়ক নির্মাণ যন্ত্রপাতি নিরাপদে চালনার জন্য সরকারি সার্টিফিকেশন।", "desc_en" => "Official certification for operating excavators, cranes, and heavy road construction machinery safely."
-            ],
-            [
-                "icon" => "fa-cart-shopping", 
-                "date" => "Nov 15", 
-                "cat_bn" => "ই-কমার্স", "cat_en" => "E-Commerce", 
-                "group" => "IT", 
-                "title_bn" => "জাতীয় ই-কমার্স ব্যবস্থাপনা", "title_en" => "National E-Commerce Management", 
-                "loc_bn" => "অনলাইন / ভার্চুয়াল ক্যাম্পাস", "loc_en" => "Online / Virtual Campus", 
-                "duration_bn" => "৬ সপ্তাহ", "duration_en" => "6 Weeks", 
-                "desc_bn" => "ডিজিটাল স্টোরফ্রন্ট ম্যানেজমেন্ট, পেমেন্ট গেটওয়ে এবং সাপ্লাই চেইন লজিস্টিকস বিষয়ক ব্যাপক প্রশিক্ষণ।", "desc_en" => "Comprehensive training on digital storefront management, payment gateways, and supply chain logistics."
-            ],
-            [
-                "icon" => "fa-shirt", 
-                "date" => "Dec 01", 
-                "cat_bn" => "টেক্সটাইল", "cat_en" => "Textile", 
-                "group" => "Industry", 
-                "title_bn" => "অ্যাপারেল মার্চেন্ডাইজিং ও সাপ্লাই চেইন", "title_en" => "Apparel Merchandising & Supply Chain", 
-                "loc_bn" => "বিজিএমইএ ইউনিভার্সিটি অফ ফ্যাশন", "loc_en" => "BGMEA University of Fashion", 
-                "duration_bn" => "১২ সপ্তাহ", "duration_en" => "12 Weeks", 
-                "desc_bn" => "তৈরি পোশাক খাতের জন্য উন্নত মার্চেন্ডাইজিং নীতি, রপ্তানি কমপ্লায়েন্স এবং আন্তর্জাতিক ক্রেতা ব্যবস্থাপনা।", "desc_en" => "Advanced merchandising principles, export compliance, and international buyer management for the RMG sector."
-            ],
-            [
-                "icon" => "fa-stethoscope", 
-                "date" => "Dec 10", 
-                "cat_bn" => "স্বাস্থ্যসেবা", "cat_en" => "Healthcare", 
-                "group" => "Healthcare", 
-                "title_bn" => "চিকিৎসা সরঞ্জাম মেরামত ও রক্ষণাবেক্ষণ", "title_en" => "Medical Equipment Troubleshooting", 
-                "loc_bn" => "নিটোর ক্যাম্পাস, ঢাকা", "loc_en" => "NITOR Campus, Dhaka", 
-                "duration_bn" => "১০ সপ্তাহ", "duration_en" => "10 Weeks", 
-                "desc_bn" => "হাসপাতালের যন্ত্রপাতি, এমআরআই স্ক্যানার এবং লাইফ সাপোর্ট সিস্টেম মেরামত ও রক্ষণাবেক্ষণের প্রযুক্তিগত দক্ষতা।", "desc_en" => "Technical skills for maintaining and repairing hospital machinery, MRI scanners, and life-support systems."
-            ],
-            [
-                "icon" => "fa-solar-panel", 
-                "date" => "Dec 20", 
-                "cat_bn" => "জ্বালানি", "cat_en" => "Energy", 
-                "group" => "Engineering", 
-                "title_bn" => "নবায়নযোগ্য শক্তি গ্রিড স্থাপন", "title_en" => "Renewable Energy Grid Installation", 
-                "loc_bn" => "স্রেডা ট্রেনিং সেন্টার", "loc_en" => "SREDA Training Center", 
-                "duration_bn" => "৮ সপ্তাহ", "duration_en" => "8 Weeks", 
-                "desc_bn" => "বৃহৎ আকারের সৌরবিদ্যুৎ গ্রিড এবং নবায়নযোগ্য শক্তি স্টোরেজ ব্যবস্থার ডিজাইন, সেটআপ ও রক্ষণাবেক্ষণ।", "desc_en" => "Design, setup, and maintenance of large-scale solar power grids and renewable energy storage solutions."
-            ]
-        ];
+        $trainings = [];
+        $res = $conn->query("SELECT * FROM trainings");
+        if ($res) {
+            while ($row = $res->fetch_assoc()) {
+                $trainings[] = [
+                    'icon' => $row['icon'],
+                    'date' => $row['start_date'],
+                    'cat_bn' => $row['cat_bn'],
+                    'cat_en' => $row['cat_en'],
+                    'group' => $row['group_name'],
+                    'title_bn' => $row['title_bn'],
+                    'title_en' => $row['title_en'],
+                    'loc_bn' => $row['loc_bn'],
+                    'loc_en' => $row['loc_en'],
+                    'duration_bn' => $row['duration_bn'],
+                    'duration_en' => $row['duration_en'],
+                    'desc_bn' => $row['desc_bn'],
+                    'desc_en' => $row['desc_en']
+                ];
+            }
+        }
 
         foreach($trainings as $t_item):
             $cat = ($lang == 'bn') ? $t_item['cat_bn'] : $t_item['cat_en'];

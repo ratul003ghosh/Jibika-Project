@@ -6,8 +6,35 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'job_seeker') {
 }
 
 include('../assets/config/db.php');
+
+if (isset($_GET['lang'])) {
+    $_SESSION['lang'] = $_GET['lang'] === 'en' ? 'en' : 'bn';
+}
 $lang = $_SESSION['lang'] ?? 'bn';
 $user_id = $_SESSION['user_id'];
+
+// Translation Dictionary
+$ui = [
+    'title' => ['en' => 'Application Tracking Dashboard', 'bn' => 'আবেদন ট্র্যাকিং ড্যাশবোর্ড'],
+    'total_applied' => ['en' => 'Total Applied', 'bn' => 'মোট আবেদন'],
+    'pending' => ['en' => 'Pending', 'bn' => 'অপেক্ষমাণ'],
+    'interviews' => ['en' => 'Interviews', 'bn' => 'সাক্ষাৎকার'],
+    'selected' => ['en' => 'Selected', 'bn' => 'নির্বাচিত'],
+    'success_rate' => ['en' => 'Success Rate:', 'bn' => 'সাফল্যের হার:'],
+    'interview_rate' => ['en' => 'Interview Rate:', 'bn' => 'সাক্ষাৎকারের হার:'],
+    'app_history' => ['en' => 'Application History', 'bn' => 'আবেদনের ইতিহাস'],
+    'th_job' => ['en' => 'Job Title', 'bn' => 'চাকরির পদ'],
+    'th_comp' => ['en' => 'Company', 'bn' => 'কোম্পানি'],
+    'th_date' => ['en' => 'Applied Date', 'bn' => 'আবেদনের তারিখ'],
+    'th_status' => ['en' => 'Status', 'bn' => 'অবস্থা'],
+    'th_int' => ['en' => 'Interview Details', 'bn' => 'সাক্ষাৎকারের বিস্তারিত'],
+    'not_sched' => ['en' => 'Not Scheduled', 'bn' => 'নির্ধারিত নয়'],
+    'emp_proposed' => ['en' => 'Employer proposed this time. Respond:', 'bn' => 'নিয়োগকর্তা এই সময় প্রস্তাব করেছেন। উত্তর দিন:'],
+    'btn_acc' => ['en' => 'Accept', 'bn' => 'গ্রহণ করুন'],
+    'btn_rej' => ['en' => 'Reject', 'bn' => 'প্রত্যাখ্যান করুন'],
+    'btn_sug' => ['en' => 'Suggest', 'bn' => 'প্রস্তাব করুন']
+];
+
 
 // Handle Applicant Actions
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
@@ -67,7 +94,7 @@ $stats = $stats_q->fetch_assoc();
 
 // 2. Application History (Join with Interviews)
 $history_q = $conn->query("SELECT 
-    a.application_id, a.rejection_count, j.title, ep.company_name, a.applied_at, a.status as app_status,
+    a.application_id, a.rejection_count, j.job_id, j.title, ep.company_name, a.applied_at, a.status as app_status,
     i.status as int_status, i.interview_datetime, i.interview_type
     FROM applications a
     JOIN jobs j ON a.job_id = j.job_id
@@ -84,65 +111,77 @@ $interview_rate = ($stats['total_applied'] > 0) ? round(($stats['interview'] / $
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Application Tracking</title>
+    <title><?php echo $ui['title'][$lang]; ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-light">
 <?php include('../includes/navbar.php'); ?>
 
 <div class="container mt-5">
-    <h2>Application Tracking Dashboard</h2>
+    <h2><?php echo $ui['title'][$lang]; ?></h2>
     
     <?php if(isset($msg)): ?>
         <div class="alert alert-info"><?php echo htmlspecialchars($msg); ?></div>
     <?php endif; ?>
     
     <div class="row mt-4">
-        <div class="col-md-3"><div class="card text-center p-3 text-white bg-primary"><h4><?php echo $stats['total_applied']; ?></h4>Total Applied</div></div>
-        <div class="col-md-3"><div class="card text-center p-3 text-white bg-warning"><h4><?php echo $stats['pending']; ?></h4>Pending</div></div>
-        <div class="col-md-3"><div class="card text-center p-3 text-white bg-info"><h4><?php echo $stats['interview']; ?></h4>Interviews</div></div>
-        <div class="col-md-3"><div class="card text-center p-3 text-white bg-success"><h4><?php echo $stats['selected']; ?></h4>Selected</div></div>
+        <div class="col-md-3"><div class="card text-center p-3 text-white bg-primary"><h4><?php echo translateNumber($stats['total_applied'], $lang); ?></h4><?php echo $ui['total_applied'][$lang]; ?></div></div>
+        <div class="col-md-3"><div class="card text-center p-3 text-white bg-warning"><h4><?php echo translateNumber($stats['pending'], $lang); ?></h4><?php echo $ui['pending'][$lang]; ?></div></div>
+        <div class="col-md-3"><div class="card text-center p-3 text-white bg-info"><h4><?php echo translateNumber($stats['interview'], $lang); ?></h4><?php echo $ui['interviews'][$lang]; ?></div></div>
+        <div class="col-md-3"><div class="card text-center p-3 text-white bg-success"><h4><?php echo translateNumber($stats['selected'], $lang); ?></h4><?php echo $ui['selected'][$lang]; ?></div></div>
     </div>
 
     <div class="row mt-4">
         <div class="col-md-6">
             <div class="card p-3">
-                <h5>Success Rate: <span class="text-success"><?php echo $success_rate; ?>%</span></h5>
-                <h5>Interview Rate: <span class="text-info"><?php echo $interview_rate; ?>%</span></h5>
+                <h5><?php echo $ui['success_rate'][$lang]; ?> <span class="text-success"><?php echo translateNumber($success_rate, $lang); ?>%</span></h5>
+                <h5><?php echo $ui['interview_rate'][$lang]; ?> <span class="text-info"><?php echo translateNumber($interview_rate, $lang); ?>%</span></h5>
             </div>
         </div>
     </div>
 
-    <h4 class="mt-5">Application History</h4>
+    <h4 class="mt-5"><?php echo $ui['app_history'][$lang]; ?></h4>
     <table class="table table-bordered table-striped mt-3">
         <thead class="table-dark">
             <tr>
-                <th>Job Title</th>
-                <th>Company</th>
-                <th>Applied Date</th>
-                <th>Status</th>
-                <th>Interview Details</th>
+                <th><?php echo $ui['th_job'][$lang]; ?></th>
+                <th><?php echo $ui['th_comp'][$lang]; ?></th>
+                <th><?php echo $ui['th_date'][$lang]; ?></th>
+                <th><?php echo $ui['th_status'][$lang]; ?></th>
+                <th><?php echo $ui['th_int'][$lang]; ?></th>
             </tr>
         </thead>
         <tbody>
             <?php while($row = $history_q->fetch_assoc()): ?>
             <tr>
-                <td><?php echo htmlspecialchars($row['title']); ?></td>
+                <td><a href="../job_details.php?id=<?php echo $row['job_id']; ?>" class="text-decoration-none fw-bold"><?php echo htmlspecialchars($row['title']); ?></a></td>
                 <td><?php echo htmlspecialchars($row['company_name']); ?></td>
                 <td><?php echo date('d M Y', strtotime($row['applied_at'])); ?></td>
-                <td><span class="badge bg-secondary"><?php echo $row['app_status']; ?></span></td>
+                <td>
+                    <?php 
+                        $status_class = 'bg-secondary';
+                        if ($row['app_status'] == 'Pending') $status_class = 'bg-warning text-dark';
+                        elseif ($row['app_status'] == 'Under Review') $status_class = 'bg-info text-dark';
+                        elseif ($row['app_status'] == 'Selected') $status_class = 'bg-success';
+                        elseif ($row['app_status'] == 'Rejected') $status_class = 'bg-danger';
+                        elseif ($row['app_status'] == 'Interview Scheduled') $status_class = 'bg-primary';
+                        elseif ($row['app_status'] == 'Interview Cancelled') $status_class = 'bg-dark';
+                    ?>
+                    <span class="badge <?php echo $status_class; ?>"><?php echo htmlspecialchars($row['app_status']); ?></span>
+                </td>
                 <td>
                     <?php if($row['int_status']): ?>
-                        <span class="badge bg-info"><?php echo $row['int_status']; ?></span>
-                        <br><small><?php echo date('d M Y, h:i A', strtotime($row['interview_datetime'])); ?> (<?php echo $row['interview_type']; ?>)</small>
+                        <span class="badge bg-info"><?php echo htmlspecialchars($row['int_status']); ?></span>
+                        <br><small><?php echo translateNumber(date('d M Y, h:i A', strtotime($row['interview_datetime'])), $lang); ?> (<?php echo htmlspecialchars($row['interview_type']); ?>)</small>
                         
-                        <?php if($row['app_status'] == 'Interview Proposed'): ?>
+                        <?php if($row['app_status'] == 'Interview Proposed' || $row['app_status'] == 'Interview Scheduled'): ?>
                             <div class="mt-2 p-2 border rounded bg-white">
-                                <p class="mb-1 fw-bold small">Employer proposed this time. Respond:</p>
+                                <p class="mb-1 fw-bold small"><?php echo $ui['emp_proposed'][$lang]; ?></p>
                                 <form method="POST" class="d-inline">
                                     <input type="hidden" name="application_id" value="<?php echo $row['application_id']; ?>">
-                                    <button type="submit" name="action" value="accept_interview" class="btn btn-sm btn-success w-100 mb-1">Accept</button>
-                                    <button type="submit" name="action" value="reject_interview" class="btn btn-sm btn-danger w-100 mb-1" onclick="return confirm('Reject this interview?');">Reject</button>
+                                    <button type="submit" name="action" value="accept_interview" class="btn btn-sm btn-success w-100 mb-1"><?php echo $ui['btn_acc'][$lang]; ?></button>
+                                    <button type="submit" name="action" value="reject_interview" class="btn btn-sm btn-danger w-100 mb-1" onclick="return confirm('Reject this interview?');"><?php echo $ui['btn_rej'][$lang]; ?></button>
                                 </form>
                                 <?php if($row['rejection_count'] < 1): ?>
                                     <form method="POST" class="mt-1">
@@ -150,7 +189,7 @@ $interview_rate = ($stats['total_applied'] > 0) ? round(($stats['interview'] / $
                                         <input type="hidden" name="action" value="suggest_time">
                                         <div class="input-group input-group-sm">
                                             <input type="datetime-local" name="suggested_time" class="form-control" required>
-                                            <button class="btn btn-outline-primary" type="submit">Suggest</button>
+                                            <button class="btn btn-outline-primary" type="submit"><?php echo $ui['btn_sug'][$lang]; ?></button>
                                         </div>
                                     </form>
                                 <?php endif; ?>
@@ -158,7 +197,7 @@ $interview_rate = ($stats['total_applied'] > 0) ? round(($stats['interview'] / $
                         <?php endif; ?>
                         
                     <?php else: ?>
-                        <small class="text-muted">Not Scheduled</small>
+                        <small class="text-muted"><?php echo $ui['not_sched'][$lang]; ?></small>
                     <?php endif; ?>
                 </td>
             </tr>
@@ -166,5 +205,6 @@ $interview_rate = ($stats['total_applied'] > 0) ? round(($stats['interview'] / $
         </tbody>
     </table>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

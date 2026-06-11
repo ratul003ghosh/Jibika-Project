@@ -32,6 +32,7 @@ $e_text = [
     ]
 ];
 $et = $e_text[$lang];
+?>
 
 <?php include('includes/header.php'); ?>
 <?php include('includes/navbar.php'); ?>
@@ -48,29 +49,17 @@ $et = $e_text[$lang];
 
     <div class="row g-4">
         <?php
-        $services_data = [
-            'en' => [
-                ["icon" => "fa-file-shield", "title" => "Online Police Clearance", "desc" => "Apply for an official police clearance certificate required for employment."],
-                ["icon" => "fa-file-invoice", "title" => "e-Trade License", "desc" => "Apply for a new trade license or renew your existing business license online."],
-                ["icon" => "fa-file-signature", "title" => "Online TIN Certificate", "desc" => "Register for a new Taxpayer Identification Number or download your certificate."],
-                ["icon" => "fa-passport", "title" => "e-Passport Portal", "desc" => "Apply for a new machine-readable e-Passport or check application status."],
-                ["icon" => "fa-plane-departure", "title" => "Expatriate Clearance (BMET)", "desc" => "Register for overseas employment and obtain BMET clearance securely."],
-                ["icon" => "fa-building", "title" => "Employer Registration", "desc" => "Register your company to legally hire employees through government portals."],
-                ["icon" => "fa-graduation-cap", "title" => "Skill Certification Check", "desc" => "Verify authenticity of vocational and technical training certificates."],
-                ["icon" => "fa-file-invoice-dollar", "title" => "Online Tax Return Filing", "desc" => "Submit your annual income tax return digitally to the NBR."]
-            ],
-            'bn' => [
-                ["icon" => "fa-file-shield", "title" => "অনলাইন পুলিশ ক্লিয়ারেন্স", "desc" => "কর্মসংস্থানের জন্য প্রয়োজনীয় অফিসিয়াল পুলিশ ক্লিয়ারেন্স সার্টিফিকেটের জন্য আবেদন করুন।"],
-                ["icon" => "fa-file-invoice", "title" => "ই-ট্রেড লাইসেন্স", "desc" => "নতুন ট্রেড লাইসেন্সের জন্য আবেদন করুন অথবা অনলাইনে আপনার বর্তমান লাইসেন্স নবায়ন করুন।"],
-                ["icon" => "fa-file-signature", "title" => "অনলাইন টিআইএন সার্টিফিকেট", "desc" => "নতুন করদাতা সনাক্তকরণ নম্বরের জন্য নিবন্ধন করুন বা আপনার সার্টিফিকেট ডাউনলোড করুন।"],
-                ["icon" => "fa-passport", "title" => "ই-পাসপোর্ট পোর্টাল", "desc" => "নতুন ই-পাসপোর্টের জন্য আবেদন করুন অথবা আবেদনের অবস্থা চেক করুন।"],
-                ["icon" => "fa-plane-departure", "title" => "প্রবাসী ক্লিয়ারেন্স (BMET)", "desc" => "বিদেশি কর্মসংস্থানের জন্য নিবন্ধন করুন এবং নিরাপদে বিএমইটি ক্লিয়ারেন্স গ্রহণ করুন।"],
-                ["icon" => "fa-building", "title" => "নিয়োগকর্তা নিবন্ধন", "desc" => "সরকারি পোর্টালের মাধ্যমে আইনসম্মতভাবে কর্মী নিয়োগের জন্য আপনার কোম্পানি নিবন্ধন করুন।"],
-                ["icon" => "fa-graduation-cap", "title" => "স্কিল সার্টিফিকেশন চেক", "desc" => "ভোকেশনাল এবং টেকনিক্যাল ট্রেনিং সার্টিফিকেটের সত্যতা যাচাই করুন।"],
-                ["icon" => "fa-file-invoice-dollar", "title" => "অনলাইন ট্যাক্স রিটার্ন ফাইলিং", "desc" => "এনবিআর-এ আপনার বার্ষিক আয়কর রিটার্ন ডিজিটালি জমা দিন।"]
-            ]
-        ];
-        $services = $services_data[$lang];
+        $services = [];
+        $res = $conn->query("SELECT * FROM eservices");
+        if ($res) {
+            while ($row = $res->fetch_assoc()) {
+                $services[] = [
+                    'icon' => $row['icon'],
+                    'title' => ($lang == 'bn') ? $row['title_bn'] : $row['title_en'],
+                    'desc' => ($lang == 'bn') ? $row['desc_bn'] : $row['desc_en']
+                ];
+            }
+        }
 
         foreach($services as $srv):
         ?>
