@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'job_seeker') {
+if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['job_seeker', 'employer'])) {
     header("Location: auth/login.php");
     exit();
 }
@@ -10,6 +10,7 @@ include('assets/config/db.php');
 
 $user_id = $_SESSION['user_id'];
 $lang = $_SESSION['lang'] ?? 'bn';
+$back_url = ($_SESSION['role'] == 'employer') ? 'employer/dashboard.php' : 'jobseeker/dashboard.php';
 
 // Mark all as read
 $conn->query("UPDATE notifications SET is_read = 1 WHERE user_id = $user_id AND is_read = 0");
@@ -45,7 +46,7 @@ $result = $conn->query($sql);
             <h2 class="mb-1"><i class="fa-solid fa-bell text-success"></i> <?php echo $ct['title']; ?></h2>
             <p class="text-muted mb-0"><?php echo $ct['subtitle']; ?></p>
         </div>
-        <a href="jobseeker/dashboard.php" class="btn btn-secondary"><?php echo $ct['back_btn']; ?></a>
+        <a href="<?php echo $back_url; ?>" class="btn btn-secondary"><?php echo $ct['back_btn']; ?></a>
     </div>
 
     <div class="card shadow p-4 mb-4">

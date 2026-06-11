@@ -33,6 +33,12 @@ if (!$profile_check || $profile_check->num_rows == 0) {
     exit();
 }
 
+$skills_check = $conn->query("SELECT skill_id FROM skills WHERE user_id='$user_id' LIMIT 1");
+if (!$skills_check || $skills_check->num_rows == 0) {
+    header("Location: skills.php?msg=mandatory");
+    exit();
+}
+
 $total_jobs = 0;
 $matched_jobs = 0;
 $applied_jobs = 0;
@@ -99,10 +105,12 @@ $matched_condition = "jobs.status='active'";
 
 if (!empty($skill_conditions)) {
     $matched_condition .= " AND (" . implode(" OR ", $skill_conditions) . ")";
+} else {
+    $matched_condition .= " AND 1=0";
 }
 
 if (!empty($user_district_id)) {
-    $matched_condition .= " OR (jobs.status='active' AND jobs.district_id='$user_district_id')";
+    $matched_condition .= " AND jobs.district_id='$user_district_id'";
 }
 
 $q = $conn->query("SELECT COUNT(*) AS total FROM jobs WHERE $matched_condition");
@@ -248,154 +256,125 @@ $district_translations = [
 ];
 ?>
 
-<!DOCTYPE html>
-<html lang="<?php echo $lang; ?>">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $t['dashboard']; ?></title>
+<?php
+include('../includes/header.php');
+include('../includes/navbar.php');
+$t = $jt_dash[$lang]; // Restore dashboard translations because navbar.php overwrites $t
+?>
 
-    <link rel="stylesheet" href="../assets/css/job_dashboard.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="../assets/css/jobseeker_dashboard.css">
 
-</head>
-<body>
+<!-- Hero -->
+<div class="dash-hero text-center">
+    <div class="container px-4">
+        <span style="background:rgba(255,255,255,0.15); border-radius:50px; padding:5px 18px; font-size:0.82rem; font-weight:700; color:#fff; letter-spacing:1px; text-transform:uppercase; border:1px solid rgba(255,255,255,0.25); display:inline-block; margin-bottom:16px;">
+            <i class="fa-solid fa-user me-2" style="color:#a7f3d0;"></i>
+            <?php echo $t['panel_title']; ?>
+        </span>
+        <h1><?php echo $t['welcome'] . htmlspecialchars($full_name); ?></h1>
+        <p><?php echo $t['welcome_sub']; ?></p>
+    </div>
+</div>
 
-<div class="dashboard-container">
+<div class="container px-3 px-lg-4 dash-wrap">
 
-    <aside class="sidebar">
-        <div class="logo">
-            <h2>JIBIKA</h2>
-            <p><?php echo $t['panel_title']; ?></p>
-        </div>
-
-        <ul class="sidebar-menu">
-            <li class="active"><a href="dashboard.php"><i class="fa-solid fa-house"></i> <?php echo $t['dashboard']; ?></a></li>
-            <li><a href="jobs.php"><i class="fa-solid fa-briefcase"></i> <?php echo $t['browse_jobs']; ?></a></li>
-            <li><a href="saved_jobs.php"><i class="fa-solid fa-bookmark"></i> <?php echo $t['saved_jobs']; ?></a></li>
-            <li><a href="my_applications.php"><i class="fa-solid fa-file-circle-check"></i> <?php echo $t['my_applications']; ?></a></li>
-            <li><a href="skills.php"><i class="fa-solid fa-screwdriver-wrench"></i> <?php echo $t['my_skills']; ?></a></li>
-            <li><a href="partner_finder.php"><i class="fa-solid fa-handshake"></i> <?php echo $t['partner_finder']; ?></a></li>
-            <li><a href="profile.php"><i class="fa-solid fa-user"></i> <?php echo $t['my_profile']; ?></a></li>
-            <li><a href="#"><i class="fa-solid fa-bell"></i> <?php echo $t['notifications']; ?></a></li>
-            <li><a href="/auth/logout.php"><i class="fa-solid fa-right-from-bracket"></i> <?php echo $t['logout']; ?></a></li>
-            <li style="margin-top: 24px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 15px;">
-                <?php if ($lang === 'bn'): ?>
-                    <a href="?lang=en" style="font-weight: 600;"><i class="fa-solid fa-globe"></i> English</a>
-                <?php else: ?>
-                    <a href="?lang=bn" style="font-weight: 600;"><i class="fa-solid fa-globe"></i> বাংলা</a>
-                <?php endif; ?>
-            </li>
-        </ul>
-    </aside>
-
-    <main class="main-content">
-
-        <div class="topbar">
+    <!-- Summary Cards -->
+    <div class="summary-cards-grid">
+        <div class="summary-card">
+            <div class="icon-circle"><i class="fa-solid fa-briefcase"></i></div>
             <div>
-                <h1><?php echo $t['welcome']; ?><?php echo htmlspecialchars($full_name); ?></h1>
-                <p><?php echo $t['welcome_sub']; ?></p>
-            </div>
-
-            <div class="topbar-actions">
-                <a href="jobs.php" class="btn primary-btn"><?php echo $t['browse_jobs']; ?></a>
-                <a href="profile.php" class="btn secondary-btn"><?php echo $t['update_profile']; ?></a>
+                <h4><?php echo translateNumber($total_jobs, $lang); ?></h4>
+                <p><?php echo $t['total_avail_jobs']; ?></p>
             </div>
         </div>
 
-        <section class="summary-cards">
-            <div class="card">
-                <div class="icon"><i class="fa-solid fa-briefcase"></i></div>
-                <div>
-                    <h3><?php echo translateNumber($total_jobs, $lang); ?></h3>
-                    <p><?php echo $t['total_avail_jobs']; ?></p>
-                </div>
+        <div class="summary-card">
+            <div class="icon-circle"><i class="fa-solid fa-star"></i></div>
+            <div>
+                <h4><?php echo translateNumber($matched_jobs, $lang); ?></h4>
+                <p><?php echo $t['matched_jobs']; ?></p>
             </div>
+        </div>
 
-            <div class="card">
-                <div class="icon"><i class="fa-solid fa-star"></i></div>
-                <div>
-                    <h3><?php echo translateNumber($matched_jobs, $lang); ?></h3>
-                    <p><?php echo $t['matched_jobs']; ?></p>
-                </div>
+        <div class="summary-card">
+            <div class="icon-circle"><i class="fa-solid fa-paper-plane"></i></div>
+            <div>
+                <h4><?php echo translateNumber($applied_jobs, $lang); ?></h4>
+                <p><?php echo $t['applied_jobs']; ?></p>
             </div>
+        </div>
 
-            <div class="card">
-                <div class="icon"><i class="fa-solid fa-paper-plane"></i></div>
-                <div>
-                    <h3><?php echo translateNumber($applied_jobs, $lang); ?></h3>
-                    <p><?php echo $t['applied_jobs']; ?></p>
-                </div>
+        <div class="summary-card">
+            <div class="icon-circle"><i class="fa-solid fa-bookmark"></i></div>
+            <div>
+                <h4><?php echo translateNumber($saved_jobs, $lang); ?></h4>
+                <p><?php echo $t['saved_jobs']; ?></p>
             </div>
+        </div>
 
-            <div class="card">
-                <div class="icon"><i class="fa-solid fa-bookmark"></i></div>
-                <div>
-                    <h3><?php echo translateNumber($saved_jobs, $lang); ?></h3>
-                    <p><?php echo $t['saved_jobs']; ?></p>
-                </div>
+        <div class="summary-card">
+            <div class="icon-circle"><i class="fa-solid fa-user-check"></i></div>
+            <div>
+                <?php
+                if ($employment_status == 'employed') {
+                    echo "<h4 class='status-text' style='color:#059669;'>" . $t['status_employed'] . "</h4>";
+                } elseif ($employment_status == 'training') {
+                    echo "<h4 class='status-text' style='color:#d97706;'>" . $t['status_training'] . "</h4>";
+                } elseif ($employment_status == 'self_employed') {
+                    echo "<h4 class='status-text' style='color:#0284c7;'>" . $t['status_self_employed'] . "</h4>";
+                } else {
+                    echo "<h4 class='status-text' style='color:#dc2626;'>" . $t['status_unemployed'] . "</h4>";
+                }
+                ?>
+                <p><?php echo $t['current_status']; ?></p>
             </div>
+        </div>
+    </div>
 
-            <div class="card">
-                <div class="icon"><i class="fa-solid fa-user-check"></i></div>
-                <div>
-                    <?php
-                    if ($employment_status == 'employed') {
-                        echo "<h3 style='color:green;'>" . $t['status_employed'] . "</h3>";
-                    } elseif ($employment_status == 'training') {
-                        echo "<h3 style='color:orange;'>" . $t['status_training'] . "</h3>";
-                    } elseif ($employment_status == 'self_employed') {
-                        echo "<h3 style='color:deepskyblue;'>" . $t['status_self_employed'] . "</h3>";
-                    } else {
-                        echo "<h3 style='color:red;'>" . $t['status_unemployed'] . "</h3>";
+    <!-- Quick Search Filter Section -->
+    <div class="quick-search-card">
+        <form class="quick-search-form" method="GET" action="jobs.php">
+            <input type="text" name="search" placeholder="<?php echo $t['search_ph']; ?>">
+
+            <select name="district_id">
+                <option value=""><?php echo $t['select_district']; ?></option>
+                <?php
+                $districts = $conn->query("SELECT * FROM districts ORDER BY district_name ASC");
+                if ($districts && $districts->num_rows > 0) {
+                    while ($district = $districts->fetch_assoc()) {
+                        $d_name = $district_translations[$lang][$district['district_name']] ?? $district['district_name'];
+                        echo "<option value='" . $district['district_id'] . "'>" . htmlspecialchars($d_name) . "</option>";
                     }
-                    ?>
-                    <p><?php echo $t['current_status']; ?></p>
-                </div>
-            </div>
-        </section>
+                }
+                ?>
+            </select>
+            
+            <select name="job_type">
+                <option value=""><?php echo $t['any_job_type']; ?></option>
+                <option value="Part-time (Student)"><?php echo $lang=='bn'?'পার্ট-টাইম (ছাত্র)':'Part-time (Student)'; ?></option>
+                <option value="Day Labor"><?php echo $lang=='bn'?'দৈনিক শ্রমিক':'Day Labor'; ?></option>
+                <option value="Full-time"><?php echo $lang=='bn'?'পূর্ণকালীন':'Full-time'; ?></option>
+                <option value="Contract"><?php echo $lang=='bn'?'চুক্তিভিত্তিক':'Contract'; ?></option>
+            </select>
 
-        <section class="search-filter-section">
-            <form class="search-filter-form" method="GET" action="jobs.php">
-                <input type="text" name="search" placeholder="<?php echo $t['search_ph']; ?>">
+            <button type="submit" class="btn btn-success rounded-pill px-4 fw-bold hover-btn" style="background-color:#006a4e; border:none; height:45px;">
+                <i class="fa-solid fa-magnifying-glass me-1"></i> <?php echo $t['search_btn']; ?>
+            </button>
+        </form>
+    </div>
 
-                <select name="district_id">
-                    <option value=""><?php echo $t['select_district']; ?></option>
-                    <?php
-                    $districts = $conn->query("SELECT * FROM districts ORDER BY district_name ASC");
-                    if ($districts && $districts->num_rows > 0) {
-                        while ($district = $districts->fetch_assoc()) {
-                            $d_name = $district_translations[$lang][$district['district_name']] ?? $district['district_name'];
-                            echo "<option value='" . $district['district_id'] . "'>" . htmlspecialchars($d_name) . "</option>";
-                        }
-                    }
-                    ?>
-                </select>
-                
-                <select name="job_type">
-                    <option value=""><?php echo $t['any_job_type']; ?></option>
-                    <option value="Part-time (Student)"><?php echo $lang=='bn'?'পার্ট-টাইম (ছাত্র)':'Part-time (Student)'; ?></option>
-                    <option value="Day Labor"><?php echo $lang=='bn'?'দৈনিক শ্রমিক':'Day Labor'; ?></option>
-                    <option value="Full-time"><?php echo $lang=='bn'?'পূর্ণকালীন':'Full-time'; ?></option>
-                    <option value="Contract"><?php echo $lang=='bn'?'চুক্তিভিত্তিক':'Contract'; ?></option>
-                </select>
-
-                <button type="submit" class="btn primary-btn"><?php echo $t['search_btn']; ?></button>
-            </form>
-        </section>
-
-        <div class="dashboard-grid">
-
-            <section class="panel large-panel">
-                <div class="panel-header">
-                    <h2><?php echo $t['recommended_jobs']; ?></h2>
-                    <a href="jobs.php"><?php echo $t['view_all']; ?></a>
+    <div class="row g-4">
+        <!-- Recommended Jobs Column -->
+        <div class="col-12 col-lg-8">
+            <div class="dash-panel">
+                <div class="dash-panel-header">
+                    <h2><i class="fa-solid fa-star"></i> <?php echo $t['recommended_jobs']; ?></h2>
+                    <a href="jobs.php"><?php echo $t['view_all']; ?> <i class="fa-solid fa-arrow-right"></i></a>
                 </div>
 
-                <div class="job-cards">
+                <div class="recommended-job-list">
                     <?php if ($recommended_jobs && $recommended_jobs->num_rows > 0): ?>
                         <?php while ($job = $recommended_jobs->fetch_assoc()): ?>
-
                             <?php
                             $match_reason = $lang == 'bn' ? 'সুপারিশকৃত' : 'Recommended';
                             $job_district_id = $job['district_id'] ?? 0;
@@ -432,59 +411,67 @@ $district_translations = [
                             $loc_translated = htmlspecialchars($district_translations[$lang][$job['district_name']] ?? ($job['location'] ?? 'N/A'));
                             ?>
 
-                            <div class="job-card">
-                                <div class="job-cover" style="background-image: url('<?php echo $job_img; ?>');"></div>
-                                <div class="job-card-top">
-                                    <h3><?php echo htmlspecialchars($job['title']); ?></h3>
-                                    <span class="match-badge"><?php echo $match_reason; ?></span>
+                            <div class="recommended-job-item">
+                                <div class="job-img-box" style="background-image: url('<?php echo $job_img; ?>');"></div>
+                                <div class="recommended-job-info">
+                                    <div class="recommended-job-title"><?php echo htmlspecialchars(translateJobTitle($job['title'] ?? '', $lang)); ?></div>
+                                    <div style="font-size: 0.85rem; color: #475569; font-weight: 600; margin-bottom: 4px;"><?php echo htmlspecialchars($job['company_name'] ?? 'N/A'); ?></div>
+                                    <div class="recommended-job-meta">
+                                        <span><i class="fa-solid fa-location-dot"></i> <?php echo $loc_translated; ?></span>
+                                        <span><i class="fa-solid fa-bangladeshi-taka-sign"></i> <?php echo $sal_translated; ?></span>
+                                        <span><i class="fa-solid fa-briefcase"></i> <?php echo htmlspecialchars($job['job_type']); ?></span>
+                                    </div>
+                                    <span class="match-tag"><?php echo $match_reason; ?></span>
                                 </div>
-
-                                <p><strong><?php echo $lang=='bn'?'কোম্পানি:':'Company:'; ?></strong> <?php echo htmlspecialchars($job['company_name'] ?? 'N/A'); ?></p>
-                                <p><strong><?php echo $lang=='bn'?'অবস্থান:':'Location:'; ?></strong> <?php echo $loc_translated; ?></p>
-                                <p><strong><?php echo $lang=='bn'?'বেতন:':'Salary:'; ?></strong> <?php echo $sal_translated; ?></p>
-
-                                <div class="job-card-actions">
-                                    <a href="jobs.php" class="btn secondary-btn"><?php echo $t['view_details']; ?></a>
+                                <div class="recommended-job-actions">
+                                    <a href="jobs.php" class="btn btn-outline-success btn-sm rounded-pill px-3 fw-bold hover-btn"><?php echo $t['view_details']; ?></a>
                                     <a href="jobs.php?apply=<?php echo $job['job_id']; ?>" 
-                                       class="btn primary-btn" 
+                                       class="btn btn-success btn-sm rounded-pill px-3 fw-bold hover-btn"
+                                       style="background-color:#006a4e; border:none;"
                                        onclick="return confirm('<?php echo $lang == 'bn' ? 'এই চাকরির জন্য আবেদন করবেন?' : 'Apply for this job?'; ?>')">
                                         <?php echo $t['apply_now']; ?>
                                     </a>
                                 </div>
                             </div>
-
                         <?php endwhile; ?>
                     <?php else: ?>
-                        <div class="job-card">
-                            <h3><?php echo $t['no_recom']; ?></h3>
-                            <p><?php echo $t['no_recom_sub']; ?></p>
-                            <a href="profile.php" class="btn primary-btn"><?php echo $t['update_profile']; ?></a>
+                        <div class="text-center py-4">
+                            <i class="fa-solid fa-circle-exclamation mb-3" style="font-size:2.5rem; color:#94a3b8;"></i>
+                            <h5 class="fw-bold text-dark mb-1"><?php echo $t['no_recom']; ?></h5>
+                            <p class="text-muted small mb-3"><?php echo $t['no_recom_sub']; ?></p>
+                            <a href="profile.php" class="btn btn-success btn-sm rounded-pill px-4 fw-bold hover-btn" style="background-color:#006a4e; border:none;"><?php echo $t['update_profile']; ?></a>
                         </div>
                     <?php endif; ?>
                 </div>
-            </section>
+            </div>
+        </div>
 
-            <section class="panel small-panel">
-                <div class="panel-header">
-                    <h2><?php echo $t['notifications']; ?></h2>
+        <!-- Notifications Column -->
+        <div class="col-12 col-lg-4">
+            <div class="dash-panel">
+                <div class="dash-panel-header">
+                    <h2><i class="fa-solid fa-bell"></i> <?php echo $t['notifications']; ?></h2>
                     <a href="#"><?php echo $t['see_all']; ?></a>
                 </div>
 
-                <ul class="notification-list">
+                <ul class="dash-notifications">
                     <?php foreach ($notifications as $note): ?>
                         <li><i class="fa-solid fa-bell"></i> <?php echo htmlspecialchars($note); ?></li>
                     <?php endforeach; ?>
                 </ul>
-            </section>
+            </div>
+        </div>
 
-            <section class="panel full-panel">
-                <div class="panel-header">
-                    <h2><?php echo $t['recent_apps']; ?></h2>
-                    <a href="my_applications.php"><?php echo $t['view_all']; ?></a>
+        <!-- Recent Applications Table Column -->
+        <div class="col-12">
+            <div class="dash-panel">
+                <div class="dash-panel-header">
+                    <h2><i class="fa-solid fa-history"></i> <?php echo $t['recent_apps']; ?></h2>
+                    <a href="my_applications.php"><?php echo $t['view_all']; ?> <i class="fa-solid fa-arrow-right"></i></a>
                 </div>
 
-                <div class="table-wrapper">
-                    <table>
+                <div class="table-responsive">
+                    <table class="dash-table">
                         <thead>
                             <tr>
                                 <th><?php echo $t['th_title']; ?></th>
@@ -505,11 +492,11 @@ $district_translations = [
                                     elseif ($status_raw == 'Rejected') $status_disp = $lang == 'bn' ? 'বাতিল' : 'Rejected';
                                     ?>
                                     <tr>
-                                        <td><?php echo htmlspecialchars($app['title']); ?></td>
-                                        <td><?php echo htmlspecialchars($app['company_name'] ?? 'N/A'); ?></td>
+                                        <td class="fw-bold text-dark"><?php echo htmlspecialchars(translateJobTitle($app['title'] ?? '', $lang)); ?></td>
+                                        <td><?php echo htmlspecialchars(translateEmployerName($app['company_name'] ?? 'N/A', $lang)); ?></td>
                                         <td><?php echo translateNumber(date('d M Y, h:i A', strtotime($app['applied_at'])), $lang); ?></td>
                                         <td>
-                                            <span class="status <?php echo strtolower($status_raw); ?>">
+                                            <span class="dash-status <?php echo strtolower($status_raw); ?>">
                                                 <?php echo htmlspecialchars($status_disp); ?>
                                             </span>
                                         </td>
@@ -517,18 +504,16 @@ $district_translations = [
                                 <?php endwhile; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="4"><?php echo $t['no_recent_apps']; ?></td>
+                                    <td colspan="4" class="text-center text-muted"><?php echo $t['no_recent_apps']; ?></td>
                                 </tr>
                             <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
-            </section>
-
+            </div>
         </div>
+    </div>
 
-    </main>
 </div>
 
-</body>
-</html>
+<?php include('../includes/footer.php'); ?>

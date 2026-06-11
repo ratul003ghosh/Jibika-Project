@@ -86,7 +86,12 @@ if (isset($_POST['login'])) {
                 $check_profile = $conn->query("SELECT profile_id FROM job_seeker_profiles WHERE user_id='$user_id' LIMIT 1");
 
                 if ($check_profile && $check_profile->num_rows > 0) {
-                    header("Location: ../jobseeker/dashboard.php");
+                    $check_skills = $conn->query("SELECT skill_id FROM skills WHERE user_id='$user_id' LIMIT 1");
+                    if ($check_skills && $check_skills->num_rows > 0) {
+                        header("Location: ../jobseeker/dashboard.php");
+                    } else {
+                        header("Location: ../jobseeker/skills.php?msg=mandatory");
+                    }
                 } else {
                     header("Location: ../jobseeker/profile.php");
                 }

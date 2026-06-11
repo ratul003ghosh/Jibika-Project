@@ -26,7 +26,7 @@ $unread_notifs = 0;
 if (isset($_SESSION['user_id'])) {
     global $conn; // assume included before navbar or include it here if missing
     if (isset($conn)) {
-        $n_res = $conn->query("SELECT COUNT(id) AS unread FROM notifications WHERE user_id = {$_SESSION['user_id']} AND is_read = 0");
+        $n_res = $conn->query("SELECT COUNT(notification_id) AS unread FROM notifications WHERE user_id = {$_SESSION['user_id']} AND is_read = 0");
         if ($n_res) $unread_notifs = $n_res->fetch_assoc()['unread'];
     }
 }
@@ -59,6 +59,7 @@ $navText = [
         'login' => 'লগইন',
         'register' => 'রেজিস্টার',
         'dashboard' => 'ড্যাশবোর্ড',
+        'my_profile' => 'আমার প্রোফাইল',
         'logout' => 'লগআউট'
     ],
     'en' => [
@@ -77,6 +78,7 @@ $navText = [
         'login' => 'Login',
         'register' => 'Register',
         'dashboard' => 'Dashboard',
+        'my_profile' => 'My Profile',
         'logout' => 'Logout'
     ]
 ];
@@ -163,6 +165,17 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                                 </div>
                             </div>
                             <div class="drop-menu-body">
+                                <?php if ($_SESSION['role'] == 'job_seeker'): ?>
+                                    <a class="drop-item" href="<?php echo $path_prefix; ?>jobseeker/profile.php">
+                                        <span class="drop-item-icon icon-profile"><i class="fa-solid fa-user"></i></span>
+                                        <?php echo $t['my_profile']; ?>
+                                    </a>
+                                <?php elseif ($_SESSION['role'] == 'employer'): ?>
+                                    <a class="drop-item" href="<?php echo $path_prefix; ?>employer/profile.php">
+                                        <span class="drop-item-icon icon-profile"><i class="fa-solid fa-user"></i></span>
+                                        <?php echo $t['my_profile']; ?>
+                                    </a>
+                                <?php endif; ?>
                                 <a class="drop-item" href="<?php echo $profile_link; ?>">
                                     <span class="drop-item-icon icon-dashboard"><i class="fa-solid fa-gauge-high"></i></span>
                                     <?php echo $t['dashboard']; ?>

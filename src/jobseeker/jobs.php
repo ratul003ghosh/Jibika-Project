@@ -112,6 +112,14 @@ $max_salary   = isset($_GET['max_salary'])  ? intval($_GET['max_salary'])    : 0
 $sort_by      = isset($_GET['sort_by'])     ? $_GET['sort_by']               : 'default';
 $view_mode    = isset($_GET['view'])        ? $_GET['view']                  : 'grid';
 
+// Default to user's district on first load if not explicitly filtered
+if (!isset($_GET['search']) && !isset($_GET['district_id']) && !isset($_GET['job_type']) && empty($categories)) {
+    $profile_q = $conn->query("SELECT district_id FROM job_seeker_profiles WHERE user_id='$user_id' LIMIT 1");
+    if ($profile_q && $profile_q->num_rows > 0) {
+        $district_id = intval($profile_q->fetch_assoc()['district_id'] ?? 0);
+    }
+}
+
 $sql = "SELECT jobs.*, d.district_name, u.upazila_name, users.full_name AS company_name
         FROM jobs
         LEFT JOIN districts d ON jobs.district_id = d.district_id
