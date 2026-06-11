@@ -1,24 +1,130 @@
 <?php
 session_start();
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'employer') {
-    header("Location: ../login.php");
+    header("Location: ../auth/login.php");
     exit();
 }
 
 include('../assets/config/db.php');
+include('../includes/header.php');
+include('../includes/navbar.php');
+
 $employer_id = $_SESSION['user_id'];
 $lang = $_SESSION['lang'] ?? 'bn';
+
+if (!function_exists('translateNumber')) {
+    function translateNumber($num, $lang) {
+        if ($lang == 'bn') {
+            $eng_nums = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+            $bng_nums = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+            return str_replace($eng_nums, $bng_nums, (string)$num);
+        }
+        return $num;
+    }
+}
+
+$district_translations = [
+    'bn' => [
+        'Dhaka' => 'ঢাকা', 'Chattogram' => 'চট্টগ্রাম', 'Khulna' => 'খুলনা', 'Rajshahi' => 'রাজশাহী',
+        'Barishal' => 'বরিশাল', 'Sylhet' => 'সিলেট', 'Rangpur' => 'রংপুর', 'Mymensingh' => 'ময়মনসিংহ'
+    ]
+];
+
+$pfText = [
+    'bn' => [
+        'page_title' => 'পার্টনার ফাইন্ডার - জীবিকা',
+        'heading' => 'পার্টনার ফাইন্ডার ও ট্যালেন্ট সার্চ',
+        'lbl_skills' => 'দক্ষতা / বিশেষত্ব (একাধিক)',
+        'lbl_education' => 'শিক্ষা',
+        'any_education' => 'যেকোনো শিক্ষা',
+        'lbl_location' => 'অবস্থান ও রিমোট',
+        'any_location' => 'যেকোনো অবস্থান',
+        'remote_only' => 'শুধুমাত্র রিমোট',
+        'lbl_availability' => 'উপলব্ধতা',
+        'any' => 'যেকোনো',
+        'lbl_interview' => 'সাক্ষাৎকারের অবস্থা',
+        'all' => 'সব',
+        'not_interviewed' => 'সাক্ষাৎকার নেওয়া হয়নি',
+        'proposed' => 'সাক্ষাৎকার প্রস্তাবিত',
+        'scheduled' => 'সাক্ষাৎকার নির্ধারিত',
+        'lbl_partner_type' => 'অংশীদারের ধরন',
+        'any_type' => 'যেকোনো ধরন',
+        'job_candidate' => 'চাকরি প্রার্থী',
+        'business_partner' => 'ব্যবসা অংশীদার',
+        'freelancer' => 'ফ্রিল্যান্সার',
+        'intern' => 'ইন্টার্ন',
+        'lbl_sort' => 'সাজানোর ইঞ্জিন',
+        'sort_relevance' => 'প্রাসঙ্গিকতা (ডিফল্ট)',
+        'sort_recommended' => 'মিল স্কোর (উচ্চ প্রস্তাবিত)',
+        'sort_exp_high' => 'অভিজ্ঞতা: বেশি থেকে কম',
+        'sort_exp_low' => 'সম্প্রতি সক্রিয় (কম অভিজ্ঞতা)',
+        'btn_apply' => 'ফিল্টার প্রয়োগ করুন',
+        'highly_recommended' => 'আপনার কোম্পানির জন্য অত্যন্ত প্রস্তাবিত',
+        'no_partners' => 'আপনার মানদণ্ডের সাথে মিলে এমন কোনো অংশীদার পাওয়া যায়নি।',
+        'education_lbl' => 'শিক্ষা:',
+        'experience_lbl' => 'অভিজ্ঞতা:',
+        'location_lbl' => 'অবস্থান:',
+        'btn_profile' => 'প্রোফাইল',
+        'btn_chat' => 'চ্যাট',
+        'chat_with' => 'চ্যাট করুন',
+        'chat_placeholder' => 'একটি বার্তা লিখুন...',
+        'years' => 'বছর',
+        'remote' => 'রিমোট',
+        'match_score' => 'মিল'
+    ],
+    'en' => [
+        'page_title' => 'Partner Finder - Jibika',
+        'heading' => 'Partner Finder & Talent Search',
+        'lbl_skills' => 'Skills / Expertise (Multi)',
+        'lbl_education' => 'Education',
+        'any_education' => 'Any Education',
+        'lbl_location' => 'Location & Remote',
+        'any_location' => 'Any Location',
+        'remote_only' => 'Remote Only',
+        'lbl_availability' => 'Availability',
+        'any' => 'Any',
+        'lbl_interview' => 'Interview Status',
+        'all' => 'All',
+        'not_interviewed' => 'Not Interviewed',
+        'proposed' => 'Interview Proposed',
+        'scheduled' => 'Interview Scheduled',
+        'lbl_partner_type' => 'Partner Type',
+        'any_type' => 'Any Type',
+        'job_candidate' => 'Job Candidate',
+        'business_partner' => 'Business Partner',
+        'freelancer' => 'Freelancer',
+        'intern' => 'Intern',
+        'lbl_sort' => 'Sort Engine',
+        'sort_relevance' => 'Relevance (Default)',
+        'sort_recommended' => 'Match Score (Highly Recommended)',
+        'sort_exp_high' => 'Experience (High to Low)',
+        'sort_exp_low' => 'Recently Active (Low to High Exp)',
+        'btn_apply' => 'Apply Filters',
+        'highly_recommended' => 'Highly Recommended for Your Company',
+        'no_partners' => 'No partners found matching your criteria.',
+        'education_lbl' => 'Education:',
+        'experience_lbl' => 'Experience:',
+        'location_lbl' => 'Location:',
+        'btn_profile' => 'Profile',
+        'btn_chat' => 'Chat',
+        'chat_with' => 'Chat with',
+        'chat_placeholder' => 'Type a message...',
+        'years' => 'Years',
+        'remote' => 'Remote',
+        'match_score' => 'Match'
+    ]
+];
+$ct = $pfText[$lang];
 
 // Handle Search & Filter
 $where = ["u.role = 'job_seeker'"];
 if (!empty($_GET['skills'])) {
-    // Array of skills
     $skills = is_array($_GET['skills']) ? $_GET['skills'] : [$_GET['skills']];
     $skill_cond = [];
     foreach($skills as $s) {
         if (!empty($s)) {
             $es = $conn->real_escape_string($s);
-            $skill_cond[] = "u.user_id IN (SELECT user_id FROM job_seeker_skills jss JOIN dic_skills ds ON jss.skill_id = ds.skill_id WHERE ds.skill_name LIKE '%$es%')";
+            $skill_cond[] = "u.user_id IN (SELECT user_id FROM skills WHERE skill_name LIKE '%$es%')";
         }
     }
     if(count($skill_cond) > 0) {
@@ -27,7 +133,7 @@ if (!empty($_GET['skills'])) {
 }
 if (!empty($_GET['education'])) {
     $e = $conn->real_escape_string($_GET['education']);
-    $where[] = "u.user_id IN (SELECT user_id FROM seeker_education se JOIN dic_education_levels del ON se.level_id = del.level_id WHERE del.level_name LIKE '%$e%')";
+    $where[] = "jsp.education LIKE '%$e%'";
 }
 if (!empty($_GET['location'])) {
     $l = $conn->real_escape_string($_GET['location']);
@@ -72,10 +178,9 @@ $emp_q = $conn->query("SELECT e.company_description, e.district_id, d.district_n
                        WHERE e.user_id = $employer_id");
 $emp_data = $emp_q->fetch_assoc();
 
-// Fetch Candidates
 $q = $conn->query("SELECT DISTINCT u.user_id, u.full_name, u.email, jsp.experience_years, d.district_name as location, jsp.availability_status, jsp.is_remote,
-                   (SELECT GROUP_CONCAT(ds.skill_name) FROM job_seeker_skills jss JOIN dic_skills ds ON jss.skill_id = ds.skill_id WHERE jss.user_id = u.user_id) as skills,
-                   (SELECT del.level_name FROM seeker_education se JOIN dic_education_levels del ON se.level_id = del.level_id WHERE se.user_id = u.user_id LIMIT 1) as education
+                   (SELECT GROUP_CONCAT(s.skill_name) FROM skills s WHERE s.user_id = u.user_id) as skills,
+                   jsp.education as education
                    FROM users u 
                    LEFT JOIN job_seeker_profiles jsp ON u.user_id = jsp.user_id 
                    LEFT JOIN districts d ON jsp.district_id = d.district_id
@@ -89,7 +194,6 @@ $is_ai_sort = (($_GET['sort'] ?? '') == 'highly_recommended');
 while($row = $q->fetch_assoc()) {
     $score = 0;
     if ($is_ai_sort && $emp_data) {
-        // Highly Recommended Scoring based on Employer's Company Data
         $emp_text = strtolower($emp_data['company_description'] ?? '');
         $cand_skills = array_map('strtolower', array_map('trim', explode(',', $row['skills'])));
         
@@ -101,15 +205,12 @@ while($row = $q->fetch_assoc()) {
         }
         $skill_score = count($cand_skills) > 0 ? min(70, ($match_count / max(1, count($cand_skills))) * 100) : 0;
         
-        // Location matching
         $loc_score = 0;
         if (!empty($row['location']) && !empty($emp_data['emp_location']) && $row['location'] == $emp_data['emp_location']) {
-            $loc_score = 30; // 30% boost for being in the same district
+            $loc_score = 30;
         }
         
-        // Experience boost
-        $exp_score = min(20, intval($row['experience_years']) * 4); // Max 20 points for 5+ years
-        
+        $exp_score = min(20, intval($row['experience_years']) * 4);
         $score = min(100, round($skill_score + $loc_score + $exp_score, 1));
     }
     $row['ai_score'] = $score;
@@ -117,38 +218,27 @@ while($row = $q->fetch_assoc()) {
 }
 
 if ($is_ai_sort) {
-    // Sort by AI Score descending
     usort($candidates, function($a, $b) {
         return $b['ai_score'] <=> $a['ai_score'];
     });
 }
-
-
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Partner Finder - Jibika</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .partner-card { transition: transform 0.2s, box-shadow 0.2s; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .partner-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
-        .skill-badge { background: #e0f2fe; color: #0284c7; font-weight: 600; font-size: 0.75rem; padding: 4px 8px; border-radius: 4px; margin-right: 4px; margin-bottom: 4px; display: inline-block; }
-    </style>
-</head>
-<body class="bg-light">
-<?php include('../includes/navbar.php'); ?>
+
+<style>
+    .partner-card { transition: transform 0.2s, box-shadow 0.2s; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+    .partner-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+    .skill-badge { background: #e0f2fe; color: #0284c7; font-weight: 600; font-size: 0.75rem; padding: 4px 8px; border-radius: 4px; margin-right: 4px; margin-bottom: 4px; display: inline-block; }
+</style>
 
 <div class="container mt-5 mb-5">
-    <h2 class="mb-4 text-primary"><i class="fa-solid fa-users-viewfinder"></i> Partner Finder & Talent Search</h2>
+    <h2 class="mb-4 text-primary"><i class="fa-solid fa-users-viewfinder"></i> <?php echo $ct['heading']; ?></h2>
     
     <!-- Advanced Search & Filter -->
     <div class="card shadow-sm border-0 mb-4 bg-white">
         <div class="card-body">
             <form method="GET" class="row g-3">
                 <div class="col-md-3">
-                    <label class="form-label text-muted small fw-bold">Skills / Expertise (Multi)</label>
+                    <label class="form-label text-muted small fw-bold"><?php echo $ct['lbl_skills']; ?></label>
                     <select name="skills[]" class="form-select form-select-sm" multiple style="height: 60px;">
                         <option value="PHP" <?php echo (in_array('PHP', $_GET['skills']??[]))?'selected':''; ?>>PHP</option>
                         <option value="Laravel" <?php echo (in_array('Laravel', $_GET['skills']??[]))?'selected':''; ?>>Laravel</option>
@@ -160,69 +250,77 @@ if ($is_ai_sort) {
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label text-muted small fw-bold">Education</label>
+                    <label class="form-label text-muted small fw-bold"><?php echo $ct['lbl_education']; ?></label>
                     <select name="education" class="form-select form-select-sm">
-                        <option value="">Any Education</option>
-                        <option value="Bachelor" <?php echo ($_GET['education']??'')=='Bachelor'?'selected':''; ?>>Bachelor</option>
-                        <option value="Masters" <?php echo ($_GET['education']??'')=='Masters'?'selected':''; ?>>Master</option>
-                        <option value="Diploma" <?php echo ($_GET['education']??'')=='Diploma'?'selected':''; ?>>Diploma</option>
-                        <option value="PhD" <?php echo ($_GET['education']??'')=='PhD'?'selected':''; ?>>PhD</option>
+                        <option value=""><?php echo $ct['any_education']; ?></option>
+                        <option value="Bachelor" <?php echo ($_GET['education']??'')=='Bachelor'?'selected':''; ?>><?php echo $lang == 'bn' ? 'ব্যাচেলর' : 'Bachelor'; ?></option>
+                        <option value="Masters" <?php echo ($_GET['education']??'')=='Masters'?'selected':''; ?>><?php echo $lang == 'bn' ? 'মাস্টার্স' : 'Masters'; ?></option>
+                        <option value="Diploma" <?php echo ($_GET['education']??'')=='Diploma'?'selected':''; ?>><?php echo $lang == 'bn' ? 'ডিপ্লোমা' : 'Diploma'; ?></option>
+                        <option value="PhD" <?php echo ($_GET['education']??'')=='PhD'?'selected':''; ?>><?php echo $lang == 'bn' ? 'পিএইচডি' : 'PhD'; ?></option>
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label text-muted small fw-bold">Location & Remote</label>
+                    <label class="form-label text-muted small fw-bold"><?php echo $ct['lbl_location']; ?></label>
                     <select name="location" class="form-select form-select-sm mb-1">
-                        <option value="">Any Location</option>
-                        <option value="Dhaka" <?php echo ($_GET['location']??'')=='Dhaka'?'selected':''; ?>>Dhaka</option>
-                        <option value="Chattogram" <?php echo ($_GET['location']??'')=='Chattogram'?'selected':''; ?>>Chattogram</option>
-                        <option value="Sylhet" <?php echo ($_GET['location']??'')=='Sylhet'?'selected':''; ?>>Sylhet</option>
-                        <option value="Rajshahi" <?php echo ($_GET['location']??'')=='Rajshahi'?'selected':''; ?>>Rajshahi</option>
+                        <option value=""><?php echo $ct['any_location']; ?></option>
+                        <option value="Dhaka" <?php echo ($_GET['location']??'')=='Dhaka'?'selected':''; ?>><?php echo $lang == 'bn' ? 'ঢাকা' : 'Dhaka'; ?></option>
+                        <option value="Chattogram" <?php echo ($_GET['location']??'')=='Chattogram'?'selected':''; ?>><?php echo $lang == 'bn' ? 'চট্টগ্রাম' : 'Chattogram'; ?></option>
+                        <option value="Sylhet" <?php echo ($_GET['location']??'')=='Sylhet'?'selected':''; ?>><?php echo $lang == 'bn' ? 'সিলেট' : 'Sylhet'; ?></option>
+                        <option value="Rajshahi" <?php echo ($_GET['location']??'')=='Rajshahi'?'selected':''; ?>><?php echo $lang == 'bn' ? 'রাজশাহী' : 'Rajshahi'; ?></option>
                     </select>
                     <div class="form-check form-switch mt-1">
                         <input class="form-check-input" type="checkbox" name="is_remote" id="is_remote" value="1" <?php echo (!empty($_GET['is_remote']))?'checked':''; ?>>
-                        <label class="form-check-label small" for="is_remote">Remote Only</label>
+                        <label class="form-check-label small" for="is_remote"><?php echo $ct['remote_only']; ?></label>
                     </div>
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label text-muted small fw-bold">Availability</label>
+                    <label class="form-label text-muted small fw-bold"><?php echo $ct['lbl_availability']; ?></label>
                     <select name="availability_status" class="form-select form-select-sm mb-1">
-                        <option value="">Any</option>
-                        <option value="Available Now" <?php echo ($_GET['availability_status']??'')=='Available Now'?'selected':''; ?>>Available Now</option>
-                        <option value="Available This Week" <?php echo ($_GET['availability_status']??'')=='Available This Week'?'selected':''; ?>>Available This Week</option>
-                        <option value="Busy" <?php echo ($_GET['availability_status']??'')=='Busy'?'selected':''; ?>>Busy</option>
+                        <option value=""><?php echo $ct['any']; ?></option>
+                        <option value="Available Now" <?php echo ($_GET['availability_status']??'')=='Available Now'?'selected':''; ?>><?php echo $lang == 'bn' ? 'এখন উপলব্ধ' : 'Available Now'; ?></option>
+                        <option value="Available This Week" <?php echo ($_GET['availability_status']??'')=='Available This Week'?'selected':''; ?>><?php echo $lang == 'bn' ? 'এই সপ্তাহে উপলব্ধ' : 'Available This Week'; ?></option>
+                        <option value="Busy" <?php echo ($_GET['availability_status']??'')=='Busy'?'selected':''; ?>><?php echo $lang == 'bn' ? 'ব্যস্ত' : 'Busy'; ?></option>
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label text-muted small fw-bold">Interview Status</label>
+                    <label class="form-label text-muted small fw-bold"><?php echo $ct['lbl_interview']; ?></label>
                     <select name="interview_status" class="form-select form-select-sm">
-                        <option value="">All</option>
-                        <option value="Not Interviewed" <?php echo ($_GET['interview_status']??'')=='Not Interviewed'?'selected':''; ?>>Not Interviewed</option>
-                        <option value="proposed" <?php echo ($_GET['interview_status']??'')=='proposed'?'selected':''; ?>>Interview Proposed</option>
-                        <option value="scheduled" <?php echo ($_GET['interview_status']??'')=='scheduled'?'selected':''; ?>>Interview Scheduled</option>
+                        <option value=""><?php echo $ct['all']; ?></option>
+                        <option value="Not Interviewed" <?php echo ($_GET['interview_status']??'')=='Not Interviewed'?'selected':''; ?>><?php echo $ct['not_interviewed']; ?></option>
+                        <option value="proposed" <?php echo ($_GET['interview_status']??'')=='proposed'?'selected':''; ?>><?php echo $ct['proposed']; ?></option>
+                        <option value="scheduled" <?php echo ($_GET['interview_status']??'')=='scheduled'?'selected':''; ?>><?php echo $ct['scheduled']; ?></option>
                     </select>
                 </div>
                 
                 <div class="col-md-3 mt-2">
-                    <label class="form-label text-muted small fw-bold">Partner Type</label>
+                    <label class="form-label text-muted small fw-bold"><?php echo $ct['lbl_partner_type']; ?></label>
                     <select name="partner_type" class="form-select form-select-sm">
-                        <option value="">Any Type</option>
-                        <option value="Job Candidate" <?php echo ($_GET['partner_type']??'')=='Job Candidate'?'selected':''; ?>>Job Candidate</option>
-                        <option value="Business Partner" <?php echo ($_GET['partner_type']??'')=='Business Partner'?'selected':''; ?>>Business Partner</option>
-                        <option value="Freelancer" <?php echo ($_GET['partner_type']??'')=='Freelancer'?'selected':''; ?>>Freelancer</option>
-                        <option value="Intern" <?php echo ($_GET['partner_type']??'')=='Intern'?'selected':''; ?>>Intern</option>
+                        <option value=""><?php echo $ct['any_type']; ?></option>
+                        <option value="Job Candidate" <?php echo ($_GET['partner_type']??'')=='Job Candidate'?'selected':''; ?>><?php echo $ct['job_candidate']; ?></option>
+                        <option value="Business Partner" <?php echo ($_GET['partner_type']??'')=='Business Partner'?'selected':''; ?>><?php echo $ct['business_partner']; ?></option>
+                        <option value="Freelancer" <?php echo ($_GET['partner_type']??'')=='Freelancer'?'selected':''; ?>><?php echo $ct['freelancer']; ?></option>
+                        <option value="Intern" <?php echo ($_GET['partner_type']??'')=='Intern'?'selected':''; ?>><?php echo $ct['intern']; ?></option>
                     </select>
                 </div>
                 <div class="col-md-7 mt-2">
-                    <label class="form-label text-muted small fw-bold">Sort Engine</label>
+                    <label class="form-label text-muted small fw-bold"><?php echo $ct['lbl_sort']; ?></label>
                     <select name="sort" class="form-select form-select-sm border-warning">
-                        <option value="relevance" <?php echo ($_GET['sort']??'')=='relevance'?'selected':''; ?>>Relevance (Default)</option>
-                        <option value="highly_recommended" <?php echo ($_GET['sort']??'')=='highly_recommended'?'selected':''; ?>>🔥 Match Score (Highly Recommended)</option>
-                        <option value="experience_high" <?php echo ($_GET['sort']??'')=='experience_high'?'selected':''; ?>>📈 Experience (High to Low)</option>
-                        <option value="experience_low" <?php echo ($_GET['sort']??'')=='experience_low'?'selected':''; ?>>⏱ Recently Active (Low to High Exp)</option>
+                        <option value="relevance" <?php echo ($_GET['sort']??'')=='relevance'?'selected':''; ?>>
+                            <?php echo $ct['sort_relevance']; ?>
+                        </option>
+                        <option value="highly_recommended" <?php echo ($_GET['sort']??'')=='highly_recommended'?'selected':''; ?>>
+                            🔥 <?php echo $ct['sort_recommended']; ?>
+                        </option>
+                        <option value="experience_high" <?php echo ($_GET['sort']??'')=='experience_high'?'selected':''; ?>>
+                            📈 <?php echo $ct['sort_exp_high']; ?>
+                        </option>
+                        <option value="experience_low" <?php echo ($_GET['sort']??'')=='experience_low'?'selected':''; ?>>
+                            ⏱ <?php echo $ct['sort_exp_low']; ?>
+                        </option>
                     </select>
                 </div>
                 <div class="col-md-2 d-flex align-items-end mt-2">
-                    <button type="submit" class="btn btn-primary btn-sm w-100"><i class="fa fa-search"></i> Apply Filters</button>
+                    <button type="submit" class="btn btn-success btn-sm w-100" style="background-color:#09372a; border-color:#09372a;"><i class="fa fa-search"></i> <?php echo $ct['btn_apply']; ?></button>
                 </div>
             </form>
         </div>
@@ -230,12 +328,12 @@ if ($is_ai_sort) {
     
     <!-- Results -->
     <?php if ($is_ai_sort): ?>
-    <h4 class="mb-3 text-warning"><i class="fa fa-star"></i> Highly Recommended for Your Company</h4>
+    <h4 class="mb-3 text-warning"><i class="fa fa-star"></i> <?php echo $ct['highly_recommended']; ?></h4>
     <?php endif; ?>
 
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         <?php if(count($candidates) == 0): ?>
-            <div class="col-12"><div class="alert alert-warning">No partners found matching your criteria.</div></div>
+            <div class="col-12"><div class="alert alert-warning"><?php echo $ct['no_partners']; ?></div></div>
         <?php else: ?>
             <?php foreach($candidates as $row): ?>
             <div class="col">
@@ -245,36 +343,53 @@ if ($is_ai_sort) {
                             <h5 class="card-title fw-bold text-dark mb-0">
                                 <?php echo htmlspecialchars($row['full_name']); ?>
                                 <?php if($row['is_remote']): ?>
-                                    <span class="badge bg-secondary ms-1"><i class="fa fa-laptop-house"></i> Remote</span>
+                                    <span class="badge bg-secondary ms-1"><i class="fa fa-laptop-house"></i> <?php echo $ct['remote']; ?></span>
                                 <?php endif; ?>
                             </h5>
                             <?php if ($is_ai_sort && $row['ai_score'] > 0): ?>
-                                <span class="badge bg-warning text-dark"><i class="fa fa-bolt"></i> Match: <?php echo $row['ai_score']; ?>%</span>
+                                <span class="badge bg-warning text-dark"><i class="fa fa-bolt"></i> <?php echo $ct['match_score']; ?>: <?php echo translateNumber($row['ai_score'], $lang); ?>%</span>
                             <?php else: ?>
                                 <?php 
                                     $av_status = $row['availability_status'] ?? 'Available Now';
                                     $bg = 'success';
                                     if($av_status == 'Busy') $bg = 'danger';
                                     if($av_status == 'Available This Week') $bg = 'info';
+
+                                    $av_disp = $av_status;
+                                    if ($av_status == 'Available Now') $av_disp = $lang == 'bn' ? 'এখন উপলব্ধ' : 'Available Now';
+                                    elseif ($av_status == 'Available This Week') $av_disp = $lang == 'bn' ? 'এই সপ্তাহে উপলব্ধ' : 'Available This Week';
+                                    elseif ($av_status == 'Busy') $av_disp = $lang == 'bn' ? 'ব্যস্ত' : 'Busy';
                                 ?>
-                                <span class="badge bg-<?php echo $bg; ?> bg-opacity-10 text-<?php echo $bg; ?>"><i class="fa fa-check-circle"></i> <?php echo $av_status; ?></span>
+                                <span class="badge bg-<?php echo $bg; ?> bg-opacity-10 text-<?php echo $bg; ?>"><i class="fa fa-check-circle"></i> <?php echo $av_disp; ?></span>
                             <?php endif; ?>
                         </div>
                         <p class="text-muted small mb-3"><i class="fa fa-envelope"></i> <?php echo htmlspecialchars($row['email']); ?></p>
                         
                         <div class="mb-2">
-                            <strong><i class="fa fa-graduation-cap"></i> Education:</strong> <?php echo htmlspecialchars($row['education'] ?? 'Not specified'); ?>
+                            <?php
+                                $edu_disp = $row['education'] ?? ($lang == 'bn' ? 'উল্লেখ নেই' : 'Not specified');
+                                if ($lang == 'bn') {
+                                    $edu_disp = str_replace(['Bachelor', 'Masters', 'Diploma', 'PhD'], ['ব্যাচেলর', 'মাস্টার্স', 'ডিপ্লোমা', 'পিএইচডি'], $edu_disp);
+                                }
+                            ?>
+                            <strong><i class="fa fa-graduation-cap"></i> <?php echo $ct['education_lbl']; ?></strong> <?php echo htmlspecialchars($edu_disp); ?>
                         </div>
                         <div class="mb-2">
-                            <strong><i class="fa fa-briefcase"></i> Experience:</strong> <?php echo intval($row['experience_years']); ?> Years
+                            <strong><i class="fa fa-briefcase"></i> <?php echo $ct['experience_lbl']; ?></strong> <?php echo translateNumber(intval($row['experience_years']), $lang); ?> <?php echo $ct['years']; ?>
                         </div>
                         <div class="mb-3">
-                            <strong><i class="fa fa-map-marker-alt"></i> Location:</strong> <?php echo htmlspecialchars($row['location'] ?? 'Not specified'); ?>
+                            <?php
+                                $loc_disp = $row['location'] ?? ($lang == 'bn' ? 'উল্লেখ নেই' : 'Not specified');
+                                if ($lang == 'bn') {
+                                    $loc_disp = $district_translations['bn'][$loc_disp] ?? $loc_disp;
+                                }
+                            ?>
+                            <strong><i class="fa fa-map-marker-alt"></i> <?php echo $ct['location_lbl']; ?></strong> <?php echo htmlspecialchars($loc_disp); ?>
                         </div>
                         
                         <div class="mb-4">
                             <?php 
-                            $skills = explode(',', $row['skills']);
+                            $skills = explode(',', $row['skills'] ?? '');
                             foreach($skills as $sk) {
                                 $sk = trim($sk);
                                 if($sk) echo "<span class='skill-badge'>".htmlspecialchars($sk)."</span>";
@@ -282,9 +397,12 @@ if ($is_ai_sort) {
                             ?>
                         </div>
                     </div>
-                    <div class="card-footer bg-white border-top-0 pt-0 d-flex gap-2">
-                        <a href="../candidate_biodata.php?user_id=<?php echo $row['user_id']; ?>" class="btn btn-primary btn-sm w-50"><i class="fa fa-user"></i> Profile</a>
-                        <button class="btn btn-outline-secondary btn-sm w-50" onclick="openChat(<?php echo $row['user_id']; ?>, '<?php echo addslashes($row['full_name']); ?>')"><i class="fa fa-comment-dots"></i> Chat</button>
+                    <div class="card-footer bg-white border-top-0 pt-0 d-flex flex-column gap-2">
+                        <div class="d-flex gap-2">
+                            <a href="../candidate_biodata.php?user_id=<?php echo $row['user_id']; ?>" class="btn btn-success btn-sm w-50" style="background-color:#09372a; border-color:#09372a;"><i class="fa fa-user"></i> <?php echo $ct['btn_profile']; ?></a>
+                            <button class="btn btn-outline-secondary btn-sm w-50" onclick="openChat(<?php echo $row['user_id']; ?>, '<?php echo addslashes($row['full_name']); ?>')"><i class="fa fa-comment-dots"></i> <?php echo $ct['btn_chat']; ?></button>
+                        </div>
+                        <a href="schedule_interview.php?candidate_id=<?php echo $row['user_id']; ?>" class="btn btn-primary btn-sm w-100" style="background-color:#006a4e; border-color:#006a4e;"><i class="fa-solid fa-calendar-check"></i> <?php echo $lang == 'bn' ? 'সাক্ষাৎকার নির্ধারণ' : 'Schedule Interview'; ?></a>
                     </div>
                 </div>
             </div>
@@ -297,8 +415,8 @@ if ($is_ai_sort) {
 <div class="modal fade" id="chatModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-scrollable modal-md">
     <div class="modal-content shadow">
-      <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title"><i class="fa fa-comments"></i> Chat with <span id="chatPartnerName"></span></h5>
+      <div class="modal-header bg-success text-white" style="background-color:#09372a !important;">
+        <h5 class="modal-title"><i class="fa fa-comments"></i> <?php echo $ct['chat_with']; ?> <span id="chatPartnerName"></span></h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body" id="chatBox" style="height: 400px; background: #f8fafc; overflow-y: auto;">
@@ -307,16 +425,14 @@ if ($is_ai_sort) {
       <div class="modal-footer p-2 bg-light">
           <input type="hidden" id="chatPartnerId">
           <div class="input-group">
-              <input type="text" id="chatInput" class="form-control" placeholder="Type a message...">
-              <button class="btn btn-primary" onclick="sendMessage()"><i class="fa fa-paper-plane"></i></button>
+              <input type="text" id="chatInput" class="form-control" placeholder="<?php echo $ct['chat_placeholder']; ?>">
+              <button class="btn btn-success" style="background-color:#09372a; border-color:#09372a;" onclick="sendMessage()"><i class="fa fa-paper-plane"></i></button>
           </div>
       </div>
     </div>
   </div>
 </div>
 
-<?php include('../includes/footer.php'); ?>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 let chatInterval;
 
@@ -343,9 +459,10 @@ function fetchMessages() {
         box.innerHTML = '';
         data.messages.forEach(msg => {
             let align = msg.is_mine ? 'text-end' : 'text-start';
-            let bg = msg.is_mine ? 'bg-primary text-white' : 'bg-white border';
+            let bg = msg.is_mine ? 'bg-success text-white' : 'bg-white border';
+            let customBgStyle = msg.is_mine ? 'style="background-color:#09372a !important;"' : '';
             box.innerHTML += `<div class="mb-2 ${align}">
-                                <div class="d-inline-block p-2 rounded shadow-sm ${bg}" style="max-width: 80%;">
+                                <div class="d-inline-block p-2 rounded shadow-sm ${bg}" ${customBgStyle} style="max-width: 80%;">
                                     ${msg.message_text}
                                 </div>
                               </div>`;
@@ -374,10 +491,9 @@ function sendMessage() {
     });
 }
 
-// Clear interval on modal close
 document.getElementById('chatModal').addEventListener('hidden.bs.modal', function () {
     clearInterval(chatInterval);
 });
 </script>
-</body>
-</html>
+
+<?php include('../includes/footer.php'); ?>

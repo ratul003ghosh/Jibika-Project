@@ -74,6 +74,11 @@ $ct = $skText[$lang];
 $message = "";
 $message_type = "info";
 
+if (isset($_GET['msg']) && $_GET['msg'] === 'mandatory') {
+    $message = $lang == 'bn' ? 'ড্যাশবোর্ড এবং মেলা চাকরি দেখতে কমপক্ষে একটি দক্ষতা যোগ করা আবশ্যক।' : 'Adding at least one skill is mandatory to access the dashboard and view matched jobs.';
+    $message_type = "danger";
+}
+
 // Add skill
 if (isset($_POST['add_skill'])) {
     $skill_name = trim($_POST['skill_name']);

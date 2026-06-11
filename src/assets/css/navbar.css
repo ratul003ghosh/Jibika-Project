@@ -239,6 +239,7 @@
     border-top: 1px solid #e8edf3;
     margin: 2px 0;
 }
+.icon-profile   { background: #eff6ff; color: #1e40af; }
 .icon-dashboard { background: #ecfdf5; color: #09372a; }
 .icon-logout    { background: #fef2f2; color: #dc2626; }
 

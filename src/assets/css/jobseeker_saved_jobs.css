@@ -2,7 +2,7 @@
 .saved-hero { background: linear-gradient(135deg, #0a3d2a, #006a4e); padding: 50px 0 80px; }
 .saved-hero h1 { color:#fff; font-weight:800; font-size:2.4rem; margin-bottom:8px; }
 .saved-hero p { color:rgba(255,255,255,0.75); font-size:1.05rem; margin:0; }
-.saved-wrap { margin-top:-50px; padding-bottom: 60px; }
+.saved-wrap { margin-top:-50px; padding-bottom: 60px; position: relative; z-index: 2; }
 .saved-card {
     background:#fff; border-radius:16px; border:1.5px solid #e5e7eb;
     padding:20px; transition:all 0.3s; position:relative; overflow:hidden;

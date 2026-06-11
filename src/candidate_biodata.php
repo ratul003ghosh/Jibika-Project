@@ -95,6 +95,11 @@ if (!empty($candidate['dob'])) {
                         <i class="fa fa-link"></i> <?php echo t('Portfolio Link', 'পোর্টফোলিও লিংক'); ?>
                     </a>
                 <?php endif; ?>
+                <?php if ($_SESSION['role'] == 'employer' && $application_id == 0): ?>
+                    <a href="employer/schedule_interview.php?candidate_id=<?php echo $user_id; ?>" class="btn btn-success btn-sm w-100 mt-2" style="background-color: #006a4e; border-color: #006a4e;">
+                        <i class="fa fa-calendar-check"></i> <?php echo t('Invite for Interview', 'সাক্ষাৎকার নির্ধারণ করুন'); ?>
+                    </a>
+                <?php endif; ?>
             </div>
             
             <div class="col-md-8">

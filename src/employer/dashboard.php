@@ -45,6 +45,7 @@ $empDashText = [
         'no_apps' => 'এখনও কোনো আবেদন পড়েনি',
         'no_apps_sub' => 'প্রার্থীদের আপনার সার্কুলার খুঁজে পাওয়ার জন্য অপেক্ষা করুন।',
         'negotiable' => 'আলোচনা সাপেক্ষে',
+        'partner_finder' => 'পার্টনার ফাইন্ডার',
     ],
     'en' => [
         'welcome' => 'Welcome back, ',
@@ -80,6 +81,7 @@ $empDashText = [
         'no_apps' => 'No Applications Yet',
         'no_apps_sub' => 'Wait for candidates to discover your postings.',
         'negotiable' => 'Negotiable',
+        'partner_finder' => 'Partner Finder',
     ]
 ];
 $ct = $empDashText[$lang];
@@ -254,26 +256,32 @@ $recent_applicants = $conn->query("
     <!-- Quick Actions Row -->
     <h5 class="fw-bold text-dark mb-3"><?php echo $ct['quick_actions']; ?></h5>
     <div class="row g-3 mb-5">
-        <div class="col-md-3">
-            <a href="post_job.php" class="action-card shadow-sm">
+        <div class="col-lg col-md-4 col-sm-6">
+            <a href="post_job.php" class="action-card shadow-sm h-100">
                 <i class="fa-solid fa-file-circle-plus action-icon text-success fs-3 mb-2"></i>
                 <h6 class="fw-bold mb-0"><?php echo $ct['create_job']; ?></h6>
             </a>
         </div>
-        <div class="col-md-3">
-            <a href="manage_jobs.php" class="action-card shadow-sm">
+        <div class="col-lg col-md-4 col-sm-6">
+            <a href="manage_jobs.php" class="action-card shadow-sm h-100">
                 <i class="fa-solid fa-list-check action-icon text-primary fs-3 mb-2"></i>
                 <h6 class="fw-bold mb-0"><?php echo $ct['manage_listings']; ?></h6>
             </a>
         </div>
-        <div class="col-md-3">
-            <a href="applicants.php" class="action-card shadow-sm">
+        <div class="col-lg col-md-4 col-sm-6">
+            <a href="applicants.php" class="action-card shadow-sm h-100">
                 <i class="fa-solid fa-user-tie action-icon text-warning fs-3 mb-2"></i>
                 <h6 class="fw-bold mb-0"><?php echo $ct['review_candidates']; ?></h6>
             </a>
         </div>
-        <div class="col-md-3">
-            <a href="profile.php" class="action-card shadow-sm">
+        <div class="col-lg col-md-4 col-sm-6">
+            <a href="partner_finder.php" class="action-card shadow-sm h-100">
+                <i class="fa-solid fa-users-viewfinder action-icon text-info fs-3 mb-2"></i>
+                <h6 class="fw-bold mb-0"><?php echo $ct['partner_finder']; ?></h6>
+            </a>
+        </div>
+        <div class="col-lg col-md-4 col-sm-6">
+            <a href="profile.php" class="action-card shadow-sm h-100">
                 <i class="fa-solid fa-building action-icon text-secondary fs-3 mb-2"></i>
                 <h6 class="fw-bold mb-0"><?php echo $ct['company_profile']; ?></h6>
             </a>
