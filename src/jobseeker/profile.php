@@ -140,7 +140,7 @@ if (isset($_POST['save_profile'])) {
                      district_id=$district_id,
                      upazila_id=$upazila_id,
                      ward_id=$ward_id,
-                     education='$education',
+                     degree='$education',
                      about='$about',
                      preferred_district='$pref_district',
                      preferred_upazila='$pref_upazila',
@@ -149,7 +149,7 @@ if (isset($_POST['save_profile'])) {
                 WHERE user_id='$user_id'";
     } else {
         $sql = "INSERT INTO job_seeker_profiles
-                (user_id, nid, district_id, upazila_id, ward_id, education, about, cv_path, preferred_district, preferred_upazila, preferred_job_category)
+                (user_id, nid, district_id, upazila_id, ward_id, degree, about, cv_path, preferred_district, preferred_upazila, preferred_job_category)
                 VALUES
                 ('$user_id', '$nid', $district_id, $upazila_id, $ward_id, '$education', '$about', '$cv_path', '$pref_district', '$pref_upazila', '$pref_category')";
     }
@@ -158,9 +158,8 @@ if (isset($_POST['save_profile'])) {
         if ($conn->query($sql)) {
             echo "<script>
                 alert('" . addslashes($ct['alert_success']) . "');
-                window.location='dashboard.php';
+                window.location.href = 'profile.php';
             </script>";
-            exit();
         } else {
             $message = "Error: " . $conn->error;
         }
@@ -188,7 +187,7 @@ $total_skills = ($skills_result) ? $skills_result->num_rows : 0;
 $profile_completion = 0;
 
 if (!empty($profile['nid'])) $profile_completion += 15;
-if (!empty($profile['education'])) $profile_completion += 15;
+if (!empty($profile['degree'])) $profile_completion += 15;
 if ($total_skills > 0) $profile_completion += 15;
 if (!empty($profile['about'])) $profile_completion += 15;
 if (!empty($profile['district_id'])) $profile_completion += 20;
@@ -319,9 +318,9 @@ if (!empty($profile['cv_path'])) $profile_completion += 20;
 
                         <div class="col-md-6">
                             <label class="form-label fw-bold text-muted"><?php echo $ct['education']; ?></label>
-                            <div class="input-group input-group-lg shadow-sm rounded-3">
-                                <span class="input-group-text bg-light border-0"><i class="fa-solid fa-graduation-cap text-success"></i></span>
-                                <input type="text" name="education" class="form-control border-0 bg-light" placeholder="<?php echo $ct['education_placeholder']; ?>" value="<?php echo htmlspecialchars($profile['education'] ?? ''); ?>">
+                            <div class="input-group">
+                                <span class="input-group-text bg-white"><i class="fa fa-graduation-cap text-muted"></i></span>
+                                <input type="text" name="education" class="form-control border-0 bg-light" placeholder="<?php echo $ct['education_placeholder']; ?>" value="<?php echo htmlspecialchars($profile['degree'] ?? ''); ?>">
                             </div>
                         </div>
 

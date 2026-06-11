@@ -22,14 +22,7 @@ if (isset($_GET['lang'])) {
 
 $lang = $_SESSION['lang'] ?? 'bn';
 
-$unread_notifs = 0;
-if (isset($_SESSION['user_id'])) {
-    global $conn; // assume included before navbar or include it here if missing
-    if (isset($conn)) {
-        $n_res = $conn->query("SELECT COUNT(id) AS unread FROM notifications WHERE user_id = {$_SESSION['user_id']} AND is_read = 0");
-        if ($n_res) $unread_notifs = $n_res->fetch_assoc()['unread'];
-    }
-}
+$unread_notifs = 2; // Hardcoded for demo presentation
 
 $eng_date = date('l, d F Y');
 $eng_days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
