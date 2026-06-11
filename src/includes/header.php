@@ -2,6 +2,11 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
+if (isset($_GET['lang'])) {
+    $_SESSION['lang'] = $_GET['lang'] === 'en' ? 'en' : 'bn';
+}
+
 $lang = $_SESSION['lang'] ?? 'bn';
 
 if (!isset($path_prefix)) {
