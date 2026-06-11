@@ -125,6 +125,10 @@ if (isset($_POST['save_profile'])) {
         }
     }
 
+    $pref_district = trim($_POST['preferred_district'] ?? '');
+    $pref_upazila = trim($_POST['preferred_upazila'] ?? '');
+    $pref_category = trim($_POST['preferred_job_category'] ?? '');
+
     $check = $conn->query("SELECT * FROM job_seeker_profiles WHERE user_id='$user_id'");
 
     if ($check && $check->num_rows > 0) {
@@ -137,14 +141,17 @@ if (isset($_POST['save_profile'])) {
                      upazila_id=$upazila_id,
                      ward_id=$ward_id,
                      education='$education',
-                     about='$about'
+                     about='$about',
+                     preferred_district='$pref_district',
+                     preferred_upazila='$pref_upazila',
+                     preferred_job_category='$pref_category'
                      $cv_update
                 WHERE user_id='$user_id'";
     } else {
         $sql = "INSERT INTO job_seeker_profiles
-                (user_id, nid, district_id, upazila_id, ward_id, education, about, cv_path)
+                (user_id, nid, district_id, upazila_id, ward_id, education, about, cv_path, preferred_district, preferred_upazila, preferred_job_category)
                 VALUES
-                ('$user_id', '$nid', $district_id, $upazila_id, $ward_id, '$education', '$about', '$cv_path')";
+                ('$user_id', '$nid', $district_id, $upazila_id, $ward_id, '$education', '$about', '$cv_path', '$pref_district', '$pref_upazila', '$pref_category')";
     }
 
     if ($message == "") {
@@ -372,7 +379,22 @@ if (!empty($profile['cv_path'])) $profile_completion += 20;
                             </div>
                         </div>
 
-                        <div class="col-12">
+                        <!-- PREFERRED AREA SETTINGS -->
+                        <div class="col-12 mt-4"><h5 class="border-bottom pb-2 text-primary">Job Preferences / কাজের পছন্দ</h5></div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold text-muted">Preferred District / পছন্দের জেলা</label>
+                            <input type="text" name="preferred_district" class="form-control bg-light border-0 shadow-sm" value="<?php echo htmlspecialchars($profile['preferred_district'] ?? ''); ?>" placeholder="e.g. Dhaka">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold text-muted">Preferred Upazila / পছন্দের উপজেলা</label>
+                            <input type="text" name="preferred_upazila" class="form-control bg-light border-0 shadow-sm" value="<?php echo htmlspecialchars($profile['preferred_upazila'] ?? ''); ?>" placeholder="e.g. Savar">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold text-muted">Preferred Job Category / পছন্দের ক্যাটাগরি</label>
+                            <input type="text" name="preferred_job_category" class="form-control bg-light border-0 shadow-sm" value="<?php echo htmlspecialchars($profile['preferred_job_category'] ?? ''); ?>" placeholder="e.g. IT & Computer">
+                        </div>
+
+                        <div class="col-12 mt-4">
                             <label class="form-label fw-bold text-muted"><?php echo $ct['upload_cv']; ?> <span class="badge bg-success rounded-pill ms-2"><?php echo $ct['upload_new']; ?></span></label>
                             <div class="p-4 border border-2 border-dashed rounded-3 bg-light text-center" style="border-color: #198754 !important;">
                                 <i class="fa-solid fa-cloud-arrow-up fs-1 text-success mb-3"></i>

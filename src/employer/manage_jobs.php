@@ -235,7 +235,7 @@ $result = $conn->query($sql);
                                 </td>
 
                                 <td>
-                                    <a href="applicants.php" class="btn btn-primary btn-sm mb-1">
+                                    <a href="applicants.php?job_id=<?php echo $job['job_id']; ?>" class="btn btn-primary btn-sm mb-1">
                                         <?php echo $ct['btn_applicants']; ?>
                                     </a>
 

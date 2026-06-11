@@ -22,6 +22,15 @@ if (isset($_GET['lang'])) {
 
 $lang = $_SESSION['lang'] ?? 'bn';
 
+$unread_notifs = 0;
+if (isset($_SESSION['user_id'])) {
+    global $conn; // assume included before navbar or include it here if missing
+    if (isset($conn)) {
+        $n_res = $conn->query("SELECT COUNT(id) AS unread FROM notifications WHERE user_id = {$_SESSION['user_id']} AND is_read = 0");
+        if ($n_res) $unread_notifs = $n_res->fetch_assoc()['unread'];
+    }
+}
+
 $eng_date = date('l, d F Y');
 $eng_days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 $bng_days = ['রবিবার', 'সোমবার', 'মঙ্গলবার', 'বুধবার', 'বৃহস্পতিবার', 'শুক্রবার', 'শনিবার'];
@@ -110,6 +119,17 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         <!-- Right: Auth Options + 3-Bar Menu -->
         <div class="d-flex align-items-center gap-3">
             
+            <?php if (isset($_SESSION['user_id']) && $_SESSION['role'] == 'job_seeker'): ?>
+                <a href="<?php echo $path_prefix; ?>notifications.php" class="position-relative text-white me-3" style="font-size: 1.25rem; text-decoration: none;">
+                    <i class="fa-solid fa-bell"></i>
+                    <?php if ($unread_notifs > 0): ?>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
+                            <?php echo translateNumber($unread_notifs, $lang); ?>
+                        </span>
+                    <?php endif; ?>
+                </a>
+            <?php endif; ?>
+
             <!-- Auth Buttons / Profile Trigger -->
             <div class="d-flex align-items-center">
                 <?php if (isset($_SESSION['user_id']) && isset($_SESSION['role'])): ?>
@@ -164,8 +184,8 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             </div>
 
             <!-- 3-Bar Hamburger Menu Trigger (Triggers Offcanvas Menu) -->
-            <button class="btn-menu-trigger" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
-                <i class="fa-solid fa-bars"></i>
+            <button class="btn-menu-trigger d-flex" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation" style="font-size: 24px; line-height: 1; padding-bottom: 4px;">
+                &#9776;
             </button>
 
         </div>
@@ -183,6 +203,16 @@ $currentPage = basename($_SERVER['PHP_SELF']);
   <div class="offcanvas-body p-4">
      
      <ul class="navbar-nav flex-column gap-2">
+         <?php if (isset($_SESSION['role'])): ?>
+         <li class="nav-item-offcanvas">
+             <a class="nav-link-offcanvas <?php echo strpos($currentPage, 'dashboard.php') !== false ? 'active' : ''; ?>" href="<?php 
+                 echo $path_prefix . ($_SESSION['role'] == 'admin' ? 'admin/dashboard.php' : ($_SESSION['role'] == 'employer' ? 'employer/dashboard.php' : 'jobseeker/dashboard.php')); 
+             ?>">
+                 <i class="fa-solid fa-gauge-high icon-w"></i> <?php echo $t['dashboard']; ?>
+             </a>
+         </li>
+         <?php endif; ?>
+         
          <li class="nav-item-offcanvas">
              <a class="nav-link-offcanvas <?php echo $currentPage == 'index.php' ? 'active' : ''; ?>" href="<?php echo $path_prefix; ?>index.php">
                  <i class="fa-solid fa-house icon-w"></i> <?php echo $t['home']; ?>
@@ -217,11 +247,34 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                  <i class="fa-solid fa-bullhorn icon-w"></i> <?php echo $t['notice']; ?>
              </a>
          </li>
+         <?php if (isset($_SESSION['role']) && in_array($_SESSION['role'], ['admin', 'employer'])): ?>
          <li class="nav-item-offcanvas">
              <a class="nav-link-offcanvas <?php echo $currentPage == 'statistics.php' ? 'active' : ''; ?>" href="<?php echo $path_prefix; ?>statistics.php">
                  <i class="fa-solid fa-chart-simple icon-w"></i> <?php echo $t['statistics']; ?>
              </a>
          </li>
+         <?php endif; ?>
+         
+         <?php if (isset($_SESSION['role']) && $_SESSION['role'] == 'employer'): ?>
+         <li class="nav-item-offcanvas">
+             <a class="nav-link-offcanvas <?php echo $currentPage == 'calendar.php' ? 'active' : ''; ?>" href="<?php echo $path_prefix; ?>employer/calendar.php">
+                 <i class="fa-solid fa-calendar icon-w"></i> <?php echo $lang == 'bn' ? 'সাক্ষাৎকার ক্যালেন্ডার' : 'Interview Calendar'; ?>
+             </a>
+         </li>
+         <li class="nav-item-offcanvas">
+             <a class="nav-link-offcanvas <?php echo $currentPage == 'partner_finder.php' ? 'active' : ''; ?>" href="<?php echo $path_prefix; ?>employer/partner_finder.php">
+                 <i class="fa-solid fa-users-viewfinder icon-w"></i> <?php echo $lang == 'bn' ? 'পার্টনার ফাইন্ডার' : 'Partner Finder'; ?>
+             </a>
+         </li>
+         <?php endif; ?>
+
+         <?php if (isset($_SESSION['role']) && $_SESSION['role'] == 'job_seeker'): ?>
+         <li class="nav-item-offcanvas">
+             <a class="nav-link-offcanvas <?php echo $currentPage == 'application_tracking.php' ? 'active' : ''; ?>" href="<?php echo $path_prefix; ?>jobseeker/application_tracking.php">
+                 <i class="fa-solid fa-route icon-w"></i> <?php echo $lang == 'bn' ? 'আবেদন ট্র্যাকিং' : 'App Tracking'; ?>
+             </a>
+         </li>
+         <?php endif; ?>
          <li class="nav-item-offcanvas">
              <a class="nav-link-offcanvas <?php echo $currentPage == 'contact.php' ? 'active' : ''; ?>" href="<?php echo $path_prefix; ?>contact.php">
                  <i class="fa-solid fa-envelope icon-w"></i> <?php echo $t['contact']; ?>

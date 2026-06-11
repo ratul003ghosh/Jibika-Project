@@ -9,7 +9,61 @@ if (isset($_GET['lang'])) {
 }
 $lang = $_SESSION['lang'] ?? 'bn';
 
+if (isset($_SESSION['role']) && $_SESSION['role'] == 'job_seeker') {
+    header("Location: jobseeker/dashboard.php");
+    exit();
+}
 
+// Fetch dynamic data
+$kpi1 = $kpi2 = $kpi3 = $kpi4 = 0;
+
+if (isset($_SESSION['role'])) {
+    if ($_SESSION['role'] == 'employer') {
+        $eid = $_SESSION['user_id'];
+        
+        // kpi1: Seekers applied to his jobs
+        $q = $conn->query("SELECT COUNT(DISTINCT applications.user_id) as c FROM applications JOIN jobs ON applications.job_id = jobs.job_id WHERE jobs.employer_id = $eid");
+        if ($q) $kpi1 = $q->fetch_assoc()['c'];
+        
+        // kpi2: Just him
+        $kpi2 = 1;
+        
+        // kpi3: His active jobs
+        $q = $conn->query("SELECT COUNT(job_id) as c FROM jobs WHERE employer_id = $eid AND status='active'");
+        if ($q) $kpi3 = $q->fetch_assoc()['c'];
+        
+        // kpi4: His total placements (Accepted applications)
+        $q = $conn->query("SELECT COUNT(application_id) as c FROM applications JOIN jobs ON applications.job_id = jobs.job_id WHERE jobs.employer_id = $eid AND applications.status='Accepted'");
+        if ($q) $kpi4 = $q->fetch_assoc()['c'];
+        
+    } elseif ($_SESSION['role'] == 'admin') {
+        // kpi1: Total seekers
+        $q = $conn->query("SELECT COUNT(user_id) as c FROM users WHERE role='job_seeker'");
+        if ($q) $kpi1 = $q->fetch_assoc()['c'];
+        
+        // kpi2: Total employers
+        $q = $conn->query("SELECT COUNT(user_id) as c FROM users WHERE role='employer'");
+        if ($q) $kpi2 = $q->fetch_assoc()['c'];
+        
+        // kpi3: Total active jobs
+        $q = $conn->query("SELECT COUNT(job_id) as c FROM jobs WHERE status='active'");
+        if ($q) $kpi3 = $q->fetch_assoc()['c'];
+        
+        // kpi4: Total placements
+        $q = $conn->query("SELECT COUNT(application_id) as c FROM applications WHERE status='Accepted'");
+        if ($q) $kpi4 = $q->fetch_assoc()['c'];
+    }
+} else {
+    // Guests (if we allow them, but let's assume they see admin stats)
+    $q = $conn->query("SELECT COUNT(user_id) as c FROM users WHERE role='job_seeker'");
+    if ($q) $kpi1 = $q->fetch_assoc()['c'];
+    $q = $conn->query("SELECT COUNT(user_id) as c FROM users WHERE role='employer'");
+    if ($q) $kpi2 = $q->fetch_assoc()['c'];
+    $q = $conn->query("SELECT COUNT(job_id) as c FROM jobs WHERE status='active'");
+    if ($q) $kpi3 = $q->fetch_assoc()['c'];
+    $q = $conn->query("SELECT COUNT(application_id) as c FROM applications WHERE status='Accepted'");
+    if ($q) $kpi4 = $q->fetch_assoc()['c'];
+}
 
 $stats_en = [
     'title' => 'National Employment Intelligence',
@@ -206,7 +260,7 @@ $stats_t = $lang === 'en' ? $stats_en : $stats_bn;
                         <div class="kpi-icon bg-emerald-light"><i class="fa-solid fa-users"></i></div>
                         <div class="kpi-growth bg-success-subtle text-success"><i class="fa-solid fa-arrow-trend-up"></i> <?= translateNumber('+12.5%', $lang) ?></div>
                     </div>
-                    <div class="kpi-value mt-3"><?= translateNumber('125,430', $lang) ?></div>
+                    <div class="kpi-value mt-3"><?= translateNumber($kpi1, $lang) ?></div>
                     <div class="kpi-label"><?= $stats_t['kpi1'] ?></div>
                 </div>
             </div>
@@ -218,7 +272,7 @@ $stats_t = $lang === 'en' ? $stats_en : $stats_bn;
                         <div class="kpi-icon bg-navy-light"><i class="fa-solid fa-building"></i></div>
                         <div class="kpi-growth bg-success-subtle text-success"><i class="fa-solid fa-arrow-trend-up"></i> <?= translateNumber('+5.2%', $lang) ?></div>
                     </div>
-                    <div class="kpi-value mt-3"><?= translateNumber('8,450', $lang) ?></div>
+                    <div class="kpi-value mt-3"><?= translateNumber($kpi2, $lang) ?></div>
                     <div class="kpi-label"><?= $stats_t['kpi2'] ?></div>
                 </div>
             </div>
@@ -230,7 +284,7 @@ $stats_t = $lang === 'en' ? $stats_en : $stats_bn;
                         <div class="kpi-icon bg-warning-light"><i class="fa-solid fa-briefcase"></i></div>
                         <div class="kpi-growth bg-success-subtle text-success"><i class="fa-solid fa-arrow-trend-up"></i> <?= translateNumber('+18.1%', $lang) ?></div>
                     </div>
-                    <div class="kpi-value mt-3"><?= translateNumber('14,200', $lang) ?></div>
+                    <div class="kpi-value mt-3"><?= translateNumber($kpi3, $lang) ?></div>
                     <div class="kpi-label"><?= $stats_t['kpi3'] ?></div>
                 </div>
             </div>
@@ -242,7 +296,7 @@ $stats_t = $lang === 'en' ? $stats_en : $stats_bn;
                         <div class="kpi-icon bg-info-light"><i class="fa-solid fa-handshake"></i></div>
                         <div class="kpi-growth bg-success-subtle text-success"><i class="fa-solid fa-arrow-trend-up"></i> <?= translateNumber('+22.4%', $lang) ?></div>
                     </div>
-                    <div class="kpi-value mt-3"><?= translateNumber('62,890', $lang) ?></div>
+                    <div class="kpi-value mt-3"><?= translateNumber($kpi4, $lang) ?></div>
                     <div class="kpi-label"><?= $stats_t['kpi4'] ?></div>
                 </div>
             </div>

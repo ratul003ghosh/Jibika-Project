@@ -1,7 +1,7 @@
 <?php
 mysqli_report(MYSQLI_REPORT_OFF);
 $host = "localhost";
-$port = 3306;
+$port = 3307;
 $user = "root";
 $pass = "";
 $dbname = "jibika_db";

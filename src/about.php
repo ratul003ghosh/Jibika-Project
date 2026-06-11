@@ -492,31 +492,32 @@ $about_t = $lang === 'en' ? $about_en : $about_bn;
             <div class="col-md-6 col-lg-3">
                 <div class="white-card">
                     <h5 class="mb-3">Frontend</h5>
-                    <div class="tech-pill"><i class="fa-brands fa-react" style="color:#61dafb;"></i> React.js</div>
-                    <div class="tech-pill"><i class="fa-solid fa-n"></i> Next.js</div>
-                    <div class="tech-pill"><i class="fa-solid fa-wind" style="color:#38bdf8;"></i> Tailwind CSS</div>
+                    <div class="tech-pill"><i class="fa-brands fa-html5" style="color:#e34f26;"></i> HTML5 & CSS3</div>
+                    <div class="tech-pill"><i class="fa-brands fa-bootstrap" style="color:#7952b3;"></i> Bootstrap 5</div>
+                    <div class="tech-pill"><i class="fa-brands fa-js" style="color:#f7df1e;"></i> JavaScript</div>
                 </div>
             </div>
             <div class="col-md-6 col-lg-3">
                 <div class="white-card">
                     <h5 class="mb-3">Backend</h5>
-                    <div class="tech-pill"><i class="fa-brands fa-node" style="color:#68a063;"></i> Node.js</div>
-                    <div class="tech-pill"><i class="fa-brands fa-php" style="color:#8892be;"></i> PHP</div>
-                    <div class="tech-pill"><i class="fa-solid fa-server"></i> Express.js</div>
+                    <div class="tech-pill"><i class="fa-brands fa-php" style="color:#8892be;"></i> PHP 8+</div>
+                    <div class="tech-pill"><i class="fa-solid fa-gears" style="color:#68a063;"></i> AJAX</div>
+                    <div class="tech-pill"><i class="fa-solid fa-code" style="color:#007acc;"></i> Object-Oriented</div>
                 </div>
             </div>
             <div class="col-md-6 col-lg-3">
                 <div class="white-card">
                     <h5 class="mb-3">Database</h5>
-                    <div class="tech-pill"><i class="fa-solid fa-database" style="color:#336791;"></i> PostgreSQL</div>
-                    <div class="tech-pill"><i class="fa-solid fa-leaf" style="color:#47A248;"></i> MongoDB</div>
+                    <div class="tech-pill"><i class="fa-solid fa-database" style="color:#00758F;"></i> MySQL (V2)</div>
+                    <div class="tech-pill"><i class="fa-solid fa-sitemap" style="color:#47A248;"></i> BCNF Schema</div>
+                    <div class="tech-pill"><i class="fa-solid fa-bolt" style="color:#f59e0b;"></i> DB Triggers</div>
                 </div>
             </div>
             <div class="col-md-6 col-lg-3">
                 <div class="white-card">
                     <h5 class="mb-3">Intelligence</h5>
-                    <div class="tech-pill"><i class="fa-solid fa-brain" style="color:#f472b6;"></i> AI Matching</div>
-                    <div class="tech-pill"><i class="fa-solid fa-chart-line" style="color:#fbbf24;"></i> Analytics</div>
+                    <div class="tech-pill"><i class="fa-solid fa-brain" style="color:#f472b6;"></i> Vector-SQL AI</div>
+                    <div class="tech-pill"><i class="fa-solid fa-chart-line" style="color:#fbbf24;"></i> Materialized Views</div>
                 </div>
             </div>
         </div>

@@ -235,17 +235,19 @@ $recent_applicants = $conn->query("
         </div>
 
         <div class="col-xl-3 col-md-6">
-            <div class="stat-card">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <p class="text-muted fw-bold mb-1 small text-uppercase"><?php echo $ct['hired']; ?></p>
-                        <h2 class="fw-bold text-dark mb-0"><?php echo translateNumber($accepted_applicants, $lang); ?></h2>
-                    </div>
-                    <div class="icon-box bg-success bg-opacity-10 text-success">
-                        <i class="fa-solid fa-check-circle"></i>
+            <a href="applicants.php?f_status=Accepted" class="text-decoration-none">
+                <div class="stat-card hover-shadow transition-all">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-muted fw-bold mb-1 small text-uppercase"><?php echo $ct['hired']; ?></p>
+                            <h2 class="fw-bold text-dark mb-0"><?php echo translateNumber($accepted_applicants, $lang); ?></h2>
+                        </div>
+                        <div class="icon-box bg-success bg-opacity-10 text-success">
+                            <i class="fa-solid fa-check-circle"></i>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </a>
         </div>
     </div>
 
