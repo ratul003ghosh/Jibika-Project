@@ -1,0 +1,25 @@
+/* ── interview_tips.php Styles ── */
+body { background-color: #f8f9fa; }
+.resource-header {
+    background: linear-gradient(135deg, #00563f 0%, #006a4e 100%);
+    color: white;
+    padding: 60px 0;
+    margin-bottom: 40px;
+}
+.tip-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    height: 100%;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border-top: 4px solid #006a4e;
+    transition: transform 0.2s;
+}
+.tip-card:hover {
+    transform: translateY(-5px);
+}
+.tip-icon {
+    font-size: 2.5rem;
+    color: #006a4e;
+    margin-bottom: 15px;
+}

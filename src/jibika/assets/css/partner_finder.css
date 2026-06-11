@@ -1,0 +1,124 @@
+.partner-page {
+    background: linear-gradient(180deg, #f3fdf5 0%, #ffffff 100%);
+}
+
+.partner-hero {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.partner-badge {
+    display: inline-block;
+    background: #e6f7ea;
+    color: #166534;
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.partner-title {
+    font-size: 42px;
+    font-weight: 800;
+    color: #14532d;
+}
+
+.partner-subtitle {
+    font-size: 17px;
+    color: #4b5563;
+}
+
+.partner-form-card,
+.partner-results-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.06);
+}
+
+.card-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.preference-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.preference-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    background: #f9fafb;
+    font-size: 14px;
+}
+
+.result-count {
+    font-size: 14px;
+    font-weight: 600;
+    color: #166534;
+    background: #ecfdf3;
+    padding: 8px 12px;
+    border-radius: 999px;
+}
+
+.partner-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 20px;
+    background: #fafafa;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.partner-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
+}
+
+.partner-card h4 {
+    font-size: 21px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 14px;
+}
+
+.partner-card p {
+    color: #4b5563;
+    margin-bottom: 10px;
+}
+
+.empty-state {
+    border: 1px dashed #cbd5e1;
+    border-radius: 16px;
+    padding: 32px;
+    text-align: center;
+    background: #f8fafc;
+}
+
+@media (max-width: 991px) {
+    .partner-title {
+        font-size: 34px;
+    }
+}
+
+@media (max-width: 767px) {
+    .partner-title {
+        font-size: 28px;
+    }
+
+    .preference-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .partner-form-card,
+    .partner-results-card {
+        padding: 20px;
+    }
+}

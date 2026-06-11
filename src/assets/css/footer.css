@@ -1,0 +1,20 @@
+/* ── footer.php Styles ── */
+.footer-link {
+    color: #cbd5e1;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    padding-left: 0;
+    border-left: 3px solid transparent;
+    display: block; /* So padding/border looks like a list item */
+    line-height: 1.5;
+}
+.footer-link:hover {
+    color: #10B981;
+    padding-left: 8px;
+}
+.footer-link.active {
+    color: #10B981;
+    font-weight: 700;
+    padding-left: 10px;
+    border-left-color: #10B981;
+}

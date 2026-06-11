@@ -1,0 +1,25 @@
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE / Editor folders
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# XAMPP / Local Logs
+error_log
+access_log
+php-server-*.log
+
+# Local runtime/session files
+sess_*
+
+# Generated local test reports and backups
+database/post_upgrade_*_results.json
+database/codex_test_users.json
+database/backup_before_dbms_upgrade.sql

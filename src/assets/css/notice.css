@@ -1,0 +1,22 @@
+/* ── notice.php Styles ── */
+.notice-ticker {
+    background-color: #006a4e;
+    color: white;
+    padding: 8px 0;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+}
+.notice-ticker-label {
+    background-color: #f42a41;
+    color: white;
+    padding: 8px 15px;
+    font-weight: bold;
+    white-space: nowrap;
+    z-index: 2;
+    position: relative;
+}
+.hover-success:hover {
+    color: #006a4e !important;
+    text-decoration: underline !important;
+}

@@ -1,0 +1,334 @@
+/* ── Top Mini Bar ── */
+.gov-top-bar {
+    background-color: #05261d;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 0.8rem;
+    padding: 8px 0;
+    color: #94a3b8;
+    letter-spacing: 0.01em;
+}
+.gov-top-bar a {
+    color: #cbd5e1;
+    text-decoration: none;
+    margin-right: 14px;
+    font-weight: 500;
+    transition: color 0.15s;
+}
+.gov-top-bar a:hover { color: #34d399; }
+.gov-top-bar .text-success {
+    color: #34d399 !important;
+}
+.gov-top-bar .fw-bold.text-success {
+    color: #34d399 !important;
+    border-bottom: 2px solid #34d399;
+    padding-bottom: 2px;
+}
+
+.main-navbar-gov {
+    background: #09372a !important;
+    border-bottom: 3px solid #e11d48;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    padding: 12px 0 !important;
+    transition: all 0.3s ease;
+}
+.navbar-scrolled .main-navbar-gov {
+    padding: 8px 0 !important;
+    background: rgba(9, 55, 42, 0.96) !important;
+    backdrop-filter: blur(8px);
+}
+.main-navbar-gov .container-fluid {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+}
+
+/* Brand (logo + title inside navbar) */
+.nav-brand-gov {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+.nb-logo-img {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: contain;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    background: #ffffff;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.nav-brand-gov:hover .nb-logo-img {
+    transform: scale(1.08);
+    box-shadow: 0 4px 12px rgba(244, 42, 65, 0.25);
+}
+.nav-brand-gov .nb-text .nb-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    white-space: nowrap;
+}
+.nav-brand-gov .nb-text .nb-title .nb-accent {
+    color: #e11d48;
+}
+.nav-brand-gov .nb-text .nb-sub {
+    font-size: 0.64rem;
+    color: rgba(255,255,255,0.7);
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    margin-top: 2px;
+    white-space: nowrap;
+}
+
+/* ── Profile Trigger ── */
+.profile-trigger {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 10px 4px 12px !important;
+    border-radius: 40px;
+    border: 1.5px solid rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.07) !important;
+    transition: background 0.2s, border-color 0.2s;
+    text-decoration: none;
+    cursor: pointer;
+}
+.profile-trigger:hover,
+.profile-trigger.show {
+    background: rgba(255,255,255,0.16) !important;
+    border-color: rgba(255,255,255,0.55);
+}
+.profile-trigger .profile-name {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.2;
+    letter-spacing: 0.01em;
+}
+.profile-trigger .profile-role {
+    font-size: 0.64rem;
+    color: rgba(255,255,255,0.72);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    line-height: 1;
+}
+.profile-trigger .profile-chevron {
+    color: rgba(255,255,255,0.55);
+    font-size: 0.65rem;
+    margin-left: 2px;
+    transition: transform 0.2s;
+}
+.profile-trigger.show .profile-chevron {
+    transform: rotate(180deg);
+}
+.profile-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #ffffff;
+    color: #09372a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    font-weight: 800;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    border: 2px solid rgba(255,255,255,0.8);
+}
+
+/* ── Profile Dropdown ── */
+.profile-dropdown {
+    min-width: 272px;
+    margin-top: 10px !important;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.16), 0 2px 8px rgba(0,0,0,0.08);
+    overflow: hidden;
+    padding: 0;
+    animation: dropFadeIn 0.18s ease;
+}
+@keyframes dropFadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.profile-dropdown .profile-card-header {
+    background: linear-gradient(135deg, #09372a 0%, #10b981 100%);
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.profile-card-header .drop-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    font-weight: 800;
+    flex-shrink: 0;
+    border: 2px solid rgba(255,255,255,0.4);
+}
+.profile-card-header .drop-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.2;
+}
+.profile-card-header .drop-email {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.75);
+    margin-top: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 170px;
+}
+.profile-card-header .drop-role-badge {
+    display: inline-block;
+    margin-top: 5px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.18);
+    color: #ffffff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border: 1px solid rgba(255,255,255,0.3);
+}
+.profile-dropdown .drop-menu-body {
+    padding: 6px 0;
+}
+.profile-dropdown .drop-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 18px;
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: #1e293b;
+    text-decoration: none;
+    transition: background 0.15s;
+    border: none;
+}
+.profile-dropdown .drop-item .drop-item-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+.profile-dropdown .drop-item:hover { background-color: #f1f5f9; }
+.profile-dropdown .drop-item.drop-danger { color: #dc2626; }
+.profile-dropdown .drop-item.drop-danger:hover { background-color: #fef2f2; }
+.profile-dropdown .drop-divider {
+    border: none;
+    border-top: 1px solid #e8edf3;
+    margin: 2px 0;
+}
+.icon-dashboard { background: #ecfdf5; color: #09372a; }
+.icon-logout    { background: #fef2f2; color: #dc2626; }
+
+/* ── Auth Buttons ── */
+.btn-nav-login {
+    color: #ffffff !important;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    padding: 0 10px;
+    margin-right: 8px;
+}
+.btn-nav-login:hover {
+    color: #f42a41 !important;
+}
+
+.btn-nav-register {
+    background-color: #198754;
+    color: #ffffff !important;
+    font-weight: 600;
+    border-radius: 6px;
+    padding: 7px 20px !important;
+    font-size: 0.9rem;
+    transition: background 0.2s, box-shadow 0.2s;
+    text-decoration: none;
+}
+.btn-nav-register:hover {
+    background-color: #f42a41;
+    box-shadow: 0 4px 12px rgba(244,42,65,0.35);
+}
+.btn-nav-register.active-reg {
+    background-color: #f42a41;
+    box-shadow: 0 2px 8px rgba(244,42,65,0.4);
+}
+
+/* ── 3-Bar Menu Trigger ── */
+.btn-menu-trigger {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.btn-menu-trigger:hover {
+    background: rgba(244, 42, 65, 0.15);
+    border-color: rgba(244, 42, 65, 0.3);
+    color: #f42a41;
+    transform: scale(1.05);
+}
+
+/* ── Offcanvas Sidebar Styling ── */
+.nav-link-offcanvas {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: rgba(255, 255, 255, 0.75) !important;
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 10px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+.nav-link-offcanvas .icon-w {
+    width: 20px;
+    text-align: center;
+    font-size: 1.15rem;
+    color: rgba(255, 255, 255, 0.4);
+    transition: color 0.2s ease;
+}
+.nav-link-offcanvas:hover {
+    background: rgba(244, 42, 65, 0.08);
+    color: #f42a41 !important;
+}
+.nav-link-offcanvas:hover .icon-w {
+    color: #f42a41;
+}
+.nav-link-offcanvas.active {
+    background: rgba(244, 42, 65, 0.12) !important;
+    color: #f42a41 !important;
+    font-weight: 600;
+}
+.nav-link-offcanvas.active .icon-w {
+    color: #f42a41 !important;
+}
