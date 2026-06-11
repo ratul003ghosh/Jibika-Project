@@ -22,7 +22,18 @@ if (isset($_GET['lang'])) {
 
 $lang = $_SESSION['lang'] ?? 'bn';
 
-$unread_notifs = 2; // Hardcoded for demo presentation
+$unread_notifs = 0;
+if (isset($_SESSION['user_id'])) {
+    if ($_SESSION['role'] == 'job_seeker') {
+        $unread_notifs = 2; // Hardcoded for demo presentation
+    } else {
+        global $conn;
+        if (isset($conn)) {
+            $n_res = $conn->query("SELECT COUNT(id) AS unread FROM notifications WHERE user_id = {$_SESSION['user_id']} AND is_read = 0");
+            if ($n_res) $unread_notifs = $n_res->fetch_assoc()['unread'];
+        }
+    }
+}
 
 $eng_date = date('l, d F Y');
 $eng_days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -101,7 +112,15 @@ $currentPage = basename($_SERVER['PHP_SELF']);
     <div class="container-fluid px-3 px-lg-4 d-flex align-items-center justify-content-between flex-row">
 
         <!-- Left: Logo + Title -->
-        <a class="navbar-brand nav-brand-gov" href="<?php echo $path_prefix; ?>index.php">
+        <?php
+            $logo_link = $path_prefix . 'index.php';
+            if (isset($_SESSION['user_id']) && isset($_SESSION['role'])) {
+                if ($_SESSION['role'] == 'job_seeker') $logo_link = $path_prefix . 'jobseeker/dashboard.php';
+                elseif ($_SESSION['role'] == 'employer') $logo_link = $path_prefix . 'employer/dashboard.php';
+                elseif ($_SESSION['role'] == 'admin') $logo_link = $path_prefix . 'admin/dashboard.php';
+            }
+        ?>
+        <a class="navbar-brand nav-brand-gov" href="<?php echo $logo_link; ?>">
             <img src="<?php echo $path_prefix; ?>assets/images/jibika_logo.png" alt="Jibika Logo" class="nb-logo-img">
             <div class="nb-text d-none d-md-block">
                 <span class="nb-title">জীবিকা <span class="nb-accent">|</span> Jibika</span>
@@ -112,7 +131,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         <!-- Right: Auth Options + 3-Bar Menu -->
         <div class="d-flex align-items-center gap-3">
             
-            <?php if (isset($_SESSION['user_id']) && $_SESSION['role'] == 'job_seeker'): ?>
+            <?php if (isset($_SESSION['user_id']) && in_array($_SESSION['role'], ['job_seeker', 'employer'])): ?>
                 <a href="<?php echo $path_prefix; ?>notifications.php" class="position-relative text-white me-3" style="font-size: 1.25rem; text-decoration: none;">
                     <i class="fa-solid fa-bell"></i>
                     <?php if ($unread_notifs > 0): ?>

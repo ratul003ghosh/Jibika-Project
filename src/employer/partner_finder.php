@@ -180,7 +180,7 @@ $emp_data = $emp_q->fetch_assoc();
 
 $q = $conn->query("SELECT DISTINCT u.user_id, u.full_name, u.email, jsp.experience_years, d.district_name as location, jsp.availability_status, jsp.is_remote,
                    (SELECT GROUP_CONCAT(s.skill_name) FROM skills s WHERE s.user_id = u.user_id) as skills,
-                   jsp.education as education
+                   jsp.degree as education
                    FROM users u 
                    LEFT JOIN job_seeker_profiles jsp ON u.user_id = jsp.user_id 
                    LEFT JOIN districts d ON jsp.district_id = d.district_id

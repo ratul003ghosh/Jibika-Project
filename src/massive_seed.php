@@ -48,7 +48,7 @@ foreach ($seeker_names as $i => $name) {
         $sid = $sid_res->fetch_assoc()['user_id'];
         $seeker_ids[] = $sid;
         
-        $conn->query("INSERT IGNORE INTO job_seeker_profiles (user_id, education, expected_salary, experience_years) VALUES ($sid, 'Bachelor', '25000', " . rand(1,5) . ")");
+        $conn->query("INSERT IGNORE INTO job_seeker_profiles (user_id, degree, expected_salary, experience_years) VALUES ($sid, 'Bachelor', '25000', " . rand(1,5) . ")");
     }
 }
 

@@ -1,6 +1,20 @@
 <?php
 session_start();
 include('assets/config/db.php');
+
+// Redirect logged-in users directly to their dashboards
+if (isset($_SESSION['user_id']) && isset($_SESSION['role'])) {
+    if ($_SESSION['role'] == 'job_seeker') {
+        header("Location: jobseeker/dashboard.php");
+        exit();
+    } elseif ($_SESSION['role'] == 'employer') {
+        header("Location: employer/dashboard.php");
+        exit();
+    } elseif ($_SESSION['role'] == 'admin') {
+        header("Location: admin/dashboard.php");
+        exit();
+    }
+}
 ?>
 <?php include('includes/header.php'); ?>
 <?php include('includes/navbar.php'); ?>

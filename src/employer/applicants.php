@@ -189,7 +189,7 @@ $where_sql = implode(" AND ", $where_clauses);
             applications.application_id, applications.status, applications.applied_at,
             jobs.job_id, jobs.title AS job_title, jobs.job_category, jobs.job_type, jobs.salary, jobs.salary_type, jobs.application_deadline, jobs.education_required, jobs.experience_required, jobs.location, jobs.upazila_id,
             users.user_id AS applicant_id, users.full_name, users.email,
-            jsp.education, jsp.about, jsp.district, jsp.upazila, jsp.preferred_job_category, jsp.experience_years,
+            jsp.about, jsp.district, jsp.upazila, jsp.preferred_job_category, jsp.experience_years,
             jsp.cv_file, jsp.portfolio_link, jsp.certifications, jsp.degree, jsp.institution, jsp.gpa,
             jsp.gender, jsp.dob, jsp.address, jsp.nid, jsp.profile_photo
         FROM applications

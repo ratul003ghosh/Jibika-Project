@@ -39,14 +39,7 @@ $ct = $loginText[$lang];
 if (isset($_SESSION['user_id']) && isset($_SESSION['role'])) {
     if ($_SESSION['role'] == 'job_seeker') {
 
-        $user_id = $_SESSION['user_id'];
-        $check_profile = $conn->query("SELECT profile_id FROM job_seeker_profiles WHERE user_id='$user_id' LIMIT 1");
-
-        if ($check_profile && $check_profile->num_rows > 0) {
-            header("Location: ../jobseeker/dashboard.php");
-        } else {
-            header("Location: ../jobseeker/profile.php");
-        }
+        header("Location: ../jobseeker/dashboard.php");
         exit();
 
     } elseif ($_SESSION['role'] == 'employer') {
@@ -82,19 +75,7 @@ if (isset($_POST['login'])) {
 
             if ($user['role'] == 'job_seeker') {
 
-                $user_id = $user['user_id'];
-                $check_profile = $conn->query("SELECT profile_id FROM job_seeker_profiles WHERE user_id='$user_id' LIMIT 1");
-
-                if ($check_profile && $check_profile->num_rows > 0) {
-                    $check_skills = $conn->query("SELECT skill_id FROM skills WHERE user_id='$user_id' LIMIT 1");
-                    if ($check_skills && $check_skills->num_rows > 0) {
-                        header("Location: ../jobseeker/dashboard.php");
-                    } else {
-                        header("Location: ../jobseeker/skills.php?msg=mandatory");
-                    }
-                } else {
-                    header("Location: ../jobseeker/profile.php");
-                }
+                header("Location: ../jobseeker/dashboard.php");
                 exit();
 
             } elseif ($user['role'] == 'employer') {
