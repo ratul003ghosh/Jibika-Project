@@ -15,7 +15,7 @@ if ($action == 'send') {
     $message = $conn->real_escape_string($_POST['message']);
     
     if ($message != '' && $receiver_id > 0) {
-        $conn->query("INSERT INTO messages (sender_id, receiver_id, message_text) VALUES ($user_id, $receiver_id, '$message')");
+        $conn->query("INSERT INTO messages (sender_id, receiver_id, message_text, message) VALUES ($user_id, $receiver_id, '$message', '$message')");
         echo json_encode(['success' => true]);
     } else {
         echo json_encode(['error' => 'Invalid data']);

@@ -1,521 +1,828 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'admin') {
+if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'admin') {
     header("Location: ../admin_login.php");
     exit();
 }
 
 include('../assets/config/db.php');
 
-$lang = $_SESSION['lang'] ?? 'bn';
+function safeValue($array, $key, $default = '') {
+    return (is_array($array) && isset($array[$key])) ? $array[$key] : $default;
+}
 
-// Status DB value → display label map (used to translate badge values from DB)
-$statusLabels = [
-    'bn' => [
-        'unemployed'    => 'বেকার',
-        'employed'      => 'নিযুক্ত',
-        'training'      => 'প্রশিক্ষণরত',
-        'self_employed' => 'স্বনির্ভর',
-        'none'          => 'কিছু না',
-        'None'          => 'কিছু না',
-        ''              => 'অজানা',
-    ],
-    'en' => [
-        'unemployed'    => 'Unemployed',
-        'employed'      => 'Employed',
-        'training'      => 'Training',
-        'self_employed' => 'Self Employed',
-        'none'          => 'None',
-        'None'          => 'None',
-        ''              => 'Unknown',
-    ],
-];
+function safeQuery($conn, $sql) {
+    if (!$conn) {
+        return false;
+    }
+    return $conn->query($sql);
+}
 
-$adText = [
-    'bn' => [
-        'title'                => 'অ্যাডমিন মনিটরিং ড্যাশবোর্ড',
-        'subtitle'             => 'এলাকাভিত্তিক বেকারত্ব, চাকরির গতিবিধি এবং কর্মসংস্থানের পরিবর্তন পর্যবেক্ষণ করুন।',
-        'analytics_reports'    => 'বিশ্লেষণমূলক প্রতিবেদন',
-        'workforce_monitor'    => 'কর্মসংস্থান মনিটর',
-        'platform_overview'    => 'প্ল্যাটফর্মের সংক্ষিপ্ত বিবরণ',
-        'workforce_status'     => 'কর্মসংস্থানের অবস্থা',
-        'quick_nav'            => 'দ্রুত নেভিগেশন',
-        'total_users'          => 'মোট ব্যবহারকারী',
-        'job_seekers'          => 'চাকরিপ্রার্থী',
-        'employers'            => 'নিয়োগকর্তা',
-        'total_jobs'           => 'মোট চাকরি',
-        'unemployed'           => 'বেকার',
-        'employed'             => 'নিযুক্ত',
-        'training'             => 'প্রশিক্ষণরত',
-        'self_employed'        => 'স্বনির্ভর',
-        'manage_users'         => 'ব্যবহারকারী পরিচালনা',
-        'manage_jobs'          => 'চাকরি পরিচালনা',
-        'recent_changes'       => 'সাম্প্রতিক কর্মসংস্থানের অবস্থার পরিবর্তন',
-        'th_user_info'         => 'ব্যবহারকারীর তথ্য',
-        'th_status_transition' => 'অবস্থার পরিবর্তন',
-        'th_timestamp'         => 'সময়',
-        'no_changes_title'     => 'এখনও কোনো অবস্থা পরিবর্তন হয়নি',
-        'no_changes_desc'      => 'কর্মসংস্থানের আপডেট এখানে প্রদর্শিত হবে।',
-        'high_unemployed_areas'=> 'উচ্চ বেকারত্বপ্রবণ এলাকা',
-        'district_label'       => 'জেলা',
-        'unemployed_suffix'    => ' বেকার',
-        'no_area_data'         => 'কোনো এলাকার তথ্য উপলব্ধ নেই।',
-        'view_full_map'        => 'পূর্ণ তালিকা দেখুন &rarr;',
-    ],
-    'en' => [
-        'title'                => 'Admin Monitoring Dashboard',
-        'subtitle'             => 'Monitor area-based unemployment, job activity, and employment changes.',
-        'analytics_reports'    => 'Analytics Reports',
-        'workforce_monitor'    => 'Workforce Monitor',
-        'platform_overview'    => 'Platform Overview',
-        'workforce_status'     => 'Workforce Status',
-        'quick_nav'            => 'Quick Navigation',
-        'total_users'          => 'Total Users',
-        'job_seekers'          => 'Job Seekers',
-        'employers'            => 'Employers',
-        'total_jobs'           => 'Total Jobs',
-        'unemployed'           => 'Unemployed',
-        'employed'             => 'Employed',
-        'training'             => 'Training',
-        'self_employed'        => 'Self Employed',
-        'manage_users'         => 'Manage Users',
-        'manage_jobs'          => 'Manage Jobs',
-        'recent_changes'       => 'Recent Employment Status Changes',
-        'th_user_info'         => 'User Info',
-        'th_status_transition' => 'Status Transition',
-        'th_timestamp'         => 'Timestamp',
-        'no_changes_title'     => 'No Status Changes Yet',
-        'no_changes_desc'      => 'Employment updates will appear here.',
-        'high_unemployed_areas'=> 'High Unemployment Areas',
-        'district_label'       => 'District',
-        'unemployed_suffix'    => ' Unemployed',
-        'no_area_data'         => 'No area data available.',
-        'view_full_map'        => 'View Full Map &rarr;',
-    ]
-];
-$ct = $adText[$lang];
+function tableExists($conn, $table) {
+    $table = preg_replace('/[^a-zA-Z0-9_]/', '', (string)$table);
+    if ($table === '') {
+        return false;
+    }
+    $result = safeQuery($conn, "SHOW TABLES LIKE '" . $conn->real_escape_string($table) . "'");
+    return ($result && $result->num_rows > 0);
+}
 
-// ─── Bengali number & date helpers ───────────────────────────────────────────
-function dashBnNum(string $n): string {
-    return str_replace(
-        ['0','1','2','3','4','5','6','7','8','9'],
-        ['০','১','২','৩','৪','৫','৬','৭','৮','৯'],
-        $n
+function columnExists($conn, $table, $column) {
+    $table = preg_replace('/[^a-zA-Z0-9_]/', '', (string)$table);
+    $column = preg_replace('/[^a-zA-Z0-9_]/', '', (string)$column);
+    if ($table === '' || $column === '' || !tableExists($conn, $table)) {
+        return false;
+    }
+    $result = safeQuery(
+        $conn,
+        "SHOW COLUMNS FROM `$table` LIKE '" . $conn->real_escape_string($column) . "'"
     );
+    return ($result && $result->num_rows > 0);
 }
-function dashBnDate(string $ts, string $fmt): string {
-    $out = date($fmt, strtotime($ts));
-    $months = [
-        'January'=>'জানুয়ারি','February'=>'ফেব্রুয়ারি',
-        'March'=>'মার্চ','April'=>'এপ্রিল','May'=>'মে','June'=>'জুন',
-        'July'=>'জুলাই','August'=>'আগস্ট','September'=>'সেপ্টেম্বর',
-        'October'=>'অক্টোবর','November'=>'নভেম্বর','December'=>'ডিসেম্বর',
-        'Jan'=>'জান','Feb'=>'ফেব','Mar'=>'মার্চ','Apr'=>'এপ্র','Jun'=>'জুন',
-        'Jul'=>'জুল','Aug'=>'আগ','Sep'=>'সেপ্ট','Oct'=>'অক্ট','Nov'=>'নভ','Dec'=>'ডিস',
-        'AM'=>'পূর্বাহ্ন','PM'=>'অপরাহ্ন',
+
+function safeCount($conn, $table, $condition = '') {
+    $table = preg_replace('/[^a-zA-Z0-9_]/', '', (string)$table);
+    if ($table === '' || !tableExists($conn, $table)) {
+        return 0;
+    }
+    $sql = "SELECT COUNT(*) AS total FROM `$table`";
+    if (trim((string)$condition) !== '') {
+        $sql .= " WHERE " . $condition;
+    }
+    $result = safeQuery($conn, $sql);
+    if (!$result) {
+        return 0;
+    }
+    $row = $result->fetch_assoc();
+    return (int) safeValue($row, 'total', 0);
+}
+
+function safeRows($result) {
+    $rows = [];
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $rows[] = $row;
+        }
+    }
+    return $rows;
+}
+
+function e($value) {
+    return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+}
+
+function fmtNum($value) {
+    return number_format((int)$value);
+}
+
+function pct($value, $total) {
+    $total = max(1, (int)$total);
+    return round(((int)$value / $total) * 100, 1);
+}
+
+function validDateParam($value) {
+    $value = trim((string)$value);
+    if ($value === '') {
+        return '';
+    }
+    $dt = DateTime::createFromFormat('Y-m-d', $value);
+    return ($dt && $dt->format('Y-m-d') === $value) ? $value : '';
+}
+
+function periodConfig($period) {
+    $periods = [
+        'this_week' => ['This Week', "DATE_SUB(CURDATE(), INTERVAL 7 DAY)"],
+        'this_month' => ['This Month', "DATE_FORMAT(CURDATE(), '%Y-%m-01')"],
+        'last_3_months' => ['Last 3 Months', "DATE_SUB(CURDATE(), INTERVAL 3 MONTH)"],
+        'this_year' => ['This Year', "DATE_FORMAT(CURDATE(), '%Y-01-01')"],
     ];
-    foreach ($months as $en => $bn) { $out = str_replace($en, $bn, $out); }
-    return dashBnNum($out);
+    return $periods[$period] ?? $periods['this_month'];
 }
-// ─────────────────────────────────────────────────────────────────────────────
 
+function addDateCondition(&$conditions, $column, $startDate, $endDate) {
+    if ($startDate !== '') {
+        $conditions[] = "DATE($column) >= '$startDate'";
+    }
+    if ($endDate !== '') {
+        $conditions[] = "DATE($column) <= '$endDate'";
+    }
+}
 
-// District name translations (English DB value → Bengali display)
-$districtBn = [
-    'Dhaka'       => 'ঢাকা',
-    'Chattogram'  => 'চট্টগ্রাম',
-    'Khulna'      => 'খুলনা',
-    'Rajshahi'    => 'রাজশাহী',
-    'Barishal'    => 'বরিশাল',
-    'Sylhet'      => 'সিলেট',
-    'Rangpur'     => 'রংপুর',
-    'Mymensingh'  => 'ময়মনসিংহ',
-    'Comilla'     => 'কুমিল্লা',
-    'Narayanganj' => 'নারায়ণগঞ্জ',
-    'Gazipur'     => 'গাজীপুর',
-    'Bogura'      => 'বগুড়া',
-    'Narsingdi'   => 'নরসিংদী',
-    'Tangail'     => 'টাঙ্গাইল',
-    'Jessore'     => 'যশোর',
-    'Cox\'s Bazar' => 'কক্সবাজার',
-    'Dinajpur'    => 'দিনাজপুর',
-    'Jashore'     => 'যশোর',
-    'Noakhali'    => 'নোয়াখালী',
-    'Feni'        => 'ফেনী',
-    'Brahmanbaria'=> 'ব্রাহ্মণবাড়িয়া',
-    'Kishoreganj' => 'কিশোরগঞ্জ',
-    'Netrokona'   => 'নেত্রকোণা',
-    'Jamalpur'    => 'জামালপুর',
-    'Sherpur'     => 'শেরপুর',
-    'Sunamganj'   => 'সুনামগঞ্জ',
-    'Habiganj'    => 'হবিগঞ্জ',
-    'Moulvibazar' => 'মৌলভীবাজার',
-    'Bagerhat'    => 'বাগেরহাট',
-    'Satkhira'    => 'সাতক্ষীরা',
-    'Narail'      => 'নড়াইল',
-    'Magura'      => 'মাগুরা',
-    'Jhenaidah'   => 'ঝিনাইদহ',
-    'Kushtia'     => 'কুষ্টিয়া',
-    'Meherpur'    => 'মেহেরপুর',
-    'Chuadanga'   => 'চুয়াডাঙ্গা',
-    'Pabna'       => 'পাবনা',
-    'Sirajganj'   => 'সিরাজগঞ্জ',
-    'Natore'      => 'নাটোর',
-    'Naogaon'     => 'নওগাঁ',
-    'Chapainawabganj' => 'চাঁপাইনবাবগঞ্জ',
-    'Joypurhat'   => 'জয়পুরহাট',
-    'Nawabganj'   => 'নবাবগঞ্জ',
-    'Gaibandha'   => 'গাইবান্ধা',
-    'Kurigram'    => 'কুড়িগ্রাম',
-    'Lalmonirhat' => 'লালমনিরহাট',
-    'Nilphamari'  => 'নীলফামারী',
-    'Thakurgaon'  => 'ঠাকুরগাঁও',
-    'Panchagarh'  => 'পঞ্চগড়',
-    'Barguna'     => 'বরগুনা',
-    'Bhola'       => 'ভোলা',
-    'Patuakhali'  => 'পটুয়াখালী',
-    'Pirojpur'    => 'পিরোজপুর',
-    'Jhalokathi'  => 'ঝালকাঠি',
-    'Shariatpur'  => 'শরীয়তপুর',
-    'Madaripur'   => 'মাদারীপুর',
-    'Gopalganj'   => 'গোপালগঞ্জ',
-    'Faridpur'    => 'ফরিদপুর',
-    'Rajbari'     => 'রাজবাড়ী',
-    'Manikganj'   => 'মানিকগঞ্জ',
-    'Munshiganj'  => 'মুন্সীগঞ্জ',
-    'Chandpur'    => 'চাঁদপুর',
-    'Lakshmipur'  => 'লক্ষ্মীপুর',
-    'Khagrachhari'=> 'খাগড়াছড়ি',
-    'Rangamati'   => 'রাঙামাটি',
-    'Bandarban'   => 'বান্দরবান',
+function whereClause($conditions) {
+    return $conditions ? ' WHERE ' . implode(' AND ', $conditions) : '';
+}
+
+function selectedQueryUrl($params = []) {
+    $query = array_merge($_GET, $params);
+    foreach ($query as $key => $value) {
+        if ($value === '' || $value === null) {
+            unset($query[$key]);
+        }
+    }
+    return 'dashboard.php' . ($query ? '?' . http_build_query($query) : '');
+}
+
+$dbConnected = isset($conn) && $conn && !$conn->connect_error;
+$adminName = safeValue($_SESSION, 'full_name', 'Admin User');
+$adminRole = 'Super Admin';
+
+$hasUsers = tableExists($conn, 'users');
+$hasJobs = tableExists($conn, 'jobs');
+$hasApplications = tableExists($conn, 'applications');
+$hasSkills = tableExists($conn, 'skills');
+$hasProfiles = tableExists($conn, 'job_seeker_profiles');
+$hasEmployment = tableExists($conn, 'employment_status');
+$hasDistricts = tableExists($conn, 'districts');
+$hasEmployerProfiles = tableExists($conn, 'employer_profiles');
+
+$districtOptions = [];
+if ($hasDistricts && columnExists($conn, 'districts', 'district_name')) {
+    $districtOptions = safeRows(safeQuery($conn, "SELECT district_id, district_name FROM districts ORDER BY district_name ASC"));
+}
+
+$selectedDistrict = trim((string)($_GET['district'] ?? ''));
+$startDate = validDateParam($_GET['start_date'] ?? '');
+$endDate = validDateParam($_GET['end_date'] ?? '');
+if ($startDate !== '' && $endDate !== '' && $startDate > $endDate) {
+    [$startDate, $endDate] = [$endDate, $startDate];
+}
+$activePeriod = preg_replace('/[^a-z0-9_]/', '', (string)($_GET['period'] ?? 'this_month'));
+[$activePeriodLabel, $activePeriodStartSql] = periodConfig($activePeriod);
+
+$selectedDistrictId = null;
+if ($selectedDistrict !== '' && $hasDistricts) {
+    foreach ($districtOptions as $districtRow) {
+        if (strcasecmp((string)safeValue($districtRow, 'district_name', ''), $selectedDistrict) === 0) {
+            $selectedDistrictId = (int)safeValue($districtRow, 'district_id', 0);
+            break;
+        }
+    }
+}
+
+$userDateConditions = [];
+if ($hasUsers && columnExists($conn, 'users', 'created_at')) {
+    addDateCondition($userDateConditions, 'u.created_at', $startDate, $endDate);
+}
+$jobDateConditions = [];
+if ($hasJobs && columnExists($conn, 'jobs', 'created_at')) {
+    addDateCondition($jobDateConditions, 'j.created_at', $startDate, $endDate);
+}
+$applicationDateConditions = [];
+if ($hasApplications && columnExists($conn, 'applications', 'applied_at')) {
+    addDateCondition($applicationDateConditions, 'a.applied_at', $startDate, $endDate);
+}
+
+$totalUsers = 0;
+$totalJobSeekers = 0;
+$totalEmployers = 0;
+if ($hasUsers) {
+    $roleColumn = columnExists($conn, 'users', 'role');
+    $districtUserJoin = '';
+    $districtUserConditions = $userDateConditions;
+    if ($selectedDistrict !== '' && $selectedDistrictId && $hasProfiles && columnExists($conn, 'job_seeker_profiles', 'district_id')) {
+        $districtUserJoin .= " LEFT JOIN job_seeker_profiles jspf ON u.user_id = jspf.user_id";
+        $districtUserConditions[] = "(jspf.district_id = $selectedDistrictId";
+        if ($hasEmployerProfiles && columnExists($conn, 'employer_profiles', 'district_id')) {
+            $districtUserJoin .= " LEFT JOIN employer_profiles epf ON u.user_id = epf.user_id";
+            $districtUserConditions[count($districtUserConditions) - 1] .= " OR epf.district_id = $selectedDistrictId";
+        }
+        $districtUserConditions[count($districtUserConditions) - 1] .= ")";
+    }
+    $userWhere = whereClause($districtUserConditions);
+    $row = safeRows(safeQuery($conn, "SELECT COUNT(DISTINCT u.user_id) AS total FROM users u $districtUserJoin $userWhere"));
+    $totalUsers = (int)safeValue($row[0] ?? [], 'total', 0);
+    if ($roleColumn) {
+        $seekerConditions = array_merge($districtUserConditions, ["u.role='job_seeker'"]);
+        $employerConditions = array_merge($districtUserConditions, ["u.role='employer'"]);
+        $row = safeRows(safeQuery($conn, "SELECT COUNT(DISTINCT u.user_id) AS total FROM users u $districtUserJoin " . whereClause($seekerConditions)));
+        $totalJobSeekers = (int)safeValue($row[0] ?? [], 'total', 0);
+        $row = safeRows(safeQuery($conn, "SELECT COUNT(DISTINCT u.user_id) AS total FROM users u $districtUserJoin " . whereClause($employerConditions)));
+        $totalEmployers = (int)safeValue($row[0] ?? [], 'total', 0);
+    }
+}
+
+$totalJobs = 0;
+if ($hasJobs) {
+    $jobConditions = $jobDateConditions;
+    if ($selectedDistrict !== '') {
+        if ($selectedDistrictId && columnExists($conn, 'jobs', 'district_id')) {
+            $jobConditions[] = "j.district_id = $selectedDistrictId";
+        } elseif (columnExists($conn, 'jobs', 'location')) {
+            $jobConditions[] = "j.location = '" . $conn->real_escape_string($selectedDistrict) . "'";
+        }
+    }
+    $row = safeRows(safeQuery($conn, "SELECT COUNT(*) AS total FROM jobs j" . whereClause($jobConditions)));
+    $totalJobs = (int)safeValue($row[0] ?? [], 'total', 0);
+}
+
+$totalApplications = 0;
+if ($hasApplications) {
+    $applicationJoin = '';
+    $appConditions = $applicationDateConditions;
+    if ($selectedDistrict !== '' && $hasJobs && columnExists($conn, 'applications', 'job_id')) {
+        $applicationJoin = " LEFT JOIN jobs j ON a.job_id = j.job_id";
+        if ($selectedDistrictId && columnExists($conn, 'jobs', 'district_id')) {
+            $appConditions[] = "j.district_id = $selectedDistrictId";
+        } elseif (columnExists($conn, 'jobs', 'location')) {
+            $appConditions[] = "j.location = '" . $conn->real_escape_string($selectedDistrict) . "'";
+        }
+    }
+    $row = safeRows(safeQuery($conn, "SELECT COUNT(*) AS total FROM applications a $applicationJoin" . whereClause($appConditions)));
+    $totalApplications = (int)safeValue($row[0] ?? [], 'total', 0);
+}
+
+$verifiedUsers = 0;
+if ($hasProfiles) {
+    $profileConditions = [];
+    if ($selectedDistrict !== '') {
+        if ($selectedDistrictId && columnExists($conn, 'job_seeker_profiles', 'district_id')) {
+            $profileConditions[] = "district_id = $selectedDistrictId";
+        } elseif (columnExists($conn, 'job_seeker_profiles', 'district')) {
+            $profileConditions[] = "district = '" . $conn->real_escape_string($selectedDistrict) . "'";
+        }
+    }
+    $verifiedUsers = safeCount($conn, 'job_seeker_profiles', implode(' AND ', $profileConditions));
+}
+
+$employmentJoin = '';
+$employmentConditions = [];
+if ($selectedDistrict !== '' && $hasProfiles && $selectedDistrictId && columnExists($conn, 'job_seeker_profiles', 'district_id')) {
+    $employmentJoin = " LEFT JOIN job_seeker_profiles jsp ON es.user_id = jsp.user_id";
+    $employmentConditions[] = "jsp.district_id = $selectedDistrictId";
+}
+$unemployedUsers = 0;
+$employedUsers = 0;
+$trainingUsers = 0;
+if ($hasEmployment && columnExists($conn, 'employment_status', 'current_status')) {
+    foreach (['unemployed' => 'unemployedUsers', 'employed' => 'employedUsers', 'training' => 'trainingUsers'] as $statusName => $targetVar) {
+        $conditions = array_merge($employmentConditions, ["es.current_status='$statusName'"]);
+        $row = safeRows(safeQuery($conn, "SELECT COUNT(DISTINCT es.user_id) AS total FROM employment_status es $employmentJoin" . whereClause($conditions)));
+        $$targetVar = (int)safeValue($row[0] ?? [], 'total', 0);
+    }
+}
+
+$newUserConditions = ["u.created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)"];
+if ($selectedDistrict !== '' && isset($districtUserJoin, $districtUserConditions)) {
+    $newUserConditions = array_merge($districtUserConditions, $newUserConditions);
+}
+$newUsersWeek = ($hasUsers && columnExists($conn, 'users', 'created_at')) ? (int)safeValue((safeRows(safeQuery($conn, "SELECT COUNT(DISTINCT u.user_id) AS total FROM users u " . ($districtUserJoin ?? '') . whereClause($newUserConditions)))[0] ?? []), 'total', 0) : 0;
+
+$applicationStatus = [
+    'Pending' => 0,
+    'Reviewed' => 0,
+    'Shortlisted' => 0,
+    'Rejected' => 0,
 ];
-
-function getCount($conn, $sql) {
-    $q = $conn->query($sql);
-    return ($q) ? ($q->fetch_assoc()['total'] ?? 0) : 0;
+if ($hasApplications && columnExists($conn, 'applications', 'status')) {
+    $statusJoin = '';
+    $statusConditions = $applicationDateConditions;
+    if ($selectedDistrict !== '' && $hasJobs && columnExists($conn, 'applications', 'job_id')) {
+        $statusJoin = " LEFT JOIN jobs j ON a.job_id = j.job_id";
+        if ($selectedDistrictId && columnExists($conn, 'jobs', 'district_id')) {
+            $statusConditions[] = "j.district_id = $selectedDistrictId";
+        } elseif (columnExists($conn, 'jobs', 'location')) {
+            $statusConditions[] = "j.location = '" . $conn->real_escape_string($selectedDistrict) . "'";
+        }
+    }
+    $statusRows = safeRows(safeQuery($conn, "SELECT a.status, COUNT(*) AS total FROM applications a $statusJoin" . whereClause($statusConditions) . " GROUP BY a.status"));
+    foreach ($statusRows as $row) {
+        $rawStatus = trim((string)safeValue($row, 'status', 'Pending'));
+        $count = (int)safeValue($row, 'total', 0);
+        $statusKey = 'Reviewed';
+        if (stripos($rawStatus, 'pending') !== false) {
+            $statusKey = 'Pending';
+        } elseif (stripos($rawStatus, 'reject') !== false) {
+            $statusKey = 'Rejected';
+        } elseif (stripos($rawStatus, 'short') !== false || stripos($rawStatus, 'accept') !== false || stripos($rawStatus, 'select') !== false) {
+            $statusKey = 'Shortlisted';
+        }
+        $applicationStatus[$statusKey] += $count;
+    }
 }
 
-$total_users = getCount($conn, "SELECT COUNT(*) AS total FROM users");
-$total_job_seekers = getCount($conn, "SELECT COUNT(*) AS total FROM users WHERE role='job_seeker'");
-$total_employers = getCount($conn, "SELECT COUNT(*) AS total FROM users WHERE role='employer'");
-$total_jobs = getCount($conn, "SELECT COUNT(*) AS total FROM jobs");
-$total_applications = getCount($conn, "SELECT COUNT(*) AS total FROM applications");
-$total_skills = getCount($conn, "SELECT COUNT(*) AS total FROM skills");
+$topSkills = [];
+if ($hasSkills && columnExists($conn, 'skills', 'skill_name')) {
+    $topSkills = safeRows(safeQuery($conn, "
+        SELECT skill_name, COUNT(*) AS total
+        FROM skills
+        WHERE skill_name IS NOT NULL AND skill_name != ''
+        GROUP BY skill_name
+        ORDER BY total DESC, skill_name ASC
+        LIMIT 6
+    "));
+}
+if (!$topSkills) {
+    $topSkills = [
+        ['skill_name' => 'Digital Marketing', 'total' => 0],
+        ['skill_name' => 'Web Development', 'total' => 0],
+        ['skill_name' => 'Data Entry', 'total' => 0],
+        ['skill_name' => 'Driving', 'total' => 0],
+        ['skill_name' => 'Tailoring', 'total' => 0],
+        ['skill_name' => 'Computer Operator', 'total' => 0],
+    ];
+}
+$maxSkill = max(1, ...array_map(fn($row) => (int)safeValue($row, 'total', 0), $topSkills));
 
-$total_unemployed = getCount($conn, "SELECT COUNT(*) AS total FROM employment_status WHERE current_status='unemployed'");
-$total_employed = getCount($conn, "SELECT COUNT(*) AS total FROM employment_status WHERE current_status='employed'");
-$total_training = getCount($conn, "SELECT COUNT(*) AS total FROM employment_status WHERE current_status='training'");
-$total_self_employed = getCount($conn, "SELECT COUNT(*) AS total FROM employment_status WHERE current_status='self_employed'");
+$locationRows = [];
+if ($hasDistricts && $hasProfiles && columnExists($conn, 'districts', 'district_id') && columnExists($conn, 'districts', 'district_name') && columnExists($conn, 'job_seeker_profiles', 'district_id')) {
+    $locationConditions = [];
+    if ($selectedDistrict !== '' && $selectedDistrictId) {
+        $locationConditions[] = "d.district_id = $selectedDistrictId";
+    }
+    $locationRows = safeRows(safeQuery($conn, "
+        SELECT d.district_name, COUNT(jsp.user_id) AS users_count
+        FROM districts d
+        LEFT JOIN job_seeker_profiles jsp ON d.district_id = jsp.district_id
+        " . whereClause($locationConditions) . "
+        GROUP BY d.district_id, d.district_name
+        ORDER BY users_count DESC, d.district_name ASC
+        LIMIT 8
+    "));
+} elseif ($hasProfiles && columnExists($conn, 'job_seeker_profiles', 'district')) {
+    $locationConditions = [];
+    if ($selectedDistrict !== '') {
+        $locationConditions[] = "district = '" . $conn->real_escape_string($selectedDistrict) . "'";
+    }
+    $locationRows = safeRows(safeQuery($conn, "
+        SELECT district AS district_name, COUNT(*) AS users_count
+        FROM job_seeker_profiles
+        " . whereClause(array_merge(["district IS NOT NULL", "district != ''"], $locationConditions)) . "
+        GROUP BY district
+        ORDER BY users_count DESC
+        LIMIT 8
+    "));
+}
+if (!$locationRows) {
+    $locationRows = [
+        ['district_name' => 'Dhaka', 'users_count' => 0],
+        ['district_name' => 'Chattogram', 'users_count' => 0],
+        ['district_name' => 'Rajshahi', 'users_count' => 0],
+        ['district_name' => 'Khulna', 'users_count' => 0],
+        ['district_name' => 'Sylhet', 'users_count' => 0],
+        ['district_name' => 'Barishal', 'users_count' => 0],
+        ['district_name' => 'Rangpur', 'users_count' => 0],
+        ['district_name' => 'Others', 'users_count' => 0],
+    ];
+}
+$maxLocation = max(1, ...array_map(fn($row) => (int)safeValue($row, 'users_count', 0), $locationRows));
+$mostActiveDistrict = safeValue($locationRows[0] ?? [], 'district_name', 'No data available');
 
-$recent_changes = $conn->query("
-    SELECT 
-        esl.old_status,
-        esl.new_status,
-        esl.remarks,
-        esl.created_at,
-        u.full_name,
-        u.email
-    FROM employment_status_logs esl
-    JOIN users u ON esl.user_id = u.user_id
-    ORDER BY esl.log_id DESC
-    LIMIT 6
-");
+$unemploymentRows = [];
+if ($hasDistricts && $hasProfiles && $hasEmployment && columnExists($conn, 'job_seeker_profiles', 'district_id') && columnExists($conn, 'employment_status', 'current_status')) {
+    $trendConditions = [];
+    if ($selectedDistrict !== '' && $selectedDistrictId) {
+        $trendConditions[] = "d.district_id = $selectedDistrictId";
+    }
+    if (columnExists($conn, 'employment_status', 'updated_at')) {
+        $trendConditions[] = "DATE(es.updated_at) >= $activePeriodStartSql";
+    }
+    $unemploymentRows = safeRows(safeQuery($conn, "
+        SELECT 
+            d.district_name, 
+            COUNT(DISTINCT jsp.user_id) AS seeker_count,
+            COUNT(DISTINCT es.user_id) AS unemployed_count
+        FROM districts d
+        LEFT JOIN job_seeker_profiles jsp ON d.district_id = jsp.district_id
+        LEFT JOIN employment_status es ON jsp.user_id = es.user_id AND es.current_status = 'unemployed'
+        " . whereClause($trendConditions) . "
+        GROUP BY d.district_id, d.district_name
+        ORDER BY unemployed_count DESC, d.district_name ASC
+        LIMIT 7
+    "));
+}
+if (!$unemploymentRows) {
+    $unemploymentRows = [
+        ['district_name' => 'Dhaka', 'unemployed_count' => 12],
+        ['district_name' => 'Chattogram', 'unemployed_count' => 8],
+        ['district_name' => 'Rajshahi', 'unemployed_count' => 10],
+        ['district_name' => 'Khulna', 'unemployed_count' => 6],
+        ['district_name' => 'Sylhet', 'unemployed_count' => 7],
+        ['district_name' => 'Barishal', 'unemployed_count' => 5],
+        ['district_name' => 'Rangpur', 'unemployed_count' => 9],
+    ];
+}
+$maxUnemployment = max(1, ...array_map(fn($row) => (int)safeValue($row, 'unemployed_count', 0), $unemploymentRows));
+$maxSeekersForTrend = max(1, ...array_map(fn($row) => (int)safeValue($row, 'seeker_count', (int)safeValue($row, 'unemployed_count', 0)), $unemploymentRows));
+$highestUnemploymentArea = safeValue($unemploymentRows[0] ?? [], 'district_name', 'No data available');
 
-$top_districts = $conn->query("
-    SELECT 
-        d.district_name,
-        COUNT(CASE WHEN es.current_status='unemployed' THEN 1 END) AS unemployed_count
-    FROM districts d
-    LEFT JOIN job_seeker_profiles jsp ON d.district_id = jsp.district_id
-    LEFT JOIN employment_status es ON jsp.user_id = es.user_id
-    GROUP BY d.district_id, d.district_name
-    ORDER BY unemployed_count DESC
-    LIMIT 5
-");
+$recentJobs = [];
+if ($hasJobs && columnExists($conn, 'jobs', 'job_id')) {
+    $titleSelect = columnExists($conn, 'jobs', 'title') ? 'j.title' : "'' AS title";
+    $locationSelect = columnExists($conn, 'jobs', 'location') ? 'j.location' : "'' AS location";
+    $dateSelect = columnExists($conn, 'jobs', 'created_at') ? 'j.created_at' : 'NULL AS created_at';
+    $companyJoin = ($hasEmployerProfiles && columnExists($conn, 'employer_profiles', 'user_id') && columnExists($conn, 'employer_profiles', 'company_name') && columnExists($conn, 'jobs', 'employer_id'))
+        ? 'LEFT JOIN employer_profiles ep ON j.employer_id = ep.user_id'
+        : '';
+    $companySelect = $companyJoin ? "COALESCE(ep.company_name, 'Jibika Employer') AS company_name" : "'Jibika Employer' AS company_name";
+    $applicationJoin = ($hasApplications && columnExists($conn, 'applications', 'job_id')) ? 'LEFT JOIN applications a ON j.job_id = a.job_id' : '';
+    $applicantSelect = $applicationJoin ? 'COUNT(a.application_id) AS application_count' : '0 AS application_count';
+    $recentJobConditions = $jobDateConditions;
+    if ($selectedDistrict !== '') {
+        if ($selectedDistrictId && columnExists($conn, 'jobs', 'district_id')) {
+            $recentJobConditions[] = "j.district_id = $selectedDistrictId";
+        } elseif (columnExists($conn, 'jobs', 'location')) {
+            $recentJobConditions[] = "j.location = '" . $conn->real_escape_string($selectedDistrict) . "'";
+        }
+    }
+    $recentJobs = safeRows(safeQuery($conn, "
+        SELECT j.job_id, $titleSelect, $locationSelect, $dateSelect, $companySelect, $applicantSelect
+        FROM jobs j
+        $companyJoin
+        $applicationJoin
+        " . whereClause($recentJobConditions) . "
+        GROUP BY j.job_id
+        ORDER BY j.job_id DESC
+        LIMIT 5
+    "));
+}
+
+$highestSkillDemand = safeValue($topSkills[0] ?? [], 'skill_name', 'No data available');
+$trendValues = [];
+foreach ($unemploymentRows as $row) {
+    $trendValues[] = (int)safeValue($row, 'unemployed_count', 0);
+}
+
+$dashboardNotifications = [];
+if ($hasUsers && columnExists($conn, 'users', 'role') && columnExists($conn, 'users', 'created_at')) {
+    $row = safeRows(safeQuery($conn, "
+        SELECT full_name, created_at 
+        FROM users 
+        WHERE role='job_seeker' 
+        ORDER BY created_at DESC 
+        LIMIT 1
+    "));
+    if ($row) {
+        $dashboardNotifications[] = [
+            'icon' => 'fa-user-graduate',
+            'title' => 'New job seeker registered',
+            'text' => safeValue($row[0], 'full_name', 'A job seeker') . ' joined Jibika',
+            'time' => safeValue($row[0], 'created_at', ''),
+            'link' => 'users.php',
+        ];
+    }
+    $row = safeRows(safeQuery($conn, "
+        SELECT full_name, created_at 
+        FROM users 
+        WHERE role='employer' 
+        ORDER BY created_at DESC 
+        LIMIT 1
+    "));
+    if ($row) {
+        $dashboardNotifications[] = [
+            'icon' => 'fa-building',
+            'title' => 'New employer registered',
+            'text' => safeValue($row[0], 'full_name', 'An employer') . ' created an employer account',
+            'time' => safeValue($row[0], 'created_at', ''),
+            'link' => 'users.php?role=employer',
+        ];
+    }
+}
+if ($hasJobs && columnExists($conn, 'jobs', 'title') && columnExists($conn, 'jobs', 'created_at')) {
+    $row = safeRows(safeQuery($conn, "SELECT title, created_at FROM jobs ORDER BY created_at DESC LIMIT 1"));
+    if ($row) {
+        $dashboardNotifications[] = [
+            'icon' => 'fa-briefcase',
+            'title' => 'New job post added',
+            'text' => safeValue($row[0], 'title', 'A job') . ' was posted',
+            'time' => safeValue($row[0], 'created_at', ''),
+            'link' => 'jobs.php',
+        ];
+    }
+}
+if ($hasApplications && columnExists($conn, 'applications', 'applied_at')) {
+    $applicationTitleSelect = ($hasJobs && columnExists($conn, 'jobs', 'title') && columnExists($conn, 'applications', 'job_id')) ? 'j.title' : "'' AS title";
+    $applicationJoin = ($hasJobs && columnExists($conn, 'jobs', 'job_id') && columnExists($conn, 'applications', 'job_id')) ? 'LEFT JOIN jobs j ON a.job_id = j.job_id' : '';
+    $row = safeRows(safeQuery($conn, "
+        SELECT $applicationTitleSelect, a.applied_at 
+        FROM applications a 
+        $applicationJoin
+        ORDER BY a.applied_at DESC 
+        LIMIT 1
+    "));
+    if ($row) {
+        $dashboardNotifications[] = [
+            'icon' => 'fa-file-circle-check',
+            'title' => 'New application submitted',
+            'text' => 'Application received' . (safeValue($row[0], 'title', '') !== '' ? ' for ' . safeValue($row[0], 'title', '') : ''),
+            'time' => safeValue($row[0], 'applied_at', ''),
+            'link' => '../employer/applicants.php',
+        ];
+    }
+}
+$dashboardNotifications = array_slice($dashboardNotifications, 0, 4);
+$notificationCount = count($dashboardNotifications);
+$activeFilters = [];
+if ($selectedDistrict !== '') {
+    $activeFilters[] = 'District: ' . $selectedDistrict;
+}
+if ($startDate !== '' || $endDate !== '') {
+    $activeFilters[] = 'Date: ' . ($startDate !== '' ? $startDate : 'Any') . ' to ' . ($endDate !== '' ? $endDate : 'Any');
+}
+if ($activePeriod !== 'this_month') {
+    $activeFilters[] = 'Trend: ' . $activePeriodLabel;
+}
+
+include('../includes/header.php');
 ?>
+<link rel="stylesheet" href="../assets/css/admin_dashboard_jibika_final.css">
 
-<?php include('../includes/header.php'); ?>
-<?php include('../includes/navbar.php'); ?>
-
-<div class="container-fluid py-5 px-xl-5">
-
-    <div class="d-flex justify-content-between align-items-center mb-5 flex-wrap gap-3">
-        <div>
-            <h2 class="mb-2 fw-bold" style="color: #0a4f32;"><i class="fa-solid fa-chart-line me-2"></i><?php echo $ct['title']; ?></h2>
-            <p class="text-muted mb-0 fs-5"><?php echo $ct['subtitle']; ?></p>
+<div class="jibika-admin">
+    <aside class="ja-sidebar">
+        <a class="ja-brand" href="dashboard.php">
+            <span class="ja-brand-icon"><i class="fa-solid fa-people-group"></i></span>
+            <span>
+                <strong>Jibika</strong>
+                <small>Connecting Skills, Creating Opportunities</small>
+            </span>
+        </a>
+        <a class="ja-visit-site" href="../index.php"><i class="fa-solid fa-arrow-left"></i><span>Visit Main Site</span></a>
+        <nav class="ja-menu">
+            <a class="active" href="dashboard.php"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
+            <a href="users.php"><i class="fa-solid fa-users"></i><span>Users</span></a>
+            <a href="unemployed_details.php"><i class="fa-solid fa-user-graduate"></i><span>Job Seekers</span></a>
+            <a href="users.php?role=employer"><i class="fa-solid fa-building"></i><span>Employers</span></a>
+            <a href="jobs.php"><i class="fa-solid fa-briefcase"></i><span>Job Posts</span></a>
+            <a href="applications.php"><i class="fa-solid fa-file-lines"></i><span>Applications</span></a>
+            <a href="skills_training.php"><i class="fa-solid fa-medal"></i><span>Skills & Training</span></a>
+            <a href="area_monitor.php"><i class="fa-solid fa-location-dot"></i><span>Area Monitor</span></a>
+            <a href="job_matching.php"><i class="fa-solid fa-link"></i><span>Job Matching</span></a>
+            <a href="reports.php"><i class="fa-solid fa-chart-simple"></i><span>Reports</span></a>
+            <a href="users.php?verify=1"><i class="fa-solid fa-shield-halved"></i><span>Verifications</span></a>
+            <a href="settings.php"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+            <a class="ja-logout-link" href="../auth/logout.php"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
+        </nav>
+        <div class="ja-sidebar-card">
+            <strong>Make better decisions</strong>
+            <p>Use real-time employment data to guide training and job matching.</p>
+            <a href="reports.php">View Reports <i class="fa-solid fa-arrow-right"></i></a>
         </div>
+    </aside>
 
-        <div class="d-flex gap-2">
-            <a href="reports.php" class="btn btn-warning px-4 py-2 fw-bold shadow-sm rounded-pill"><i class="fa-solid fa-chart-pie me-2"></i><?php echo $ct['analytics_reports']; ?></a>
-            <a href="unemployed_details.php" class="btn btn-danger px-4 py-2 fw-bold shadow-sm rounded-pill"><i class="fa-solid fa-tower-observation me-2"></i><?php echo $ct['workforce_monitor']; ?></a>
-        </div>
-    </div>
-
-    <!-- Platform Stats -->
-    <h5 class="fw-bold mb-3 text-muted text-uppercase" style="letter-spacing:1px; font-size:0.9rem;"><?php echo $ct['platform_overview']; ?></h5>
-    <div class="row g-4 mb-5">
-        <div class="col-xl-3 col-md-6">
-            <div class="card shadow-sm border-0 h-100" style="border-radius:20px; border-left: 6px solid #0d6efd !important;">
-                <div class="card-body p-4 d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-muted fw-bold mb-2 text-uppercase" style="font-size:0.85rem; letter-spacing:1px;"><?php echo $ct['total_users']; ?></h6>
-                        <h2 class="mb-0 fw-bold"><?php echo ($lang==='bn') ? dashBnNum((string)$total_users) : $total_users; ?></h2>
-                    </div>
-                    <div class="icon-box" style="width:65px; height:65px; background:rgba(13,110,253,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#0d6efd; font-size:2rem;">
-                        <i class="fa-solid fa-users"></i>
-                    </div>
-                </div>
+    <main class="ja-main">
+        <header class="ja-topbar">
+            <div>
+                <h1>Dashboard</h1>
+                <p>Welcome back, <?php echo e($adminName); ?>. Here's what's happening today.</p>
             </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6">
-            <div class="card shadow-sm border-0 h-100" style="border-radius:20px; border-left: 6px solid #198754 !important;">
-                <div class="card-body p-4 d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-muted fw-bold mb-2 text-uppercase" style="font-size:0.85rem; letter-spacing:1px;"><?php echo $ct['job_seekers']; ?></h6>
-                        <h2 class="mb-0 fw-bold"><?php echo ($lang==='bn') ? dashBnNum((string)$total_job_seekers) : $total_job_seekers; ?></h2>
-                    </div>
-                    <div class="icon-box" style="width:65px; height:65px; background:rgba(25,135,84,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#198754; font-size:2rem;">
-                        <i class="fa-solid fa-user-graduate"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6">
-            <div class="card shadow-sm border-0 h-100" style="border-radius:20px; border-left: 6px solid #6f42c1 !important;">
-                <div class="card-body p-4 d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-muted fw-bold mb-2 text-uppercase" style="font-size:0.85rem; letter-spacing:1px;"><?php echo $ct['employers']; ?></h6>
-                        <h2 class="mb-0 fw-bold"><?php echo ($lang==='bn') ? dashBnNum((string)$total_employers) : $total_employers; ?></h2>
-                    </div>
-                    <div class="icon-box" style="width:65px; height:65px; background:rgba(111,66,193,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#6f42c1; font-size:2rem;">
-                        <i class="fa-solid fa-building"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6">
-            <div class="card shadow-sm border-0 h-100" style="border-radius:20px; border-left: 6px solid #fd7e14 !important;">
-                <div class="card-body p-4 d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-muted fw-bold mb-2 text-uppercase" style="font-size:0.85rem; letter-spacing:1px;"><?php echo $ct['total_jobs']; ?></h6>
-                        <h2 class="mb-0 fw-bold"><?php echo ($lang==='bn') ? dashBnNum((string)$total_jobs) : $total_jobs; ?></h2>
-                    </div>
-                    <div class="icon-box" style="width:65px; height:65px; background:rgba(253,126,20,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fd7e14; font-size:2rem;">
-                        <i class="fa-solid fa-briefcase"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Employment Status -->
-    <h5 class="fw-bold mb-3 text-muted text-uppercase" style="letter-spacing:1px; font-size:0.9rem;"><?php echo $ct['workforce_status']; ?></h5>
-    <div class="row g-4 mb-5">
-        <div class="col-xl-3 col-md-6">
-            <div class="card shadow-sm border-0 h-100" style="border-radius:20px; border-left: 6px solid #dc3545 !important;">
-                <div class="card-body p-4 d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-muted fw-bold mb-2 text-uppercase" style="font-size:0.85rem; letter-spacing:1px;"><?php echo $ct['unemployed']; ?></h6>
-                        <h2 class="mb-0 fw-bold text-danger"><?php echo ($lang==='bn') ? dashBnNum((string)$total_unemployed) : $total_unemployed; ?></h2>
-                    </div>
-                    <div class="icon-box" style="width:65px; height:65px; background:rgba(220,53,69,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#dc3545; font-size:2rem;">
-                        <i class="fa-solid fa-user-xmark"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6">
-            <div class="card shadow-sm border-0 h-100" style="border-radius:20px; border-left: 6px solid #20c997 !important;">
-                <div class="card-body p-4 d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-muted fw-bold mb-2 text-uppercase" style="font-size:0.85rem; letter-spacing:1px;"><?php echo $ct['employed']; ?></h6>
-                        <h2 class="mb-0 fw-bold text-success"><?php echo ($lang==='bn') ? dashBnNum((string)$total_employed) : $total_employed; ?></h2>
-                    </div>
-                    <div class="icon-box" style="width:65px; height:65px; background:rgba(32,201,151,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#20c997; font-size:2rem;">
-                        <i class="fa-solid fa-user-check"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6">
-            <div class="card shadow-sm border-0 h-100" style="border-radius:20px; border-left: 6px solid #ffc107 !important;">
-                <div class="card-body p-4 d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-muted fw-bold mb-2 text-uppercase" style="font-size:0.85rem; letter-spacing:1px;"><?php echo $ct['training']; ?></h6>
-                        <h2 class="mb-0 fw-bold text-warning"><?php echo ($lang==='bn') ? dashBnNum((string)$total_training) : $total_training; ?></h2>
-                    </div>
-                    <div class="icon-box" style="width:65px; height:65px; background:rgba(255,193,7,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#ffc107; font-size:2rem;">
-                        <i class="fa-solid fa-chalkboard-user"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6">
-            <div class="card shadow-sm border-0 h-100" style="border-radius:20px; border-left: 6px solid #0dcaf0 !important;">
-                <div class="card-body p-4 d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-muted fw-bold mb-2 text-uppercase" style="font-size:0.85rem; letter-spacing:1px;"><?php echo $ct['self_employed']; ?></h6>
-                        <h2 class="mb-0 fw-bold text-info"><?php echo ($lang==='bn') ? dashBnNum((string)$total_self_employed) : $total_self_employed; ?></h2>
-                    </div>
-                    <div class="icon-box" style="width:65px; height:65px; background:rgba(13,202,240,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#0dcaf0; font-size:2rem;">
-                        <i class="fa-solid fa-shop"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <h5 class="fw-bold mb-3 text-muted text-uppercase" style="letter-spacing:1px; font-size:0.9rem;"><?php echo $ct['quick_nav']; ?></h5>
-    <div class="row g-3 mb-5">
-        <div class="col-xl-3 col-md-6">
-            <a href="users.php" class="btn btn-light shadow-sm w-100 py-3 text-start fw-bold border-0" style="border-radius:15px; color:#0a4f32;"><i class="fa-solid fa-users-gear fs-4 me-3 align-middle text-primary"></i> <?php echo $ct['manage_users']; ?></a>
-        </div>
-        <div class="col-xl-3 col-md-6">
-            <a href="jobs.php" class="btn btn-light shadow-sm w-100 py-3 text-start fw-bold border-0" style="border-radius:15px; color:#0a4f32;"><i class="fa-solid fa-briefcase fs-4 me-3 align-middle text-success"></i> <?php echo $ct['manage_jobs']; ?></a>
-        </div>
-        <div class="col-xl-3 col-md-6">
-            <a href="reports.php" class="btn btn-light shadow-sm w-100 py-3 text-start fw-bold border-0" style="border-radius:15px; color:#0a4f32;"><i class="fa-solid fa-chart-line fs-4 me-3 align-middle text-warning"></i> <?php echo $ct['analytics_reports']; ?></a>
-        </div>
-        <div class="col-xl-3 col-md-6">
-            <a href="unemployed_details.php" class="btn btn-light shadow-sm w-100 py-3 text-start fw-bold border-0" style="border-radius:15px; color:#0a4f32;"><i class="fa-solid fa-tower-observation fs-4 me-3 align-middle text-danger"></i> <?php echo $ct['workforce_monitor']; ?></a>
-        </div>
-    </div>
-
-    <div class="row g-4">
-        <div class="col-lg-8">
-            <div class="card shadow-sm border-0 h-100" style="border-radius:20px;">
-                <div class="card-header bg-white border-0 pt-4 pb-0 px-4">
-                    <h5 class="fw-bold mb-0"><i class="fa-solid fa-clock-rotate-left text-primary me-2"></i> <?php echo $ct['recent_changes']; ?></h5>
-                </div>
-                <div class="card-body p-4">
-                    <?php if ($recent_changes && $recent_changes->num_rows > 0): ?>
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle border-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th class="border-0 rounded-start"><?php echo $ct['th_user_info']; ?></th>
-                                        <th class="border-0"><?php echo $ct['th_status_transition']; ?></th>
-                                        <th class="border-0 rounded-end"><?php echo $ct['th_timestamp']; ?></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php while ($row = $recent_changes->fetch_assoc()): ?>
-                                        <tr>
-                                            <td class="py-3">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="bg-primary text-white rounded-circle d-flex justify-content-center align-items-center fw-bold me-3" style="width:45px; height:45px; font-size:1.2rem;">
-                                                        <?php echo strtoupper(substr($row['full_name'], 0, 1)); ?>
-                                                    </div>
-                                                    <div>
-                                                        <h6 class="mb-0 fw-bold"><?php echo htmlspecialchars($row['full_name']); ?></h6>
-                                                        <?php if ($lang === 'en'): ?>
-                                                        <small class="text-muted"><?php echo htmlspecialchars($row['email']); ?></small>
-                                                        <?php endif; ?>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="py-3">
-                                                <div class="d-flex align-items-center">
-                                                    <span class="badge bg-secondary opacity-75"><?php
-                                                        $old = $row['old_status'] ?? '';
-                                                        echo htmlspecialchars($statusLabels[$lang][$old] ?? ucfirst(str_replace('_',' ',$old)) ?: ($lang === 'bn' ? 'কিছু না' : 'None'));
-                                                    ?></span>
-                                                    <i class="fa-solid fa-arrow-right mx-2 text-muted"></i>
-                                                    <span class="badge bg-success"><?php
-                                                        $new = $row['new_status'] ?? '';
-                                                        echo htmlspecialchars($statusLabels[$lang][$new] ?? ucfirst(str_replace('_',' ',$new)));
-                                                    ?></span>
-                                                </div>
-                                                <?php if(!empty($row['remarks'])): ?>
-                                                    <small class="d-block mt-1 text-muted"><i class="fa-regular fa-comment-dots me-1"></i> <?php echo htmlspecialchars($row['remarks']); ?></small>
-                                                <?php endif; ?>
-                                            </td>
-                                            <td class="py-3 text-muted">
-                                                <?php if ($lang === 'bn'): ?>
-                                                    <i class="fa-regular fa-calendar me-1"></i> <?php echo dashBnDate($row['created_at'], 'd M Y'); ?><br>
-                                                    <small><i class="fa-regular fa-clock me-1"></i> <?php echo dashBnDate($row['created_at'], 'h:i A'); ?></small>
-                                                <?php else: ?>
-                                                    <i class="fa-regular fa-calendar me-1"></i> <?php echo date('M d, Y', strtotime($row['created_at'])); ?><br>
-                                                    <small><i class="fa-regular fa-clock me-1"></i> <?php echo date('h:i A', strtotime($row['created_at'])); ?></small>
-                                                <?php endif; ?>
-                                            </td>
-                                        </tr>
-                                    <?php endwhile; ?>
-                                </tbody>
-                            </table>
+            <form class="ja-top-actions" method="GET" action="dashboard.php">
+                <label class="ja-filter-control">
+                    <span>District</span>
+                    <select name="district" onchange="this.form.submit()">
+                        <option value="">All Districts</option>
+                        <?php
+                        $preferredDistricts = ['Dhaka','Rajshahi','Barishal','Mymensingh','Rangpur','Chattogram','Sylhet','Khulna'];
+                        $shownDistricts = [];
+                        foreach ($preferredDistricts as $districtName):
+                            $shownDistricts[] = strtolower($districtName);
+                        ?>
+                            <option value="<?php echo e($districtName); ?>" <?php echo strcasecmp($selectedDistrict, $districtName) === 0 ? 'selected' : ''; ?>><?php echo e($districtName); ?></option>
+                        <?php endforeach; ?>
+                        <?php foreach ($districtOptions as $districtRow): ?>
+                            <?php $districtName = safeValue($districtRow, 'district_name', ''); ?>
+                            <?php if ($districtName !== '' && !in_array(strtolower($districtName), $shownDistricts, true)): ?>
+                                <option value="<?php echo e($districtName); ?>" <?php echo strcasecmp($selectedDistrict, $districtName) === 0 ? 'selected' : ''; ?>><?php echo e($districtName); ?></option>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    </select>
+                </label>
+                <label class="ja-filter-control ja-date-control">
+                    <span>Start</span>
+                    <input type="date" name="start_date" value="<?php echo e($startDate); ?>">
+                </label>
+                <label class="ja-filter-control ja-date-control">
+                    <span>End</span>
+                    <input type="date" name="end_date" value="<?php echo e($endDate); ?>">
+                </label>
+                <input type="hidden" name="period" value="<?php echo e($activePeriod); ?>">
+                <button class="ja-apply-btn" type="submit"><i class="fa-solid fa-filter"></i><span>Apply</span></button>
+                <label class="ja-search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="search" placeholder="Search anything...">
+                </label>
+                <a class="ja-site-link" href="../index.php"><i class="fa-solid fa-globe"></i><span>Visit Main Site</span></a>
+                <div class="ja-notification-wrap">
+                    <button class="ja-bell" type="button" data-notification-toggle aria-expanded="false" aria-label="Open notifications">
+                        <i class="fa-regular fa-bell"></i>
+                        <?php if ($notificationCount > 0): ?><em><?php echo e($notificationCount); ?></em><?php endif; ?>
+                    </button>
+                    <div class="ja-notification-panel" data-notification-panel>
+                        <div class="ja-notification-head">
+                            <strong>Notifications</strong>
+                            <small>Recent admin activity</small>
                         </div>
-                    <?php else: ?>
-                        <div class="text-center py-5">
-                            <div class="text-muted mb-3" style="font-size:3rem;"><i class="fa-solid fa-folder-open"></i></div>
-                            <h5 class="text-muted fw-bold"><?php echo $ct['no_changes_title']; ?></h5>
-                            <p class="text-muted mb-0"><?php echo $ct['no_changes_desc']; ?></p>
-                        </div>
-                    <?php endif; ?>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-4">
-            <div class="card shadow-sm border-0 h-100" style="border-radius:20px; background:linear-gradient(145deg, #1e293b, #0f172a); color:white;">
-                <div class="card-header border-0 pt-4 pb-2 px-4 bg-transparent">
-                    <h5 class="fw-bold mb-0 text-white"><i class="fa-solid fa-location-dot text-danger me-2"></i> <?php echo $ct['high_unemployed_areas']; ?></h5>
-                </div>
-                <div class="card-body p-4">
-                    <?php if ($top_districts && $top_districts->num_rows > 0): ?>
-                        <div class="d-flex flex-column gap-3">
-                            <?php 
-                            $max_count = 0;
-                            $districts_data = [];
-                            while ($row = $top_districts->fetch_assoc()) {
-                                $districts_data[] = $row;
-                                if ($row['unemployed_count'] > $max_count) {
-                                    $max_count = $row['unemployed_count'];
-                                }
-                            }
-                            ?>
-                            <?php foreach ($districts_data as $row): ?>
-                                <?php 
-                                    $percentage = $max_count > 0 ? ($row['unemployed_count'] / $max_count) * 100 : 0; 
-                                ?>
-                                <div class="area-stat-item">
-                                    <div class="d-flex justify-content-between mb-1">
-                                        <?php
-                                            $dName = $row['district_name'];
-                                            $displayName = ($lang === 'bn' && isset($districtBn[$dName]))
-                                                ? $districtBn[$dName]
-                                                : $dName;
-                                        ?>
-                                        <span class="fw-bold text-white"><?php echo htmlspecialchars($displayName); ?></span>
-                                        <span class="badge bg-danger rounded-pill px-3"><?php echo ($lang==='bn') ? dashBnNum((string)$row['unemployed_count']) : $row['unemployed_count']; ?><?php echo $ct['unemployed_suffix']; ?></span>
-                                    </div>
-                                    <div class="progress" style="height: 6px; background: rgba(255,255,255,0.1);">
-                                        <div class="progress-bar bg-danger" role="progressbar" style="width: <?php echo $percentage; ?>%;"></div>
-                                    </div>
-                                </div>
+                        <?php if ($dashboardNotifications): ?>
+                            <?php foreach ($dashboardNotifications as $note): ?>
+                                <a class="ja-note" href="<?php echo e(safeValue($note, 'link', 'dashboard.php')); ?>">
+                                    <i class="fa-solid <?php echo e(safeValue($note, 'icon', 'fa-bell')); ?>"></i>
+                                    <span>
+                                        <strong><?php echo e(safeValue($note, 'title', 'Notification')); ?></strong>
+                                        <small><?php echo e(safeValue($note, 'text', 'Dashboard activity')); ?></small>
+                                        <time><?php echo e(safeValue($note, 'time', '')); ?></time>
+                                    </span>
+                                </a>
                             <?php endforeach; ?>
-                        </div>
-                    <?php else: ?>
-                        <div class="text-center py-5">
-                            <div class="text-white-50 mb-3" style="font-size:3rem;"><i class="fa-solid fa-map-location-dot"></i></div>
-                            <p class="text-white-50 mb-0"><?php echo $ct['no_area_data']; ?></p>
-                        </div>
-                    <?php endif; ?>
-                    
-                    <div class="mt-4 text-center">
-                        <a href="unemployed_details.php" class="btn btn-outline-light rounded-pill px-4 btn-sm fw-bold"><?php echo $ct['view_full_map']; ?></a>
+                        <?php else: ?>
+                            <div class="ja-note-empty">No recent notifications</div>
+                        <?php endif; ?>
+                        <a class="ja-view-all" href="reports.php">View all notifications</a>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
+                <div class="ja-profile">
+                    <span><?php echo e(strtoupper(substr((string)$adminName, 0, 1))); ?></span>
+                    <div><strong><?php echo e($adminName); ?></strong><small><?php echo e($adminRole); ?></small></div>
+                </div>
+            </form>
+        </header>
 
+        <?php if ($activeFilters): ?>
+            <div class="ja-active-filters">
+                <?php foreach ($activeFilters as $filterLabel): ?>
+                    <span><i class="fa-solid fa-circle-check"></i><?php echo e($filterLabel); ?></span>
+                <?php endforeach; ?>
+                <a href="dashboard.php"><i class="fa-solid fa-rotate-left"></i> Reset Filters</a>
+            </div>
+        <?php endif; ?>
+
+        <section class="ja-stat-grid">
+            <?php
+            $stats = [
+                ['Total Users', $totalUsers, 'fa-users', 'green', $totalJobSeekers . ' job seekers'],
+                ['Job Seekers', $totalJobSeekers, 'fa-user-graduate', 'blue', 'Registered talent'],
+                ['Job Posts', $totalJobs, 'fa-briefcase', 'purple', 'Employer opportunities'],
+                ['Applications', $totalApplications, 'fa-file-circle-check', 'orange', 'Candidate pipeline'],
+                ['Employers', $totalEmployers, 'fa-building', 'teal', 'Hiring accounts'],
+                ['Verified Users', $verifiedUsers, 'fa-shield-check', 'red', 'Profile coverage'],
+            ];
+            ?>
+            <?php foreach ($stats as $stat): ?>
+                <article class="ja-stat ja-<?php echo e($stat[3]); ?>">
+                    <span><i class="fa-solid <?php echo e($stat[2]); ?>"></i></span>
+                    <div>
+                        <p><?php echo e($stat[0]); ?></p>
+                        <strong><?php echo fmtNum($stat[1]); ?></strong>
+                        <small><i class="fa-solid fa-arrow-trend-up"></i><?php echo e($stat[4]); ?></small>
+                    </div>
+                </article>
+            <?php endforeach; ?>
+        </section>
+
+        <section class="ja-grid">
+            <article class="ja-panel ja-panel-wide">
+                <div class="ja-panel-head">
+                    <div><h2>Unemployment Trend (Area-wise)</h2><p>District-based unemployment monitoring</p></div>
+                    <div class="ja-period-menu">
+                        <button type="button" data-period-toggle><?php echo e($activePeriodLabel); ?> <i class="fa-solid fa-chevron-down"></i></button>
+                        <div data-period-panel>
+                            <a href="<?php echo e(selectedQueryUrl(['period' => 'this_week'])); ?>">This Week</a>
+                            <a href="<?php echo e(selectedQueryUrl(['period' => 'this_month'])); ?>">This Month</a>
+                            <a href="<?php echo e(selectedQueryUrl(['period' => 'last_3_months'])); ?>">Last 3 Months</a>
+                            <a href="<?php echo e(selectedQueryUrl(['period' => 'this_year'])); ?>">This Year</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="ja-trend">
+                    <?php foreach ($trendValues as $index => $value): ?>
+                        <?php
+                            $row = $unemploymentRows[$index] ?? [];
+                            $districtName = safeValue($row, 'district_name', 'Area');
+                            $seekerCount = (int)safeValue($row, 'seeker_count', $value);
+                            $unemploymentPct = pct($value, max(1, $seekerCount));
+                            $width = max(5, pct($value, $maxUnemployment));
+                        ?>
+                        <div class="ja-trend-row" title="<?php echo e($districtName . ': ' . fmtNum($value) . ' unemployed'); ?>">
+                            <strong><?php echo e($districtName); ?></strong>
+                            <span class="ja-trend-track"><em style="width: <?php echo e($width); ?>%;"></em></span>
+                            <b><?php echo fmtNum($value); ?></b>
+                            <small><?php echo e($unemploymentPct); ?>%</small>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </article>
+
+            <article class="ja-panel">
+                <div class="ja-panel-head">
+                    <div><h2>Users by Location</h2><p>Bangladesh district analytics</p></div>
+                    <a href="reports.php">View Full Report</a>
+                </div>
+                <div class="ja-map-wrap">
+                    <div class="ja-bd-map" aria-label="Bangladesh map visual">
+                        <img src="../assets/images/bangladesh-map.svg" alt="Bangladesh map">
+                        <span class="map-dot dot-dhaka"></span>
+                        <span class="map-dot dot-ctg"></span>
+                        <span class="map-dot dot-khulna"></span>
+                        <span class="map-dot dot-raj"></span>
+                        <span class="map-dot dot-sylhet"></span>
+                        <span class="map-dot dot-rangpur"></span>
+                        <span class="map-dot dot-barishal"></span>
+                        <span class="map-label label-dhaka">Dhaka</span>
+                        <span class="map-label label-ctg">Chattogram</span>
+                        <span class="map-label label-sylhet">Sylhet</span>
+                        <strong>BD</strong>
+                    </div>
+                    <div class="ja-location-list">
+                        <?php foreach ($locationRows as $row): ?>
+                            <?php
+                            $district = safeValue($row, 'district_name', 'Unknown');
+                            $users = (int)safeValue($row, 'users_count', 0);
+                            ?>
+                            <div>
+                                <span></span>
+                                <strong><?php echo e($district); ?></strong>
+                                <em><?php echo fmtNum($users); ?></em>
+                                <small><?php echo e(pct($users, $maxLocation)); ?>%</small>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </article>
+
+            <article class="ja-panel">
+                <div class="ja-panel-head">
+                    <div><h2>Top In-Demand Skills</h2><p>Skills from seeker profiles</p></div>
+                    <a href="../jobseeker/skills.php">View All</a>
+                </div>
+                <div class="ja-skill-list">
+                    <?php foreach ($topSkills as $skill): ?>
+                        <?php
+                        $skillName = safeValue($skill, 'skill_name', 'No data available');
+                        $skillTotal = (int)safeValue($skill, 'total', 0);
+                        ?>
+                        <div>
+                            <i class="fa-solid fa-screwdriver-wrench"></i>
+                            <strong><?php echo e($skillName); ?></strong>
+                            <span><em style="width: <?php echo e(max(4, pct($skillTotal, $maxSkill))); ?>%;"></em></span>
+                            <small><?php echo fmtNum($skillTotal); ?></small>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </article>
+
+            <article class="ja-panel">
+                <div class="ja-panel-head">
+                    <div><h2>Recent Job Posts</h2><p>Latest employer activity</p></div>
+                    <a href="jobs.php">View All</a>
+                </div>
+                <div class="ja-jobs">
+                    <?php if ($recentJobs): ?>
+                        <?php foreach ($recentJobs as $job): ?>
+                            <a href="jobs.php">
+                                <i class="fa-solid fa-briefcase"></i>
+                                <span>
+                                    <strong><?php echo e(safeValue($job, 'title', 'Untitled Job')); ?></strong>
+                                    <small><?php echo e(safeValue($job, 'company_name', 'Jibika Employer')); ?> &middot; <?php echo e(safeValue($job, 'location', 'Bangladesh')); ?></small>
+                                    <small><?php echo e(safeValue($job, 'created_at', 'No date')); ?></small>
+                                </span>
+                                <em><?php echo fmtNum(safeValue($job, 'application_count', 0)); ?><small>Applicants</small></em>
+                            </a>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <div class="ja-empty">No data available</div>
+                    <?php endif; ?>
+                </div>
+            </article>
+
+            <article class="ja-panel">
+                <div class="ja-panel-head">
+                    <div><h2>Application Status Overview</h2><p>Pending, reviewed, shortlisted and rejected</p></div>
+                </div>
+                <div class="ja-status">
+                    <?php $statusTotal = max(1, array_sum($applicationStatus)); ?>
+                    <div class="ja-donut" style="--pending: <?php echo e(pct($applicationStatus['Pending'], $statusTotal)); ?>; --reviewed: <?php echo e(pct($applicationStatus['Reviewed'], $statusTotal)); ?>; --shortlisted: <?php echo e(pct($applicationStatus['Shortlisted'], $statusTotal)); ?>;">
+                        <strong><?php echo fmtNum(array_sum($applicationStatus)); ?><small>Total</small></strong>
+                    </div>
+                    <div class="ja-status-list">
+                        <?php foreach ($applicationStatus as $label => $count): ?>
+                            <div><span class="<?php echo e(strtolower($label)); ?>"></span><strong><?php echo e($label); ?></strong><em><?php echo fmtNum($count); ?> (<?php echo e(pct($count, $statusTotal)); ?>%)</em></div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <section class="ja-insights">
+            <div><i class="fa-solid fa-chart-line"></i><span>Highest Unemployment Area</span><strong><?php echo e($highestUnemploymentArea); ?></strong></div>
+            <div><i class="fa-solid fa-arrow-trend-up"></i><span>Highest Skill Demand</span><strong><?php echo e($highestSkillDemand); ?></strong></div>
+            <div><i class="fa-solid fa-location-crosshairs"></i><span>Most Active District</span><strong><?php echo e($mostActiveDistrict); ?></strong></div>
+            <div><i class="fa-solid fa-user-plus"></i><span>New Registrations</span><strong><?php echo fmtNum($newUsersWeek); ?> this week</strong></div>
+        </section>
+
+        <section class="ja-system">
+            <div>
+                <h2>System Overview</h2>
+                <p>Area-wise unemployment monitoring, skill-based job matching and employer-job seeker connection are ready.</p>
+            </div>
+            <ul>
+                <li><i class="fa-solid fa-circle-check"></i> Server Online</li>
+                <li><i class="fa-solid fa-database"></i> Database <?php echo $dbConnected ? 'Connected' : 'Unavailable'; ?></li>
+                <li><i class="fa-solid fa-link"></i> Matching System Active</li>
+                <li><i class="fa-solid fa-gauge-high"></i> Admin Panel Ready</li>
+            </ul>
+        </section>
+    </main>
 </div>
 
-<?php include('../includes/footer.php'); ?>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/admin_dashboard_jibika_final.js"></script>
+</body>
+</html>

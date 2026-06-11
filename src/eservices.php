@@ -34,6 +34,7 @@ $e_text = [
 $et = $e_text[$lang];
 ?>
 
+?>
 <?php include('includes/header.php'); ?>
 <?php include('includes/navbar.php'); ?>
 <link rel="stylesheet" href="assets/css/eservices.css">

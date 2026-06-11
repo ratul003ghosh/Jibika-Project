@@ -1,474 +1,253 @@
 <?php
-session_start();
+include_once('admin_bootstrap.php');
 
-if(!isset($_SESSION['user_id']) || $_SESSION['role'] != 'admin'){
-    header("Location: ../admin_login.php");
-    exit();
+$districtId = isset($_GET['district_id']) ? (int)$_GET['district_id'] : 0;
+$upazilaId = isset($_GET['upazila_id']) ? (int)$_GET['upazila_id'] : 0;
+$wardId = isset($_GET['ward_id']) ? (int)$_GET['ward_id'] : 0;
+$skill = trim((string)($_GET['skill'] ?? ''));
+$status = trim((string)($_GET['status'] ?? ''));
+$startDate = preg_match('/^\d{4}-\d{2}-\d{2}$/', (string)($_GET['start_date'] ?? '')) ? $_GET['start_date'] : '';
+$endDate = preg_match('/^\d{4}-\d{2}-\d{2}$/', (string)($_GET['end_date'] ?? '')) ? $_GET['end_date'] : '';
+$allowedStatuses = ['unemployed', 'employed', 'training', 'self_employed'];
+$status = in_array($status, $allowedStatuses, true) ? $status : '';
+$skillSql = $conn->real_escape_string($skill);
+
+$districts = admin_rows($conn, "SELECT district_id, district_name FROM districts ORDER BY district_name");
+$upazilas = admin_rows($conn, "SELECT upazila_id, upazila_name FROM upazilas ORDER BY upazila_name");
+$wards = admin_rows($conn, "SELECT ward_id, ward_name FROM wards ORDER BY ward_name");
+$skills = admin_rows($conn, "SELECT skill_name FROM dic_skills ORDER BY skill_name LIMIT 250");
+
+function report_profile_where($districtId, $upazilaId, $wardId, $status, $skillSql) {
+    $conditions = ["1=1"];
+    if ($districtId > 0) $conditions[] = "jsp.district_id = $districtId";
+    if ($upazilaId > 0) $conditions[] = "jsp.upazila_id = $upazilaId";
+    if ($wardId > 0) $conditions[] = "jsp.ward_id = $wardId";
+    if ($status !== '') $conditions[] = "es.current_status = '$status'";
+    if ($skillSql !== '') {
+        $conditions[] = "EXISTS (
+            SELECT 1 FROM job_seeker_skills jss2
+            JOIN dic_skills ds2 ON jss2.skill_id = ds2.skill_id
+            WHERE jss2.user_id = jsp.user_id AND ds2.skill_name = '$skillSql'
+        )";
+    }
+    return implode(' AND ', $conditions);
 }
 
-include('../assets/config/db.php');
-
-$lang = $_SESSION['lang'] ?? 'bn';
-
-$arText = [
-    'bn' => [
-        'title' => 'কর্মসংস্থান বিশ্লেষণ ড্যাশবোর্ড',
-        'subtitle' => 'এলাকাভিত্তিক বেকারত্ব, কর্মসংস্থান, দক্ষতা এবং চাকরির চাহিদা পর্যবেক্ষণ।',
-        'details_btn' => 'বেকারদের বিবরণ',
-        'back_btn' => 'ফিরে যান',
-        'total_users' => 'মোট ব্যবহারকারী',
-        'job_seekers' => 'চাকরিপ্রার্থী',
-        'employers' => 'নিয়োগকর্তা',
-        'total_jobs' => 'মোট চাকরি',
-        'unemployed' => 'বেকার',
-        'employed' => 'নিযুক্ত',
-        'training' => 'প্রশিক্ষণরত',
-        'self_employed' => 'স্বনির্ভর',
-        'status_overview' => 'কর্মসংস্থানের অবস্থার সংক্ষিপ্ত বিবরণ',
-        'district_unemployment' => 'জেলাওয়ারী বেকারত্ব',
-        'jobs_by_district' => 'জেলা অনুযায়ী পোস্ট করা চাকরি',
-        'top_skills' => 'শীর্ষ দক্ষতা বিশ্লেষণ',
-        'table_title' => 'জেলাওয়ারী কর্মসংস্থান পর্যবেক্ষণ টেবিল',
-        'th_district' => 'জেলা',
-        'th_job_seekers' => 'চাকরিপ্রার্থী',
-        'th_unemployed' => 'বেকার',
-        'th_employed' => 'নিযুক্ত',
-        'th_training' => 'প্রশিক্ষণরত',
-        'th_self_employed' => 'স্বনির্ভর',
-        'th_jobs_posted' => 'পোস্ট করা চাকরি',
-        'no_district_data' => 'কোনো জেলা বিশ্লেষণ তথ্য পাওয়া যায়নি।',
-        'recent_changes' => 'সাম্প্রতিক কর্মসংস্থানের পরিবর্তন',
-        'th_name' => 'নাম',
-        'th_change' => 'পরিবর্তন',
-        'th_date' => 'তারিখ',
-        'no_changes' => 'এখনও কোনো কর্মসংস্থানের অবস্থা পরিবর্তন নেই।',
-        'recent_jobs' => 'সাম্প্রতিক চাকরি',
-        'th_title' => 'শিরোনাম',
-        'th_salary' => 'বেতন',
-        'no_recent_jobs' => 'কোনো সাম্প্রতিক চাকরি পাওয়া যায়নি।',
-        'negotiable' => 'আলোচনা সাপেক্ষে',
-        'na' => 'প্রযোজ্য নয়',
-        // Chart labels (JavaScript)
-        'chart_label_unemployed' => 'বেকার',
-        'chart_label_employed' => 'নিযুক্ত',
-        'chart_label_training' => 'প্রশিক্ষণরত',
-        'chart_label_self_employed' => 'স্বনির্ভর',
-        'chart_label_jobs_posted' => 'পোস্ট করা চাকরি',
-        'chart_label_users' => 'ব্যবহারকারী',
-    ],
-    'en' => [
-        'title' => 'Employment Analytics Dashboard',
-        'subtitle' => 'Area-based unemployment, employment, skill and job demand monitoring.',
-        'details_btn' => 'Unemployed Details',
-        'back_btn' => 'Back',
-        'total_users' => 'Total Users',
-        'job_seekers' => 'Job Seekers',
-        'employers' => 'Employers',
-        'total_jobs' => 'Total Jobs',
-        'unemployed' => 'Unemployed',
-        'employed' => 'Employed',
-        'training' => 'Training',
-        'self_employed' => 'Self Employed',
-        'status_overview' => 'Employment Status Overview',
-        'district_unemployment' => 'District-wise Unemployment',
-        'jobs_by_district' => 'Jobs Posted by District',
-        'top_skills' => 'Top Skills Analytics',
-        'table_title' => 'District-wise Employment Monitoring Table',
-        'th_district' => 'District',
-        'th_job_seekers' => 'Job Seekers',
-        'th_unemployed' => 'Unemployed',
-        'th_employed' => 'Employed',
-        'th_training' => 'Training',
-        'th_self_employed' => 'Self Employed',
-        'th_jobs_posted' => 'Jobs Posted',
-        'no_district_data' => 'No district analytics data found.',
-        'recent_changes' => 'Recent Employment Changes',
-        'th_name' => 'Name',
-        'th_change' => 'Change',
-        'th_date' => 'Date',
-        'no_changes' => 'No employment status changes yet.',
-        'recent_jobs' => 'Recent Jobs',
-        'th_title' => 'Title',
-        'th_salary' => 'Salary',
-        'no_recent_jobs' => 'No recent jobs found.',
-        'negotiable' => 'Negotiable',
-        'na' => 'N/A',
-        // Chart labels (JavaScript)
-        'chart_label_unemployed' => 'Unemployed',
-        'chart_label_employed' => 'Employed',
-        'chart_label_training' => 'Training',
-        'chart_label_self_employed' => 'Self Employed',
-        'chart_label_jobs_posted' => 'Jobs Posted',
-        'chart_label_users' => 'Users',
-    ]
-];
-$ct = $arText[$lang];
-
-function getCount($conn, $sql){
-    $q = $conn->query($sql);
-    return ($q) ? ($q->fetch_assoc()['total'] ?? 0) : 0;
+function report_job_where($districtId, $upazilaId, $wardId, $skillSql, $startDate, $endDate) {
+    $conditions = ["1=1"];
+    if ($districtId > 0) $conditions[] = "j.district_id = $districtId";
+    if ($upazilaId > 0) $conditions[] = "j.upazila_id = $upazilaId";
+    if ($wardId > 0) $conditions[] = "j.ward_id = $wardId";
+    if ($startDate !== '') $conditions[] = "DATE(j.created_at) >= '$startDate'";
+    if ($endDate !== '') $conditions[] = "DATE(j.created_at) <= '$endDate'";
+    if ($skillSql !== '') {
+        $conditions[] = "EXISTS (
+            SELECT 1 FROM job_required_skills jrs2
+            LEFT JOIN dic_skills ds2 ON jrs2.skill_id = ds2.skill_id
+            WHERE jrs2.job_id = j.job_id
+              AND (ds2.skill_name = '$skillSql' OR jrs2.skill_name = '$skillSql')
+        )";
+    }
+    return implode(' AND ', $conditions);
 }
 
-$total_users = getCount($conn, "SELECT COUNT(*) AS total FROM users");
-$total_job_seekers = getCount($conn, "SELECT COUNT(*) AS total FROM users WHERE role='job_seeker'");
-$total_employers = getCount($conn, "SELECT COUNT(*) AS total FROM users WHERE role='employer'");
-$total_jobs = getCount($conn, "SELECT COUNT(*) AS total FROM jobs");
-$total_applications = getCount($conn, "SELECT COUNT(*) AS total FROM applications");
-$total_skills = getCount($conn, "SELECT COUNT(*) AS total FROM skills");
-$total_profiles = getCount($conn, "SELECT COUNT(*) AS total FROM job_seeker_profiles");
-$total_unemployed = getCount($conn, "SELECT COUNT(*) AS total FROM employment_status WHERE current_status='unemployed'");
-$total_employed = getCount($conn, "SELECT COUNT(*) AS total FROM employment_status WHERE current_status='employed'");
-$total_training = getCount($conn, "SELECT COUNT(*) AS total FROM employment_status WHERE current_status='training'");
-$total_self_employed = getCount($conn, "SELECT COUNT(*) AS total FROM employment_status WHERE current_status='self_employed'");
+function report_app_date_where($startDate, $endDate) {
+    $conditions = [];
+    if ($startDate !== '') $conditions[] = "DATE(a.applied_at) >= '$startDate'";
+    if ($endDate !== '') $conditions[] = "DATE(a.applied_at) <= '$endDate'";
+    return $conditions;
+}
 
-$district_analytics = $conn->query("
-    SELECT 
-        d.district_name,
-        COUNT(DISTINCT jsp.user_id) AS total_job_seekers,
-        COUNT(DISTINCT CASE WHEN es.current_status='unemployed' THEN es.user_id END) AS unemployed,
-        COUNT(DISTINCT CASE WHEN es.current_status='employed' THEN es.user_id END) AS employed,
-        COUNT(DISTINCT CASE WHEN es.current_status='training' THEN es.user_id END) AS training,
-        COUNT(DISTINCT CASE WHEN es.current_status='self_employed' THEN es.user_id END) AS self_employed,
-        COUNT(DISTINCT j.job_id) AS jobs_posted
+$profileWhere = report_profile_where($districtId, $upazilaId, $wardId, $status, $skillSql);
+$jobWhere = report_job_where($districtId, $upazilaId, $wardId, $skillSql, $startDate, $endDate);
+$appConditions = array_merge(["$jobWhere"], report_app_date_where($startDate, $endDate));
+$appWhere = implode(' AND ', $appConditions);
+
+$areaReport = admin_rows($conn, "
+    SELECT d.district_name,
+           COUNT(DISTINCT jsp.user_id) AS job_seekers,
+           COUNT(DISTINCT CASE WHEN es.current_status = 'unemployed' THEN jsp.user_id END) AS unemployed,
+           COUNT(DISTINCT CASE WHEN es.current_status = 'employed' THEN jsp.user_id END) AS employed,
+           COUNT(DISTINCT CASE WHEN es.current_status = 'training' THEN jsp.user_id END) AS training,
+           COUNT(DISTINCT CASE WHEN es.current_status = 'self_employed' THEN jsp.user_id END) AS self_employed,
+           COUNT(DISTINCT j.job_id) AS job_posts
     FROM districts d
     LEFT JOIN job_seeker_profiles jsp ON d.district_id = jsp.district_id
     LEFT JOIN employment_status es ON jsp.user_id = es.user_id
     LEFT JOIN jobs j ON d.district_id = j.district_id
+    WHERE " . ($districtId > 0 ? "d.district_id = $districtId" : "1=1") . "
     GROUP BY d.district_id, d.district_name
     ORDER BY unemployed DESC, d.district_name ASC
 ");
 
-$district_labels = [];
-$unemployed_data = [];
-$employed_data = [];
-$training_data = [];
-$self_employed_data = [];
-$jobs_data = [];
-
-$district_rows = [];
-
-if($district_analytics && $district_analytics->num_rows > 0){
-    while($row = $district_analytics->fetch_assoc()){
-        $district_rows[] = $row;
-        $district_labels[] = $row['district_name'];
-        $unemployed_data[] = (int)$row['unemployed'];
-        $employed_data[] = (int)$row['employed'];
-        $training_data[] = (int)$row['training'];
-        $self_employed_data[] = (int)$row['self_employed'];
-        $jobs_data[] = (int)$row['jobs_posted'];
-    }
-}
-
-$top_skills = $conn->query("
-    SELECT skill_name, COUNT(*) AS total
-    FROM skills
-    GROUP BY skill_name
+$skillDistribution = admin_rows($conn, "
+    SELECT ds.skill_name, COUNT(DISTINCT jss.user_id) AS total
+    FROM job_seeker_profiles jsp
+    LEFT JOIN employment_status es ON jsp.user_id = es.user_id
+    JOIN job_seeker_skills jss ON jsp.user_id = jss.user_id
+    JOIN dic_skills ds ON jss.skill_id = ds.skill_id
+    WHERE $profileWhere
+    GROUP BY ds.skill_id, ds.skill_name
     ORDER BY total DESC
-    LIMIT 10
+    LIMIT 12
 ");
 
-$skill_labels = [];
-$skill_data = [];
-$skill_rows = [];
+$jobDemand = admin_rows($conn, "
+    SELECT COALESCE(ds.skill_name, jrs.skill_name) AS skill_name, COUNT(DISTINCT j.job_id) AS total_jobs
+    FROM jobs j
+    JOIN job_required_skills jrs ON j.job_id = jrs.job_id
+    LEFT JOIN dic_skills ds ON jrs.skill_id = ds.skill_id
+    WHERE $jobWhere
+    GROUP BY skill_name
+    ORDER BY total_jobs DESC
+    LIMIT 12
+");
 
-if($top_skills && $top_skills->num_rows > 0){
-    while($row = $top_skills->fetch_assoc()){
-        $skill_rows[] = $row;
-        $skill_labels[] = $row['skill_name'];
-        $skill_data[] = (int)$row['total'];
-    }
-}
+$skillGap = admin_rows($conn, "
+    SELECT skill_name, supply_count, demand_count, gap_count
+    FROM vw_skill_gap
+    " . ($skillSql !== '' ? "WHERE skill_name = '$skillSql'" : "") . "
+    ORDER BY gap_count DESC, demand_count DESC
+    LIMIT 12
+");
 
-$recent_employment_changes = $conn->query("
-    SELECT 
-        esl.old_status,
-        esl.new_status,
-        esl.remarks,
-        esl.created_at,
-        u.full_name,
-        u.email
+$trainingNeed = admin_rows($conn, "
+    SELECT d.district_name,
+           COUNT(DISTINCT jsp.user_id) AS job_seekers,
+           COUNT(DISTINCT CASE WHEN es.current_status = 'unemployed' THEN jsp.user_id END) AS unemployed,
+           COUNT(DISTINCT j.job_id) AS jobs_available
+    FROM districts d
+    LEFT JOIN job_seeker_profiles jsp ON d.district_id = jsp.district_id
+    LEFT JOIN employment_status es ON jsp.user_id = es.user_id
+    LEFT JOIN jobs j ON d.district_id = j.district_id
+    WHERE " . ($districtId > 0 ? "d.district_id = $districtId" : "1=1") . "
+    GROUP BY d.district_id, d.district_name
+    ORDER BY unemployed DESC
+");
+
+$employerActivity = admin_rows($conn, "
+    SELECT employer_id, full_name, company_name, total_jobs, total_applications
+    FROM vw_employer_activity
+    ORDER BY total_applications DESC, total_jobs DESC
+    LIMIT 12
+");
+
+$applicationStatus = admin_rows($conn, "
+    SELECT a.status, COUNT(*) AS total
+    FROM applications a
+    JOIN jobs j ON a.job_id = j.job_id
+    WHERE $appWhere
+    GROUP BY a.status
+    ORDER BY total DESC
+");
+
+$statusChanges = admin_rows($conn, "
+    SELECT u.full_name, esl.old_status, esl.new_status, esl.remarks, esl.created_at
     FROM employment_status_logs esl
     JOIN users u ON esl.user_id = u.user_id
-    ORDER BY esl.log_id DESC
-    LIMIT 8
+    LEFT JOIN job_seeker_profiles jsp ON u.user_id = jsp.user_id
+    LEFT JOIN employment_status es ON u.user_id = es.user_id
+    WHERE $profileWhere
+    ORDER BY esl.created_at DESC
+    LIMIT 12
 ");
 
-$recent_jobs = $conn->query("
-    SELECT jobs.title, jobs.salary, jobs.created_at, districts.district_name
-    FROM jobs
-    LEFT JOIN districts ON jobs.district_id = districts.district_id
-    ORDER BY jobs.job_id DESC
-    LIMIT 5
-");
+if (isset($_GET['export']) && $_GET['export'] === 'csv') {
+    header('Content-Type: text/csv; charset=utf-8');
+    header('Content-Disposition: attachment; filename=jibika_reports.csv');
+    $out = fopen('php://output', 'w');
+    fputcsv($out, ['Jibika Area-wise Unemployment And Skill Matching Report']);
+    fputcsv($out, []);
+    fputcsv($out, ['District', 'Job Seekers', 'Unemployed', 'Employed', 'Training', 'Self Employed', 'Job Posts']);
+    foreach ($areaReport as $row) {
+        fputcsv($out, [$row['district_name'], $row['job_seekers'], $row['unemployed'], $row['employed'], $row['training'], $row['self_employed'], $row['job_posts']]);
+    }
+    fputcsv($out, []);
+    fputcsv($out, ['Skill Gap', 'Supply', 'Demand', 'Gap']);
+    foreach ($skillGap as $row) {
+        fputcsv($out, [$row['skill_name'], $row['supply_count'], $row['demand_count'], $row['gap_count']]);
+    }
+    fputcsv($out, []);
+    fputcsv($out, ['Employer', 'Company', 'Jobs', 'Applications']);
+    foreach ($employerActivity as $row) {
+        fputcsv($out, [$row['full_name'], $row['company_name'], $row['total_jobs'], $row['total_applications']]);
+    }
+    fclose($out);
+    exit();
+}
+
+admin_header('Reports');
 ?>
+<style>
+@media print { .side, .top .btn, .filters, .report-actions { display:none !important; } .layout{display:block} main{padding:0} body{background:#fff} }
+.report-note { background:#eef8f2; border:1px solid #cfe9d8; border-radius:14px; padding:16px; margin-bottom:16px; color:#154734; }
+</style>
 
-<?php include('../includes/header.php'); ?>
-<?php include('../includes/navbar.php'); ?>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<div class="container py-5">
-
-    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-        <div>
-            <h2 class="mb-1 fw-bold"><?php echo $ct['title']; ?></h2>
-            <p class="text-muted mb-0">
-                <?php echo $ct['subtitle']; ?>
-            </p>
-        </div>
-        <div>
-            <a href="unemployed_details.php" class="btn btn-danger me-2"><?php echo $ct['details_btn']; ?></a>
-            <a href="dashboard.php" class="btn btn-secondary"><?php echo $ct['back_btn']; ?></a>
-        </div>
-    </div>
-
-    <div class="row g-4 mb-4">
-        <div class="col-md-3"><div class="card shadow-sm border-0 p-3 h-100"><h6><?php echo $ct['total_users']; ?></h6><h3><?php echo $total_users; ?></h3></div></div>
-        <div class="col-md-3"><div class="card shadow-sm border-0 p-3 h-100"><h6><?php echo $ct['job_seekers']; ?></h6><h3><?php echo $total_job_seekers; ?></h3></div></div>
-        <div class="col-md-3"><div class="card shadow-sm border-0 p-3 h-100"><h6><?php echo $ct['employers']; ?></h6><h3><?php echo $total_employers; ?></h3></div></div>
-        <div class="col-md-3"><div class="card shadow-sm border-0 p-3 h-100"><h6><?php echo $ct['total_jobs']; ?></h6><h3><?php echo $total_jobs; ?></h3></div></div>
-
-        <div class="col-md-3"><div class="card shadow-sm border-0 p-3 h-100"><h6><?php echo $ct['unemployed']; ?></h6><h3 class="text-danger"><?php echo $total_unemployed; ?></h3></div></div>
-        <div class="col-md-3"><div class="card shadow-sm border-0 p-3 h-100"><h6><?php echo $ct['employed']; ?></h6><h3 class="text-success"><?php echo $total_employed; ?></h3></div></div>
-        <div class="col-md-3"><div class="card shadow-sm border-0 p-3 h-100"><h6><?php echo $ct['training']; ?></h6><h3 class="text-warning"><?php echo $total_training; ?></h3></div></div>
-        <div class="col-md-3"><div class="card shadow-sm border-0 p-3 h-100"><h6><?php echo $ct['self_employed']; ?></h6><h3 class="text-info"><?php echo $total_self_employed; ?></h3></div></div>
-    </div>
-
-    <div class="row g-4 mb-4">
-
-        <div class="col-lg-6">
-            <div class="card shadow border-0 p-4 h-100">
-                <h4 class="mb-3"><?php echo $ct['status_overview']; ?></h4>
-                <canvas id="statusPieChart" height="220"></canvas>
-            </div>
-        </div>
-
-        <div class="col-lg-6">
-            <div class="card shadow border-0 p-4 h-100">
-                <h4 class="mb-3"><?php echo $ct['district_unemployment']; ?></h4>
-                <canvas id="districtBarChart" height="220"></canvas>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="row g-4 mb-4">
-
-        <div class="col-lg-6">
-            <div class="card shadow border-0 p-4 h-100">
-                <h4 class="mb-3"><?php echo $ct['jobs_by_district']; ?></h4>
-                <canvas id="jobsDistrictChart" height="220"></canvas>
-            </div>
-        </div>
-
-        <div class="col-lg-6">
-            <div class="card shadow border-0 p-4 h-100">
-                <h4 class="mb-3"><?php echo $ct['top_skills']; ?></h4>
-                <canvas id="skillsChart" height="220"></canvas>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="card shadow p-4 mb-4">
-        <h4 class="mb-3"><?php echo $ct['table_title']; ?></h4>
-
-        <?php if(!empty($district_rows)): ?>
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover align-middle">
-                    <thead class="table-dark">
-                        <tr>
-                            <th><?php echo $ct['th_district']; ?></th>
-                            <th><?php echo $ct['th_job_seekers']; ?></th>
-                            <th><?php echo $ct['th_unemployed']; ?></th>
-                            <th><?php echo $ct['th_employed']; ?></th>
-                            <th><?php echo $ct['th_training']; ?></th>
-                            <th><?php echo $ct['th_self_employed']; ?></th>
-                            <th><?php echo $ct['th_jobs_posted']; ?></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach($district_rows as $row): ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars(translateDistrict($row['district_name'] ?? '', $lang)); ?></td>
-                                <td><?php echo htmlspecialchars(translateNumber($row['total_job_seekers'] ?? 0, $lang)); ?></td>
-                                <td><span class="badge bg-danger"><?php echo htmlspecialchars(translateNumber($row['unemployed'] ?? 0, $lang)); ?></span></td>
-                                <td><span class="badge bg-success"><?php echo htmlspecialchars(translateNumber($row['employed'] ?? 0, $lang)); ?></span></td>
-                                <td><span class="badge bg-warning text-dark"><?php echo htmlspecialchars(translateNumber($row['training'] ?? 0, $lang)); ?></span></td>
-                                <td><span class="badge bg-info text-dark"><?php echo htmlspecialchars(translateNumber($row['self_employed'] ?? 0, $lang)); ?></span></td>
-                                <td><?php echo htmlspecialchars(translateNumber($row['jobs_posted'] ?? 0, $lang)); ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-        <?php else: ?>
-            <div class="alert alert-warning mb-0"><?php echo $ct['no_district_data']; ?></div>
-        <?php endif; ?>
-    </div>
-
-    <div class="row g-4 mb-4">
-
-        <div class="col-lg-6">
-            <div class="card shadow p-4 h-100">
-                <h4 class="mb-3"><?php echo $ct['recent_changes']; ?></h4>
-
-                <?php if($recent_employment_changes && $recent_employment_changes->num_rows > 0): ?>
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-sm align-middle">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th><?php echo $ct['th_name']; ?></th>
-                                    <th><?php echo $ct['th_change']; ?></th>
-                                    <th><?php echo $ct['th_date']; ?></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php while($row = $recent_employment_changes->fetch_assoc()): ?>
-                                    <tr>
-                                        <td>
-                                            <?php echo htmlspecialchars(translateEmployerName($row['full_name'] ?? '', $lang)); ?><br>
-                                            <small class="text-muted"><?php echo htmlspecialchars($row['email']); ?></small>
-                                        </td>
-                                        <td>
-                                            <?php echo htmlspecialchars($ct[$row['old_status']] ?? $row['old_status'] ?? $ct['na']); ?>
-                                            →
-                                            <strong><?php echo htmlspecialchars($ct[$row['new_status']] ?? $row['new_status']); ?></strong>
-                                            <br>
-                                            <small><?php echo htmlspecialchars($row['remarks'] ?? ''); ?></small>
-                                        </td>
-                                        <td><?php echo htmlspecialchars(translateDate($row['created_at'] ?? '', $lang)); ?></td>
-                                    </tr>
-                                <?php endwhile; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                <?php else: ?>
-                    <div class="alert alert-warning mb-0"><?php echo $ct['no_changes']; ?></div>
-                <?php endif; ?>
-            </div>
-        </div>
-
-        <div class="col-lg-6">
-            <div class="card shadow p-4 h-100">
-                <h4 class="mb-3"><?php echo $ct['recent_jobs']; ?></h4>
-
-                <?php if($recent_jobs && $recent_jobs->num_rows > 0): ?>
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-sm align-middle">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th><?php echo $ct['th_title']; ?></th>
-                                    <th><?php echo $ct['th_district']; ?></th>
-                                    <th><?php echo $ct['th_salary']; ?></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php while($row = $recent_jobs->fetch_assoc()): ?>
-                                    <tr>
-                                        <td><?php echo htmlspecialchars(translateJobTitle($row['title'] ?? '', $lang)); ?></td>
-                                        <td><?php echo htmlspecialchars(translateDistrict($row['district_name'] ?? '', $lang) ?: $ct['na']); ?></td>
-                                        <td><?php echo (empty($row['salary']) || strtolower($row['salary']) === 'negotiable') ? $ct['negotiable'] : '৳ ' . translateSalary($row['salary'], $lang); ?></td>
-                                    </tr>
-                                <?php endwhile; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                <?php else: ?>
-                    <div class="alert alert-warning mb-0"><?php echo $ct['no_recent_jobs']; ?></div>
-                <?php endif; ?>
-            </div>
-        </div>
-
-    </div>
-
+<div class="report-note">
+    These reports help government, NGO and admin teams identify high-unemployment areas, skill gaps, weak job demand, and employer activity so training and employment programs can be planned with evidence.
 </div>
 
-<script>
-const districtLabels = <?php echo json_encode($district_labels); ?>;
-const unemployedData = <?php echo json_encode($unemployed_data); ?>;
-const employedData = <?php echo json_encode($employed_data); ?>;
-const trainingData = <?php echo json_encode($training_data); ?>;
-const selfEmployedData = <?php echo json_encode($self_employed_data); ?>;
-const jobsData = <?php echo json_encode($jobs_data); ?>;
+<form class="filters" method="GET">
+    <select name="district_id"><option value="0">All Districts</option><?php foreach ($districts as $d): ?><option value="<?php echo admin_e($d['district_id']); ?>" <?php echo $districtId === (int)$d['district_id'] ? 'selected' : ''; ?>><?php echo admin_e($d['district_name']); ?></option><?php endforeach; ?></select>
+    <select name="upazila_id"><option value="0">All Upazilas</option><?php foreach ($upazilas as $u): ?><option value="<?php echo admin_e($u['upazila_id']); ?>" <?php echo $upazilaId === (int)$u['upazila_id'] ? 'selected' : ''; ?>><?php echo admin_e($u['upazila_name']); ?></option><?php endforeach; ?></select>
+    <select name="ward_id"><option value="0">All Wards</option><?php foreach ($wards as $w): ?><option value="<?php echo admin_e($w['ward_id']); ?>" <?php echo $wardId === (int)$w['ward_id'] ? 'selected' : ''; ?>><?php echo admin_e($w['ward_name']); ?></option><?php endforeach; ?></select>
+    <select name="skill"><option value="">All Skills</option><?php foreach ($skills as $s): ?><option value="<?php echo admin_e($s['skill_name']); ?>" <?php echo $skill === $s['skill_name'] ? 'selected' : ''; ?>><?php echo admin_e($s['skill_name']); ?></option><?php endforeach; ?></select>
+    <select name="status"><option value="">All Status</option><?php foreach ($allowedStatuses as $s): ?><option value="<?php echo admin_e($s); ?>" <?php echo $status === $s ? 'selected' : ''; ?>><?php echo admin_e(ucwords(str_replace('_', ' ', $s))); ?></option><?php endforeach; ?></select>
+    <input type="date" name="start_date" value="<?php echo admin_e($startDate); ?>">
+    <input type="date" name="end_date" value="<?php echo admin_e($endDate); ?>">
+    <button class="btn" type="submit">Apply</button>
+    <a class="btn light" href="reports.php">Reset</a>
+</form>
 
-const skillLabels = <?php echo json_encode($skill_labels); ?>;
-const skillData = <?php echo json_encode($skill_data); ?>;
+<div class="report-actions" style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+    <button class="btn" type="button" onclick="window.print()"><i class="fa-solid fa-print"></i> Print Report</button>
+    <a class="btn light" href="reports.php?<?php echo admin_e(http_build_query(array_merge($_GET, ['export' => 'csv']))); ?>"><i class="fa-solid fa-file-csv"></i> Export CSV</a>
+</div>
 
-const chartLabels = {
-    unemployed: <?php echo json_encode($ct['chart_label_unemployed']); ?>,
-    employed: <?php echo json_encode($ct['chart_label_employed']); ?>,
-    training: <?php echo json_encode($ct['chart_label_training']); ?>,
-    self_employed: <?php echo json_encode($ct['chart_label_self_employed']); ?>,
-    jobs_posted: <?php echo json_encode($ct['chart_label_jobs_posted']); ?>,
-    users: <?php echo json_encode($ct['chart_label_users']); ?>
-};
+<div class="grid">
+    <div class="card"><h3>Area-wise Unemployment Report</h3><p class="muted">Compares unemployment, employment, training and job posts by district.</p></div>
+    <div class="card"><h3>Skill Gap Report</h3><p class="muted">Shows where training is needed because demand is higher than supply.</p></div>
+    <div class="card"><h3>Employer Activity Report</h3><p class="muted">Shows which employers generate jobs and applications.</p></div>
+</div>
 
-new Chart(document.getElementById('statusPieChart'), {
-    type: 'doughnut',
-    data: {
-        labels: [chartLabels.unemployed, chartLabels.employed, chartLabels.training, chartLabels.self_employed],
-        datasets: [{
-            data: [
-                <?php echo $total_unemployed; ?>,
-                <?php echo $total_employed; ?>,
-                <?php echo $total_training; ?>,
-                <?php echo $total_self_employed; ?>
-            ],
-            backgroundColor: ['#dc3545', '#198754', '#ffc107', '#0dcaf0']
-        }]
-    }
-});
+<h2>Area-wise Unemployment Report</h2>
+<table><thead><tr><th>District</th><th>Job Seekers</th><th>Unemployed</th><th>Employed</th><th>Training</th><th>Self-employed</th><th>Jobs</th></tr></thead><tbody>
+<?php foreach ($areaReport as $r): ?><tr><td><?php echo admin_e($r['district_name']); ?></td><td><?php echo admin_e($r['job_seekers']); ?></td><td><?php echo admin_e($r['unemployed']); ?></td><td><?php echo admin_e($r['employed']); ?></td><td><?php echo admin_e($r['training']); ?></td><td><?php echo admin_e($r['self_employed']); ?></td><td><?php echo admin_e($r['job_posts']); ?></td></tr><?php endforeach; ?>
+</tbody></table>
 
-new Chart(document.getElementById('districtBarChart'), {
-    type: 'bar',
-    data: {
-        labels: districtLabels,
-        datasets: [
-            { label: chartLabels.unemployed, data: unemployedData, backgroundColor: '#dc3545' },
-            { label: chartLabels.employed, data: employedData, backgroundColor: '#198754' },
-            { label: chartLabels.training, data: trainingData, backgroundColor: '#ffc107' },
-            { label: chartLabels.self_employed, data: selfEmployedData, backgroundColor: '#0dcaf0' }
-        ]
-    },
-    options: {
-        responsive: true,
-        scales: { y: { beginAtZero: true } }
-    }
-});
+<br><h2>Skill Distribution Report</h2>
+<table><thead><tr><th>Available Skill</th><th>Job Seekers</th></tr></thead><tbody>
+<?php foreach ($skillDistribution as $r): ?><tr><td><?php echo admin_e($r['skill_name']); ?></td><td><?php echo admin_e($r['total']); ?></td></tr><?php endforeach; ?>
+</tbody></table>
 
-new Chart(document.getElementById('jobsDistrictChart'), {
-    type: 'bar',
-    data: {
-        labels: districtLabels,
-        datasets: [{
-            label: chartLabels.jobs_posted,
-            data: jobsData,
-            backgroundColor: '#0d6efd'
-        }]
-    },
-    options: {
-        responsive: true,
-        scales: { y: { beginAtZero: true } }
-    }
-});
+<br><h2>Job Demand Report</h2>
+<table><thead><tr><th>Demanded Skill / Job Skill</th><th>Active Job Posts</th></tr></thead><tbody>
+<?php foreach ($jobDemand as $r): ?><tr><td><?php echo admin_e($r['skill_name']); ?></td><td><?php echo admin_e($r['total_jobs']); ?></td></tr><?php endforeach; ?>
+</tbody></table>
 
-new Chart(document.getElementById('skillsChart'), {
-    type: 'bar',
-    data: {
-        labels: skillLabels,
-        datasets: [{
-            label: chartLabels.users,
-            data: skillData,
-            backgroundColor: '#6f42c1'
-        }]
-    },
-    options: {
-        indexAxis: 'y',
-        responsive: true,
-        scales: { x: { beginAtZero: true } }
-    }
-});
-</script>
+<br><h2>Skill Gap Report</h2>
+<table><thead><tr><th>Skill</th><th>Supply</th><th>Demand</th><th>Gap</th><th>Suggested Action</th></tr></thead><tbody>
+<?php foreach ($skillGap as $r): $gap = (int)$r['gap_count']; ?><tr><td><?php echo admin_e($r['skill_name']); ?></td><td><?php echo admin_e($r['supply_count']); ?></td><td><?php echo admin_e($r['demand_count']); ?></td><td><span class="badge"><?php echo admin_e($gap); ?></span></td><td><?php echo admin_e($gap > 0 ? 'Training program recommended' : 'Job matching or SME support recommended'); ?></td></tr><?php endforeach; ?>
+</tbody></table>
 
-<?php include('../includes/footer.php'); ?>
+<br><h2>Training Need Report</h2>
+<table><thead><tr><th>District</th><th>Unemployed</th><th>Jobs Available</th><th>Training Need Score</th><th>Recommendation</th></tr></thead><tbody>
+<?php foreach ($trainingNeed as $r): $seekers = max(1, (int)$r['job_seekers']); $rate = ((int)$r['unemployed'] / $seekers) * 100; $score = min(100, round($rate + (((int)$r['jobs_available'] < max(1, (int)$r['unemployed'] / 10)) ? 20 : 0))); ?><tr><td><?php echo admin_e($r['district_name']); ?></td><td><?php echo admin_e($r['unemployed']); ?></td><td><?php echo admin_e($r['jobs_available']); ?></td><td><?php echo admin_e($score); ?>/100</td><td><?php echo admin_e($score >= 60 ? 'Government/NGO training and employer outreach recommended' : 'Job matching campaign recommended'); ?></td></tr><?php endforeach; ?>
+</tbody></table>
+
+<br><h2>Employer Activity Report</h2>
+<table><thead><tr><th>Employer</th><th>Company</th><th>Jobs</th><th>Applications</th></tr></thead><tbody>
+<?php foreach ($employerActivity as $r): ?><tr><td><?php echo admin_e($r['full_name']); ?></td><td><?php echo admin_e($r['company_name']); ?></td><td><?php echo admin_e($r['total_jobs']); ?></td><td><?php echo admin_e($r['total_applications']); ?></td></tr><?php endforeach; ?>
+</tbody></table>
+
+<br><h2>Application Status Report</h2>
+<table><thead><tr><th>Status</th><th>Total Applications</th></tr></thead><tbody>
+<?php foreach ($applicationStatus as $r): ?><tr><td><?php echo admin_e($r['status']); ?></td><td><?php echo admin_e($r['total']); ?></td></tr><?php endforeach; ?>
+</tbody></table>
+
+<br><h2>Employment Status Change Report</h2>
+<table><thead><tr><th>User</th><th>Old Status</th><th>New Status</th><th>Remarks</th><th>Date</th></tr></thead><tbody>
+<?php foreach ($statusChanges as $r): ?><tr><td><?php echo admin_e($r['full_name']); ?></td><td><?php echo admin_e($r['old_status']); ?></td><td><?php echo admin_e($r['new_status']); ?></td><td><?php echo admin_e($r['remarks']); ?></td><td><?php echo admin_e($r['created_at']); ?></td></tr><?php endforeach; ?>
+</tbody></table>
+
+<?php admin_footer(); ?>

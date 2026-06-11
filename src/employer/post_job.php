@@ -197,7 +197,8 @@ if (isset($_POST['post_job'])) {
                 
                 while ($s = $s_res->fetch_assoc()) {
                     $uid = $s['user_id'];
-                    $conn->query("INSERT INTO notifications (user_id, job_id, title_en, title_bn, message_en, message_bn, is_read) VALUES ($uid, $new_job_id, '$t_en', '$t_bn', '$m_en', '$m_bn', 0)");
+                    $plain_message = $conn->real_escape_string($title);
+                    $conn->query("INSERT INTO notifications (user_id, job_id, message, title_en, title_bn, message_en, message_bn, is_read) VALUES ($uid, $new_job_id, '$plain_message', '$t_en', '$t_bn', '$m_en', '$m_bn', 0)");
                 }
             }
 
