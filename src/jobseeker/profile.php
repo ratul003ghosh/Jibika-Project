@@ -140,6 +140,7 @@ if (isset($_POST['save_profile'])) {
                      district_id=$district_id,
                      upazila_id=$upazila_id,
                      ward_id=$ward_id,
+                     education='$education',
                      degree='$education',
                      about='$about',
                      preferred_district='$pref_district',
@@ -149,9 +150,9 @@ if (isset($_POST['save_profile'])) {
                 WHERE user_id='$user_id'";
     } else {
         $sql = "INSERT INTO job_seeker_profiles
-                (user_id, nid, district_id, upazila_id, ward_id, degree, about, cv_path, preferred_district, preferred_upazila, preferred_job_category)
+                (user_id, nid, district_id, upazila_id, ward_id, education, degree, about, cv_path, preferred_district, preferred_upazila, preferred_job_category)
                 VALUES
-                ('$user_id', '$nid', $district_id, $upazila_id, $ward_id, '$education', '$about', '$cv_path', '$pref_district', '$pref_upazila', '$pref_category')";
+                ('$user_id', '$nid', $district_id, $upazila_id, $ward_id, '$education', '$education', '$about', '$cv_path', '$pref_district', '$pref_upazila', '$pref_category')";
     }
 
     if ($message == "") {

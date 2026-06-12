@@ -162,8 +162,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $notif_msg_esc = $conn->real_escape_string($ct['notif_msg']);
             $job_notif_val = $job_id > 0 ? $job_id : "NULL";
             
-            $conn->query("INSERT INTO notifications (user_id, job_id, title_en, title_bn, message_en, message_bn, type, link) 
-                          VALUES ($candidate_id, $job_notif_val, '$notif_title_esc', '$notif_title_esc', '$notif_msg_esc', '$notif_msg_esc', 'info', 'jobseeker/application_tracking.php')");
+            $conn->query("INSERT INTO notifications (user_id, job_id, message, title_en, title_bn, message_en, message_bn, type, link) 
+                          VALUES ($candidate_id, $job_notif_val, '$notif_msg_esc', '$notif_title_esc', '$notif_title_esc', '$notif_msg_esc', '$notif_msg_esc', 'info', 'jobseeker/application_tracking.php')");
             
             header("Location: calendar.php?msg=interview_proposed");
             exit();

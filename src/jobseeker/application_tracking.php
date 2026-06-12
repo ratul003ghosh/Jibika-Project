@@ -65,8 +65,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
             $notif_msg_en = "$seeker_name has accepted the interview for the role '$job_title'.";
             $notif_msg_bn = "$seeker_name '$job_title' পদের জন্য সাক্ষাৎকার গ্রহণের আমন্ত্রণ স্বীকার করেছেন।";
             
-            $conn->query("INSERT INTO notifications (user_id, job_id, title_en, title_bn, message_en, message_bn, type, link) 
-                          VALUES ($emp_id, $job_id, '$notif_title_en', '$notif_title_bn', '$notif_msg_en', '$notif_msg_bn', 'success', 'employer/calendar.php')");
+            $plain_message = $conn->real_escape_string($notif_msg_en);
+            $conn->query("INSERT INTO notifications (user_id, job_id, message, title_en, title_bn, message_en, message_bn, type, link) 
+                          VALUES ($emp_id, $job_id, '$plain_message', '$notif_title_en', '$notif_title_bn', '$notif_msg_en', '$notif_msg_bn', 'success', 'employer/calendar.php')");
             
         } elseif ($_POST['action'] == 'reject_interview') {
             $new_count = $app['rejection_count'] + 1;
@@ -88,8 +89,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
             $notif_msg_en = "$seeker_name has declined the interview for the role '$job_title'.";
             $notif_msg_bn = "$seeker_name '$job_title' পদের জন্য সাক্ষাৎকার গ্রহণের আমন্ত্রণ প্রত্যাখ্যান করেছেন।";
             
-            $conn->query("INSERT INTO notifications (user_id, job_id, title_en, title_bn, message_en, message_bn, type, link) 
-                          VALUES ($emp_id, $job_id, '$notif_title_en', '$notif_title_bn', '$notif_msg_en', '$notif_msg_bn', 'danger', 'employer/calendar.php')");
+            $plain_message = $conn->real_escape_string($notif_msg_en);
+            $conn->query("INSERT INTO notifications (user_id, job_id, message, title_en, title_bn, message_en, message_bn, type, link) 
+                          VALUES ($emp_id, $job_id, '$plain_message', '$notif_title_en', '$notif_title_bn', '$notif_msg_en', '$notif_msg_bn', 'danger', 'employer/calendar.php')");
             
         } elseif ($_POST['action'] == 'suggest_time') {
             $suggested_time = $conn->real_escape_string($_POST['suggested_time']);
@@ -117,8 +119,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
                  $notif_msg_bn = "$seeker_name '$job_title' পদের সাক্ষাৎকারের জন্য একটি নতুন সময় প্রস্তাব করেছেন: $suggested_time।";
             }
             
-            $conn->query("INSERT INTO notifications (user_id, job_id, title_en, title_bn, message_en, message_bn, type, link) 
-                          VALUES ($emp_id, $job_id, '$notif_title_en', '$notif_title_bn', '$notif_msg_en', '$notif_msg_bn', 'warning', 'employer/calendar.php')");
+            $plain_message = $conn->real_escape_string($notif_msg_en);
+            $conn->query("INSERT INTO notifications (user_id, job_id, message, title_en, title_bn, message_en, message_bn, type, link) 
+                          VALUES ($emp_id, $job_id, '$plain_message', '$notif_title_en', '$notif_title_bn', '$notif_msg_en', '$notif_msg_bn', 'warning', 'employer/calendar.php')");
         }
     }
 }
@@ -150,8 +153,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['partner_action'])) {
             $notif_msg_en = "$seeker_name has accepted the partner interview for '$int_title'.";
             $notif_msg_bn = "$seeker_name '$int_title' এর জন্য অংশীদার সাক্ষাৎকার আমন্ত্রণ স্বীকার করেছেন।";
             
-            $conn->query("INSERT INTO notifications (user_id, job_id, title_en, title_bn, message_en, message_bn, type, link) 
-                          VALUES ($emp_id, NULL, '$notif_title_en', '$notif_title_bn', '$notif_msg_en', '$notif_msg_bn', 'success', 'employer/calendar.php')");
+            $plain_message = $conn->real_escape_string($notif_msg_en);
+            $conn->query("INSERT INTO notifications (user_id, job_id, message, title_en, title_bn, message_en, message_bn, type, link) 
+                          VALUES ($emp_id, NULL, '$plain_message', '$notif_title_en', '$notif_title_bn', '$notif_msg_en', '$notif_msg_bn', 'success', 'employer/calendar.php')");
                           
         } elseif ($_POST['partner_action'] == 'reject_partner_interview') {
             $conn->query("UPDATE interviews SET status='rejected' WHERE interview_id=$int_id");
@@ -163,8 +167,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['partner_action'])) {
             $notif_msg_en = "$seeker_name has declined the partner interview for '$int_title'.";
             $notif_msg_bn = "$seeker_name '$int_title' এর জন্য অংশীদার সাক্ষাৎকার আমন্ত্রণ প্রত্যাখ্যান করেছেন।";
             
-            $conn->query("INSERT INTO notifications (user_id, job_id, title_en, title_bn, message_en, message_bn, type, link) 
-                          VALUES ($emp_id, NULL, '$notif_title_en', '$notif_title_bn', '$notif_msg_en', '$notif_msg_bn', 'danger', 'employer/calendar.php')");
+            $plain_message = $conn->real_escape_string($notif_msg_en);
+            $conn->query("INSERT INTO notifications (user_id, job_id, message, title_en, title_bn, message_en, message_bn, type, link) 
+                          VALUES ($emp_id, NULL, '$plain_message', '$notif_title_en', '$notif_title_bn', '$notif_msg_en', '$notif_msg_bn', 'danger', 'employer/calendar.php')");
         }
     }
 }

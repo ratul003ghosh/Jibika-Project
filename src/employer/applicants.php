@@ -33,14 +33,17 @@ $apText = [
         'label_skills' => 'দক্ষতা:',
         'status_accepted' => 'গৃহীত',
         'status_rejected' => 'প্রত্যাখ্যাত',
+        'status_shortlisted' => 'সংক্ষিপ্ত তালিকাভুক্ত',
         'status_pending' => 'অপেক্ষমাণ',
         'status_emp_updated' => 'কর্মসংস্থান আপডেট করা হয়েছে',
         'btn_accept' => 'গ্রহণ করুন',
         'btn_reject' => 'প্রত্যাখ্যান করুন',
+        'btn_shortlist' => 'শর্টলিস্ট করুন',
         'btn_done' => 'সিদ্ধান্ত সম্পন্ন',
         'btn_biodata' => 'বিস্তারিত জীবনবৃত্তান্ত দেখুন',
         'confirm_accept' => 'আপনি কি এই আবেদনকারীকে গ্রহণ করতে চান?',
         'confirm_reject' => 'আপনি কি এই আবেদনকারীকে প্রত্যাখ্যান করতে চান?',
+        'confirm_shortlist' => 'আপনি কি এই আবেদনকারীকে শর্টলিস্ট করতে চান?',
         'no_applicants' => 'এখনও কোনো আবেদনকারী পাওয়া যায়নি।',
         'not_specified' => 'নির্দিষ্ট করা নেই',
         'negotiable' => 'আলোচনা সাপেক্ষে',
@@ -87,14 +90,17 @@ $apText = [
         'label_skills' => 'Skills:',
         'status_accepted' => 'Accepted',
         'status_rejected' => 'Rejected',
+        'status_shortlisted' => 'Shortlisted',
         'status_pending' => 'Pending',
         'status_emp_updated' => 'Employment updated',
         'btn_accept' => 'Accept',
         'btn_reject' => 'Reject',
+        'btn_shortlist' => 'Shortlist',
         'btn_done' => 'Decision Done',
         'btn_biodata' => 'View Biodata',
         'confirm_accept' => 'Accept this applicant?',
         'confirm_reject' => 'Reject this applicant?',
+        'confirm_shortlist' => 'Shortlist this applicant?',
         'no_applicants' => 'No applicants found yet.',
         'not_specified' => 'Not specified',
         'negotiable' => 'Negotiable',
@@ -128,11 +134,18 @@ $message = "";
 if (isset($_GET['action']) && isset($_GET['application_id'])) {
     $action = $_GET['action'];
     $application_id = intval($_GET['application_id']);
-    $status = ($action == 'accept') ? 'Accepted' : (($action == 'reject') ? 'Rejected' : '');
+    $statusMap = [
+        'accept' => 'Accepted',
+        'reject' => 'Rejected',
+        'shortlist' => 'Shortlisted'
+    ];
+    $status = $statusMap[$action] ?? '';
 
     if ($status != "") {
-        $update_sql = "UPDATE applications JOIN jobs ON applications.job_id = jobs.job_id SET applications.status = '$status' WHERE applications.application_id = '$application_id' AND jobs.employer_id = '$employer_id'";
-        if ($conn->query($update_sql)) {
+        $stmt = $conn->prepare("UPDATE applications JOIN jobs ON applications.job_id = jobs.job_id SET applications.status = ? WHERE applications.application_id = ? AND jobs.employer_id = ?");
+        if ($stmt) {
+            $stmt->bind_param("sii", $status, $application_id, $employer_id);
+            $stmt->execute();
             $message = $ct['msg_success'];
         } else {
             $message = $ct['msg_error'] . $conn->error;
@@ -190,8 +203,8 @@ $where_sql = implode(" AND ", $where_clauses);
             jobs.job_id, jobs.title AS job_title, jobs.job_category, jobs.job_type, jobs.salary, jobs.salary_type, jobs.application_deadline, jobs.education_required, jobs.experience_required, jobs.location, jobs.upazila_id,
             users.user_id AS applicant_id, users.full_name, users.email,
             jsp.about, jsp.district, jsp.upazila, jsp.preferred_job_category, jsp.experience_years,
-            jsp.cv_file, jsp.portfolio_link, jsp.certifications, jsp.degree, jsp.institution, jsp.gpa,
-            jsp.gender, jsp.dob, jsp.address, jsp.nid, jsp.profile_photo
+            jsp.cv_path AS cv_file, '' AS portfolio_link, '' AS certifications, COALESCE(jsp.degree, jsp.education) AS degree, jsp.education, jsp.institution, '' AS gpa,
+            '' AS gender, NULL AS dob, jsp.address, jsp.nid, '' AS profile_photo
         FROM applications
         JOIN jobs ON applications.job_id = jobs.job_id
         JOIN users ON applications.user_id = users.user_id
@@ -386,6 +399,7 @@ if ($job_id_filter > 0 && $sort_by == 'rec_desc') {
                         <select name="f_status" class="form-select form-select-sm">
                             <option value=""><?php echo $ct['general']; ?></option>
                             <option value="Pending" <?php if($f_status=='Pending') echo 'selected'; ?>><?php echo $ct['status_pending']; ?></option>
+                            <option value="Shortlisted" <?php if($f_status=='Shortlisted') echo 'selected'; ?>><?php echo $ct['status_shortlisted']; ?></option>
                             <option value="Accepted" <?php if($f_status=='Accepted') echo 'selected'; ?>><?php echo $ct['status_accepted']; ?></option>
                             <option value="Rejected" <?php if($f_status=='Rejected') echo 'selected'; ?>><?php echo $ct['status_rejected']; ?></option>
                         </select>
@@ -442,6 +456,8 @@ if ($job_id_filter > 0 && $sort_by == 'rec_desc') {
                 $status_html = "<span class='badge bg-success'>{$row['status']}</span>";
             } elseif (strpos($row['status'], 'Rejected') !== false) {
                 $status_html = "<span class='badge bg-danger'>{$row['status']}</span>";
+            } elseif ($row['status'] == 'Shortlisted') {
+                $status_html = "<span class='badge bg-primary'>{$row['status']}</span>";
             } elseif (strpos($row['status'], 'Interview') !== false) {
                 $status_html = "<span class='badge bg-info text-dark'>{$row['status']}</span>";
             } else {
@@ -482,13 +498,16 @@ if ($job_id_filter > 0 && $sort_by == 'rec_desc') {
                     
             if ($row['status'] == 'Interview Scheduled' || $row['status'] == 'Interview Proposed') {
                 echo "<button class='btn btn-secondary btn-sm mb-1 w-100' disabled><i class='fa fa-lock'></i> Scheduling Locked</button><br>";
-            } elseif ($row['status'] == 'Pending' || $row['status'] == 'Under Review' || $row['status'] == 'Interview Cancelled') {
+            } elseif ($row['status'] == 'Pending' || $row['status'] == 'Under Review' || $row['status'] == 'Shortlisted' || $row['status'] == 'Interview Cancelled') {
                 echo "<a href='schedule_interview.php?application_id={$row['application_id']}' class='btn btn-primary btn-sm mb-1 w-100'>
                         <i class='fa fa-calendar-check'></i> Interview
                       </a><br>";
             }
             
-            if ($row['status'] == 'Pending' || $row['status'] == 'Under Review') {
+            if ($row['status'] == 'Pending' || $row['status'] == 'Under Review' || $row['status'] == 'Shortlisted') {
+                if ($row['status'] != 'Shortlisted') {
+                    echo "<a href='?action=shortlist&application_id={$row['application_id']}' class='btn btn-primary btn-sm me-1' onclick=\"return confirm('".addslashes($ct['confirm_shortlist'])."')\">{$ct['btn_shortlist']}</a>";
+                }
                 echo "<a href='?action=accept&application_id={$row['application_id']}' class='btn btn-success btn-sm me-1' onclick=\"return confirm('".addslashes($ct['confirm_accept'])."')\">{$ct['btn_accept']}</a>
                       <a href='?action=reject&application_id={$row['application_id']}' class='btn btn-danger btn-sm' onclick=\"return confirm('".addslashes($ct['confirm_reject'])."')\">{$ct['btn_reject']}</a>";
             }

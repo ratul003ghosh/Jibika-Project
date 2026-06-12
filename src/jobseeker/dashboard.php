@@ -559,11 +559,12 @@ $dash_t = [
                     $sal = !empty($job['salary']) ? '৳'.translateNumber(number_format((float)$job['salary']), $lang) : 'Negotiable';
                     $type = $job['job_type'] ?? 'Contract';
                     $job_img = getJobImage($job['title'], $job['job_category'] ?? '');
+                    $job_details_url = "../job_details.php?id=" . (int)$job['job_id'];
                 ?>
                 <div class="job-item">
-                    <div class="job-img" style="background-image:url('<?php echo $job_img; ?>');"></div>
+                    <a href="<?php echo $job_details_url; ?>" class="job-img" style="background-image:url('<?php echo $job_img; ?>');"></a>
                     <div class="job-text">
-                        <h4><?php echo htmlspecialchars($job['title']); ?></h4>
+                        <h4><a href="<?php echo $job_details_url; ?>" style="color:inherit;text-decoration:none;"><?php echo htmlspecialchars($job['title']); ?></a></h4>
                         <div class="company"><?php echo htmlspecialchars($job['company_name'] ?? 'N/A'); ?></div>
                         <div class="job-meta-row">
                             <span><i class="fa-solid fa-location-dot"></i><?php echo $loc; ?></span>
@@ -573,7 +574,7 @@ $dash_t = [
                     </div>
                     <div class="job-actions">
                         <span class="badge-match"><i class="fa-solid fa-bolt"></i> Skill Match</span>
-                        <a href="jobs.php?apply=<?php echo $job['job_id']; ?>" class="btn-apply"><?php echo $dash_t['apply']; ?></a>
+                        <a href="<?php echo $job_details_url; ?>" class="btn-apply"><?php echo $dash_t['apply']; ?></a>
                     </div>
                 </div>
             <?php endwhile; ?>

@@ -13,7 +13,7 @@ $lang = $_SESSION['lang'] ?? 'bn';
 $q = $conn->query("SELECT i.interview_id, i.interview_title, i.interview_datetime, i.status, u.full_name, j.title as job_title 
                    FROM interviews i 
                    JOIN users u ON i.candidate_id = u.user_id 
-                   JOIN jobs j ON i.job_id = j.job_id 
+                   LEFT JOIN jobs j ON i.job_id = j.job_id 
                    WHERE i.employer_id = $employer_id");
 
 $events = [];
@@ -25,12 +25,12 @@ while ($row = $q->fetch_assoc()) {
     
     $events[] = [
         'id' => $row['interview_id'],
-        'title' => $row['full_name'] . ' - ' . $row['job_title'],
+        'title' => $row['full_name'] . ' - ' . ($row['job_title'] ?: $row['interview_title']),
         'start' => date('Y-m-d\TH:i:s', strtotime($row['interview_datetime'])),
         'color' => $color,
         'extendedProps' => [
             'status' => ucfirst($row['status']),
-            'job' => $row['job_title'],
+            'job' => $row['job_title'] ?: $row['interview_title'],
             'candidate' => $row['full_name']
         ]
     ];

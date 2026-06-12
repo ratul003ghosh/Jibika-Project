@@ -118,6 +118,8 @@ $ct = $pfText[$lang];
 
 // Handle Search & Filter
 $where = ["u.role = 'job_seeker'"];
+$partnerTypeColumn = $conn->query("SHOW COLUMNS FROM job_seeker_profiles LIKE 'partner_type'");
+$hasPartnerTypeColumn = $partnerTypeColumn && $partnerTypeColumn->num_rows > 0;
 if (!empty($_GET['skills'])) {
     $skills = is_array($_GET['skills']) ? $_GET['skills'] : [$_GET['skills']];
     $skill_cond = [];
@@ -148,7 +150,9 @@ if (!empty($_GET['availability_status'])) {
 }
 if (!empty($_GET['partner_type'])) {
     $pt = $conn->real_escape_string($_GET['partner_type']);
-    $where[] = "jsp.partner_type = '$pt'";
+    if ($hasPartnerTypeColumn) {
+        $where[] = "jsp.partner_type = '$pt'";
+    }
 }
 
 $int_join = "";

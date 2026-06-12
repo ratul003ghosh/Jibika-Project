@@ -740,7 +740,7 @@ include('../includes/header.php');
             <article class="ja-panel">
                 <div class="ja-panel-head">
                     <div><h2>Top In-Demand Skills</h2><p>Skills from seeker profiles</p></div>
-                    <a href="../jobseeker/skills.php">View All</a>
+                    <a href="skills_training.php">View All</a>
                 </div>
                 <div class="ja-skill-list">
                     <?php foreach ($topSkills as $skill): ?>

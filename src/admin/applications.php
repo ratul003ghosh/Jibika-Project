@@ -1,10 +1,18 @@
 <?php
 include_once('admin_bootstrap.php');
 
+$applicationStatuses = ['Pending','Under Review','Shortlisted','Interview Proposed','Interview Scheduled','Accepted','Rejected'];
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['application_id'], $_POST['status'])) {
     $application_id = (int)$_POST['application_id'];
-    $status = $conn->real_escape_string($_POST['status']);
-    $conn->query("UPDATE applications SET status='$status' WHERE application_id=$application_id");
+    $status = $_POST['status'];
+    if (in_array($status, $applicationStatuses, true)) {
+        $stmt = $conn->prepare("UPDATE applications SET status=? WHERE application_id=?");
+        if ($stmt) {
+            $stmt->bind_param("si", $status, $application_id);
+            $stmt->execute();
+        }
+    }
 }
 
 $statusFilter = $conn->real_escape_string($_GET['status'] ?? '');
@@ -25,7 +33,7 @@ admin_header('Applications');
 <form class="filters" method="GET">
     <select name="status">
         <option value="">All Statuses</option>
-        <?php foreach (['Pending','Under Review','Interview Proposed','Interview Scheduled','Accepted','Rejected'] as $s): ?>
+        <?php foreach ($applicationStatuses as $s): ?>
             <option value="<?php echo admin_e($s); ?>" <?php echo $statusFilter === $s ? 'selected' : ''; ?>><?php echo admin_e($s); ?></option>
         <?php endforeach; ?>
     </select>
@@ -47,7 +55,7 @@ admin_header('Applications');
                 <form method="POST" class="filters" style="margin:0">
                     <input type="hidden" name="application_id" value="<?php echo admin_e($a['application_id']); ?>">
                     <select name="status">
-                        <?php foreach (['Pending','Under Review','Interview Proposed','Interview Scheduled','Accepted','Rejected'] as $s): ?>
+                        <?php foreach ($applicationStatuses as $s): ?>
                             <option value="<?php echo admin_e($s); ?>" <?php echo ($a['status'] ?? '') === $s ? 'selected' : ''; ?>><?php echo admin_e($s); ?></option>
                         <?php endforeach; ?>
                     </select>

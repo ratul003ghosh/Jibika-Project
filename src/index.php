@@ -1,20 +1,6 @@
 <?php
 session_start();
 include('assets/config/db.php');
-
-// Redirect logged-in users directly to their dashboards
-if (isset($_SESSION['user_id']) && isset($_SESSION['role'])) {
-    if ($_SESSION['role'] == 'job_seeker') {
-        header("Location: jobseeker/dashboard.php");
-        exit();
-    } elseif ($_SESSION['role'] == 'employer') {
-        header("Location: employer/dashboard.php");
-        exit();
-    } elseif ($_SESSION['role'] == 'admin') {
-        header("Location: admin/dashboard.php");
-        exit();
-    }
-}
 ?>
 <?php include('includes/header.php'); ?>
 <?php include('includes/navbar.php'); ?>
@@ -488,49 +474,49 @@ $ht = $home_text[$lang];
             <div class="row g-4">
                 <div class="col-lg-3 col-md-4 col-6">
                     <a href="<?php echo $jobs_link; ?>?search=<?php echo urlencode($ht['sec_it']); ?>" class="sector-img-card d-block text-decoration-none overflow-hidden rounded-4 shadow-sm position-relative hover-lift" style="height:200px;">
-                        <div class="sector-img-bg" style="background-image:url('/assets/image/sector_it.png');"></div>
+                        <div class="sector-img-bg" style="background-image:url('assets/image/sector_it.png');"></div>
                         <div class="sector-img-overlay"><h5><?php echo $ht['sec_it']; ?></h5><span><?php echo $ht['sec_it_sub']; ?></span></div>
                     </a>
                 </div>
                 <div class="col-lg-3 col-md-4 col-6">
                     <a href="<?php echo $jobs_link; ?>?search=<?php echo urlencode($ht['sec_garments']); ?>" class="sector-img-card d-block text-decoration-none overflow-hidden rounded-4 shadow-sm position-relative hover-lift" style="height:200px;">
-                        <div class="sector-img-bg" style="background-image:url('/assets/image/sector_garments.png');"></div>
+                        <div class="sector-img-bg" style="background-image:url('assets/image/sector_garments.png');"></div>
                         <div class="sector-img-overlay"><h5><?php echo $ht['sec_garments']; ?></h5><span><?php echo $ht['sec_garments_sub']; ?></span></div>
                     </a>
                 </div>
                 <div class="col-lg-3 col-md-4 col-6">
                     <a href="<?php echo $jobs_link; ?>?search=<?php echo urlencode($ht['sec_transport']); ?>" class="sector-img-card d-block text-decoration-none overflow-hidden rounded-4 shadow-sm position-relative hover-lift" style="height:200px;">
-                        <div class="sector-img-bg" style="background-image:url('/assets/image/sector_transport.png');"></div>
+                        <div class="sector-img-bg" style="background-image:url('assets/image/sector_transport.png');"></div>
                         <div class="sector-img-overlay"><h5><?php echo $ht['sec_transport']; ?></h5><span><?php echo $ht['sec_transport_sub']; ?></span></div>
                     </a>
                 </div>
                 <div class="col-lg-3 col-md-4 col-6">
                     <a href="<?php echo $jobs_link; ?>?search=<?php echo urlencode($ht['sec_health']); ?>" class="sector-img-card d-block text-decoration-none overflow-hidden rounded-4 shadow-sm position-relative hover-lift" style="height:200px;">
-                        <div class="sector-img-bg" style="background-image:url('/assets/image/sector_healthcare.png');"></div>
+                        <div class="sector-img-bg" style="background-image:url('assets/image/sector_healthcare.png');"></div>
                         <div class="sector-img-overlay"><h5><?php echo $ht['sec_health']; ?></h5><span><?php echo $ht['sec_health_sub']; ?></span></div>
                     </a>
                 </div>
                 <div class="col-lg-3 col-md-4 col-6">
                     <a href="<?php echo $jobs_link; ?>?search=<?php echo urlencode($ht['sec_agri']); ?>" class="sector-img-card d-block text-decoration-none overflow-hidden rounded-4 shadow-sm position-relative hover-lift" style="height:200px;">
-                        <div class="sector-img-bg" style="background-image:url('/assets/image/sector_agriculture.png');"></div>
+                        <div class="sector-img-bg" style="background-image:url('assets/image/sector_agriculture.png');"></div>
                         <div class="sector-img-overlay"><h5><?php echo $ht['sec_agri']; ?></h5><span><?php echo $ht['sec_agri_sub']; ?></span></div>
                     </a>
                 </div>
                 <div class="col-lg-3 col-md-4 col-6">
                     <a href="<?php echo $jobs_link; ?>?search=<?php echo urlencode($ht['sec_sales']); ?>" class="sector-img-card d-block text-decoration-none overflow-hidden rounded-4 shadow-sm position-relative hover-lift" style="height:200px;">
-                        <div class="sector-img-bg" style="background-image:url('/assets/image/sector_sales.png');"></div>
+                        <div class="sector-img-bg" style="background-image:url('assets/image/sector_sales.png');"></div>
                         <div class="sector-img-overlay"><h5><?php echo $ht['sec_sales']; ?></h5><span><?php echo $ht['sec_sales_sub']; ?></span></div>
                     </a>
                 </div>
                 <div class="col-lg-3 col-md-4 col-6">
                     <a href="<?php echo $jobs_link; ?>?search=<?php echo urlencode($ht['sec_edu']); ?>" class="sector-img-card d-block text-decoration-none overflow-hidden rounded-4 shadow-sm position-relative hover-lift" style="height:200px;">
-                        <div class="sector-img-bg" style="background-image:url('/assets/image/sector_education.png');"></div>
+                        <div class="sector-img-bg" style="background-image:url('assets/image/sector_education.png');"></div>
                         <div class="sector-img-overlay"><h5><?php echo $ht['sec_edu']; ?></h5><span><?php echo $ht['sec_edu_sub']; ?></span></div>
                     </a>
                 </div>
                 <div class="col-lg-3 col-md-4 col-6">
                     <a href="<?php echo $jobs_link; ?>?search=<?php echo urlencode($ht['sec_biz']); ?>" class="sector-img-card d-block text-decoration-none overflow-hidden rounded-4 shadow-sm position-relative hover-lift" style="height:200px;">
-                        <div class="sector-img-bg" style="background-image:url('/assets/image/sector_business.png');"></div>
+                        <div class="sector-img-bg" style="background-image:url('assets/image/sector_business.png');"></div>
                         <div class="sector-img-overlay"><h5><?php echo $ht['sec_biz']; ?></h5><span><?php echo $ht['sec_biz_sub']; ?></span></div>
                     </a>
                 </div>
@@ -549,7 +535,7 @@ $ht = $home_text[$lang];
             <div class="row g-4 justify-content-center">
                 <div class="col-lg-4 col-md-6">
                     <a href="<?php echo $jobs_link; ?>?job_type=Part-time+(Student)" class="text-decoration-none d-block overflow-hidden rounded-4 shadow-sm position-relative hover-lift" style="height: 220px;">
-                        <div style="background-image: url('/assets/image/student_jobs.png'); background-size: cover; background-position: center; position: absolute; inset: 0; transition: transform 0.5s;" class="specialized-bg"></div>
+                        <div style="background-image: url('assets/image/student_jobs.png'); background-size: cover; background-position: center; position: absolute; inset: 0; transition: transform 0.5s;" class="specialized-bg"></div>
                         <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(15,23,42,0.9) 0%, rgba(15,23,42,0.2) 60%, transparent 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 2rem;">
                             <h4 class="fw-bold text-white mb-1"><?php echo $ht['student_jobs']; ?></h4>
                             <p class="text-white-50 mb-0"><?php echo $ht['student_jobs_sub']; ?></p>
@@ -558,7 +544,7 @@ $ht = $home_text[$lang];
                 </div>
                 <div class="col-lg-4 col-md-6">
                     <a href="<?php echo $jobs_link; ?>?job_type=Day+Labor" class="text-decoration-none d-block overflow-hidden rounded-4 shadow-sm position-relative hover-lift" style="height: 220px;">
-                        <div style="background-image: url('/assets/image/day_labor.png'); background-size: cover; background-position: center; position: absolute; inset: 0; transition: transform 0.5s;" class="specialized-bg"></div>
+                        <div style="background-image: url('assets/image/day_labor.png'); background-size: cover; background-position: center; position: absolute; inset: 0; transition: transform 0.5s;" class="specialized-bg"></div>
                         <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(15,23,42,0.9) 0%, rgba(15,23,42,0.2) 60%, transparent 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 2rem;">
                             <h4 class="fw-bold text-white mb-1"><?php echo $ht['day_labor']; ?></h4>
                             <p class="text-white-50 mb-0"><?php echo $ht['day_labor_sub']; ?></p>
@@ -567,7 +553,7 @@ $ht = $home_text[$lang];
                 </div>
                 <div class="col-lg-4 col-md-6">
                     <a href="<?php echo $jobs_link; ?>?job_type=Internship" class="text-decoration-none d-block overflow-hidden rounded-4 shadow-sm position-relative hover-lift" style="height: 220px;">
-                        <div style="background-image: url('/assets/image/internships.png'); background-size: cover; background-position: center; position: absolute; inset: 0; transition: transform 0.5s;" class="specialized-bg"></div>
+                        <div style="background-image: url('assets/image/internships.png'); background-size: cover; background-position: center; position: absolute; inset: 0; transition: transform 0.5s;" class="specialized-bg"></div>
                         <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(15,23,42,0.9) 0%, rgba(15,23,42,0.2) 60%, transparent 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 2rem;">
                             <h4 class="fw-bold text-white mb-1"><?php echo $ht['internships']; ?></h4>
                             <p class="text-white-50 mb-0"><?php echo $ht['internships_sub']; ?></p>

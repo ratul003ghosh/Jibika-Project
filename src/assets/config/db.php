@@ -1,10 +1,10 @@
 <?php
 mysqli_report(MYSQLI_REPORT_OFF);
 $host = "127.0.0.1";
-$port = 3307;
+$port = 3306;
 $user = "root";
 $pass = "";
-$dbname = "jibika_db";
+$dbname = "jibika_final_working";
 
 $conn = new mysqli($host, $user, $pass, $dbname, $port);
 

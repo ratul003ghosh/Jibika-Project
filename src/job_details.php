@@ -2,6 +2,8 @@
 session_start();
 include('assets/config/db.php');
 $lang = $_SESSION['lang'] ?? 'bn';
+$message = "";
+$message_type = "";
 
 if (!isset($_GET['id'])) {
     header("Location: jobseeker/jobs.php");
@@ -19,6 +21,57 @@ if ($job_query->num_rows == 0) {
     die("Job not found.");
 }
 $job = $job_query->fetch_assoc();
+
+if (isset($_GET['applied']) && $_GET['applied'] === '1') {
+    $message = "Applied successfully!";
+    $message_type = "success";
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['apply_job'])) {
+    if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'job_seeker') {
+        header("Location: auth/login.php");
+        exit();
+    }
+
+    $user_id = (int)$_SESSION['user_id'];
+    $is_closed = (($job['status'] ?? 'active') === 'closed');
+    $is_deadline_over = (!empty($job['application_deadline']) && $job['application_deadline'] < date('Y-m-d'));
+
+    if ($is_closed) {
+        $message = "This job is closed.";
+        $message_type = "warning";
+    } elseif ($is_deadline_over) {
+        $message = "Application deadline is over.";
+        $message_type = "warning";
+    } else {
+        $check = $conn->prepare("SELECT application_id FROM applications WHERE job_id=? AND user_id=? LIMIT 1");
+        if ($check) {
+            $check->bind_param("ii", $job_id, $user_id);
+            $check->execute();
+            if ($check->get_result()->num_rows > 0) {
+                $message = "You already applied for this job.";
+                $message_type = "warning";
+            } else {
+                $apply = $conn->prepare("INSERT INTO applications (job_id, user_id) VALUES (?, ?)");
+                if ($apply) {
+                    $apply->bind_param("ii", $job_id, $user_id);
+                    if ($apply->execute()) {
+                        header("Location: job_details.php?id=$job_id&applied=1");
+                        exit();
+                    }
+                    $message = "Error applying for this job: " . $conn->error;
+                    $message_type = "danger";
+                } else {
+                    $message = "Error preparing application.";
+                    $message_type = "danger";
+                }
+            }
+        } else {
+            $message = "Error checking existing application.";
+            $message_type = "danger";
+        }
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -32,6 +85,11 @@ $job = $job_query->fetch_assoc();
 
 <div class="container mt-5">
     <div class="card shadow-sm p-4">
+        <?php if ($message !== ""): ?>
+            <div class="alert alert-<?php echo htmlspecialchars($message_type); ?>">
+                <?php echo htmlspecialchars($message); ?>
+            </div>
+        <?php endif; ?>
         <h2 class="fw-bold text-dark"><?php echo htmlspecialchars($job['title']); ?></h2>
         <h5 class="text-muted"><i class="fa-solid fa-building"></i> <?php echo htmlspecialchars($job['company_name'] ?? 'Unknown Company'); ?></h5>
         <hr>
@@ -51,8 +109,10 @@ $job = $job_query->fetch_assoc();
         <h5 class="fw-bold mt-3">Job Description</h5>
         <p class="mt-2" style="white-space: pre-wrap;"><?php echo htmlspecialchars($job['description']); ?></p>
         
-        <div class="mt-4">
-            <a href="jobseeker/jobs.php?apply=<?php echo $job_id; ?>" class="btn btn-success btn-lg px-5">Apply Now</a>
+        <div class="mt-4 d-flex flex-wrap gap-2">
+            <form method="POST" action="job_details.php?id=<?php echo $job_id; ?>" style="display:inline;">
+                <button type="submit" name="apply_job" class="btn btn-success btn-lg px-5">Apply Now</button>
+            </form>
             <a href="jobseeker/jobs.php" class="btn btn-outline-secondary btn-lg ms-2">Back to Jobs</a>
         </div>
     </div>
